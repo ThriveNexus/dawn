@@ -265,12 +265,6 @@
             "collection": "face-creams"
           }
         },
-        "featured_collection_ARCpUy": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "snail-secretion-line"
-          }
-        },
         "featured_collection_EqiaAN": {
           "type": "featured_collection",
           "settings": {
@@ -295,18 +289,17 @@
         "featured_collection_WLrqar",
         "featured_collection_g9q4dC",
         "featured_collection_kdnF8f",
-        "featured_collection_ARCpUy",
         "featured_collection_EqiaAN",
         "featured_collection_N9Mjp7",
         "featured_collection_AEQ4tR"
       ],
       "name": "t:sections.collection-list.presets.name",
       "settings": {
-        "title": "Collections",
+        "title": "",
         "heading_size": "h1",
-        "image_ratio": "square",
+        "image_ratio": "adapt",
         "columns_desktop": 3,
-        "color_scheme": "",
+        "color_scheme": "scheme-1",
         "show_view_all": false,
         "columns_mobile": "1",
         "swipe_on_mobile": false,
