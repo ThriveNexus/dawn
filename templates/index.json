@@ -77,10 +77,173 @@
         "padding_top": 44,
         "padding_bottom": 36
       }
+    },
+    "rich_text_TQGWNt": {
+      "type": "rich-text",
+      "blocks": {
+        "caption_kzjWry": {
+          "type": "caption",
+          "settings": {
+            "caption": "KOSMETIKAL · PESARO, ITALY",
+            "text_style": "caption-with-letter-spacing",
+            "text_size": "medium"
+          }
+        },
+        "heading_pq3hLg": {
+          "type": "heading",
+          "settings": {
+            "heading": "Your brand. Made in Italy.",
+            "heading_size": "h1"
+          }
+        },
+        "text_yjTzWr": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Certified organic skincare, manufactured in Italy. Order from 10 pieces — with your own label.</p>"
+          }
+        },
+        "button_j86y4A": {
+          "type": "button",
+          "settings": {
+            "button_label": "Browse the catalogue",
+            "button_link": "shopify://collections",
+            "button_style_secondary": false,
+            "button_label_2": "Over 500 pieces? Talk to us",
+            "button_link_2": "shopify://pages/contact",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "caption_kzjWry",
+        "heading_pq3hLg",
+        "text_yjTzWr",
+        "button_j86y4A"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 56,
+        "padding_bottom": 60
+      }
+    },
+    "multicolumn_XcNbmj": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_j46CEx": {
+          "type": "column",
+          "settings": {
+            "title": "From 10 pieces",
+            "text": "<p>No minimums in the thousands. Start small, scale when you sell.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_zCKxkT": {
+          "type": "column",
+          "settings": {
+            "title": "Your label, our formulas",
+            "text": "<p>Upload your design. We manufacture, you sell.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_r4Pt9g": {
+          "type": "column",
+          "settings": {
+            "title": "Certified and compliant",
+            "text": "<p>ISO 9001 · ISO 22716 · ICEA Biocosmesi · AIAB.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_j46CEx",
+        "column_zCKxkT",
+        "column_r4Pt9g"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "multicolumn_E3NbqU": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_Vq44AF": {
+          "type": "column",
+          "settings": {
+            "title": "1. Choose your product",
+            "text": "<p>28 formulas from the Kosmetikal VISO faceline.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_eFJb3f": {
+          "type": "column",
+          "settings": {
+            "title": "2. Add your design",
+            "text": "<p>Upload your logo or label.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_cTGNYn": {
+          "type": "column",
+          "settings": {
+            "title": "3. Receive your batch",
+            "text": "<p>ProducedinItaly.From10pieces.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_Vq44AF",
+        "column_eFJb3f",
+        "column_cTGNYn"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "How it works",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
     "image_banner",
-    "featured_collection"
+    "featured_collection",
+    "rich_text_TQGWNt",
+    "multicolumn_XcNbmj",
+    "multicolumn_E3NbqU"
   ]
 }
