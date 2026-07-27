@@ -237,6 +237,82 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "collection_list_akzVhh": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_kxJ699": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "bb-cream"
+          }
+        },
+        "featured_collection_WLrqar": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "face-masks"
+          }
+        },
+        "featured_collection_g9q4dC": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "essential-face-rituals"
+          }
+        },
+        "featured_collection_kdnF8f": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "face-creams"
+          }
+        },
+        "featured_collection_ARCpUy": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "snail-secretion-line"
+          }
+        },
+        "featured_collection_EqiaAN": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "face-serums"
+          }
+        },
+        "featured_collection_N9Mjp7": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "snail-secretion-line"
+          }
+        },
+        "featured_collection_AEQ4tR": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "water-mist"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_kxJ699",
+        "featured_collection_WLrqar",
+        "featured_collection_g9q4dC",
+        "featured_collection_kdnF8f",
+        "featured_collection_ARCpUy",
+        "featured_collection_EqiaAN",
+        "featured_collection_N9Mjp7",
+        "featured_collection_AEQ4tR"
+      ],
+      "name": "t:sections.collection-list.presets.name",
+      "settings": {
+        "title": "Collections",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 3,
+        "color_scheme": "",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -244,6 +320,7 @@
     "featured_collection",
     "rich_text_TQGWNt",
     "multicolumn_XcNbmj",
-    "multicolumn_E3NbqU"
+    "multicolumn_E3NbqU",
+    "collection_list_akzVhh"
   ]
 }
