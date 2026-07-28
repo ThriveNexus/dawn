@@ -13,15 +13,43 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "disabled": true,
+      "blocks": {
+        "link_list_8Ytay4": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company",
+            "menu": "company"
+          }
+        },
+        "link_list_UjQU4J": {
+          "type": "link_list",
+          "disabled": true,
+          "settings": {
+            "heading": "Legal",
+            "menu": "legal"
+          }
+        },
+        "text_XtYLH6": {
+          "type": "text",
+          "settings": {
+            "heading": "",
+            "subtext": "<p><strong>Kosmetikal</strong></p><p>Natural and organic cosmetics, made in Pesaro, Italy.<br/>ISO 9001 · ISO 22716 · ICEA Biocosmesi · AIAB Bio-Eco<br/>Every design is reviewed and confirmed before production.<br/><br/></p>"
+          }
+        }
+      },
+      "block_order": [
+        "link_list_8Ytay4",
+        "link_list_UjQU4J",
+        "text_XtYLH6"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
-        "newsletter_enable": true,
+        "newsletter_enable": false,
         "newsletter_heading": "Subscribe to our emails",
         "enable_follow_on_shop": true,
         "show_social": true,
         "enable_country_selector": true,
-        "enable_language_selector": true,
+        "enable_language_selector": false,
         "payment_enable": true,
         "show_policy": true,
         "margin_top": 0,
