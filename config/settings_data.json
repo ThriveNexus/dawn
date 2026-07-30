@@ -9,7 +9,9 @@
  */
 {
   "current": {
-    "logo_width": 90,
+    "logo": "shopify://shop_images/logo-kosmetikal_BLACK.svg",
+    "logo_width": 120,
+    "favicon": "shopify://shop_images/favicon-kosmetikal.png",
     "type_header_font": "lora_n4",
     "heading_scale": 100,
     "type_body_font": "assistant_n4",
@@ -144,22 +146,22 @@
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "background": "#FAF7F2",
+          "background": "#faf7f2",
           "background_gradient": "",
-          "text": "#23221F",
-          "button": "#2F3A2E",
-          "button_label": "#FAF7F2",
-          "secondary_button_label": "#2F3A2E",
+          "text": "#23221f",
+          "button": "#2f3a2e",
+          "button_label": "#faf7f2",
+          "secondary_button_label": "#2f3a2e",
           "shadow": "#121212"
         }
       },
       "scheme-2": {
         "settings": {
-          "background": "#2F3A2E",
+          "background": "#2f3a2e",
           "background_gradient": "",
-          "text": "#FAF7F2",
-          "button": "#B4794F",
-          "button_label": "#FAF7F2",
+          "text": "#faf7f2",
+          "button": "#b4794f",
+          "button_label": "#faf7f2",
           "secondary_button_label": "#121212",
           "shadow": "#121212"
         }
