@@ -1457,80 +1457,80 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Setările de aici se aplică la toate produsele. Fiecare produs le poate suprascrie individual, din metacâmpurile lui."
+      "content": "These settings apply to every product. Any product can override them individually from its own metafields."
     },
     {
       "type": "header",
-      "content": "Cantități"
+      "content": "Quantities"
     },
     {
       "type": "number",
       "id": "kk_moq",
-      "label": "Cantitate minimă",
+      "label": "Minimum order quantity",
       "default": 10,
-      "info": "Sub cât nu se poate comanda."
+      "info": "The smallest quantity a customer can order."
     },
     {
       "type": "select",
       "id": "kk_case_multiple",
-      "label": "Multiplu de bax",
+      "label": "Case multiple",
       "default": "1",
       "options": [
-        { "value": "1", "label": "Fără multiplu" },
-        { "value": "6", "label": "6 bucăți" },
-        { "value": "12", "label": "12 bucăți" },
-        { "value": "24", "label": "24 bucăți" }
+        { "value": "1", "label": "No multiple" },
+        { "value": "6", "label": "6 pieces" },
+        { "value": "12", "label": "12 pieces" },
+        { "value": "24", "label": "24 pieces" }
       ],
-      "info": "Butoanele + și − sar de la un multiplu la altul. Produsele grele merg în baxuri mici, cele mici în baxuri mari."
+      "info": "The + and − buttons step from one case to the next. Heavy products ship in small cases, small products in large ones."
     },
     {
       "type": "number",
       "id": "kk_cap",
-      "label": "Prag „cere ofertă”",
+      "label": "Quote request threshold",
       "default": 500,
-      "info": "Peste această cantitate, butoanele de comandă se înlocuiesc cu formularul de ofertă."
+      "info": "Above this quantity, the order buttons are replaced by the quote request form."
     },
     {
       "type": "checkbox",
       "id": "kk_allow_single",
-      "label": "Permite comandă de 1 bucată",
+      "label": "Allow single-piece orders",
       "default": false,
-      "info": "Ignoră cantitatea minimă. Util ca argument de marketing: „poți porni chiar de la o bucată”."
+      "info": "Ignores the minimum order quantity. Useful as a marketing claim: “start with a single piece”."
     },
     {
       "type": "header",
-      "content": "Producție"
+      "content": "Production"
     },
     {
       "type": "text",
       "id": "kk_lead_time",
-      "label": "Lead time implicit",
-      "info": "Ex: 15–20 zile lucrătoare. Apare pe pagina produsului. Lasă gol ca să nu se afișeze."
+      "label": "Default lead time",
+      "info": "For example: 15–20 working days. Shown on the product page. Leave empty to hide the row."
     },
     {
       "type": "header",
-      "content": "Calculator de marjă"
+      "content": "Profit calculator"
     },
     {
       "type": "range",
       "id": "kk_retail_multiplier",
-      "label": "Multiplicator preț de raft",
+      "label": "Suggested retail multiplier",
       "min": 2,
       "max": 8,
       "step": 0.1,
       "default": 3.5,
-      "info": "Prețul tău × acest număr = prețul de raft sugerat re-vânzătorului."
+      "info": "Your price × this number = the shelf price suggested to the reseller."
     },
     {
       "type": "number",
       "id": "kk_tier2_qty",
-      "label": "Pragul 2 — cantitate",
+      "label": "Tier 2 — quantity",
       "default": 100
     },
     {
       "type": "range",
       "id": "kk_tier2_off",
-      "label": "Pragul 2 — reducere",
+      "label": "Tier 2 — discount",
       "min": 0,
       "max": 50,
       "step": 1,
@@ -1540,13 +1540,13 @@
     {
       "type": "number",
       "id": "kk_tier3_qty",
-      "label": "Pragul 3 — cantitate",
+      "label": "Tier 3 — quantity",
       "default": 500
     },
     {
       "type": "range",
       "id": "kk_tier3_off",
-      "label": "Pragul 3 — reducere",
+      "label": "Tier 3 — discount",
       "min": 0,
       "max": 50,
       "step": 1,
