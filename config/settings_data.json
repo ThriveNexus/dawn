@@ -128,6 +128,8 @@
     "show_cart_note": false,
     "cart_drawer_collection": "",
     "cart_color_scheme": "scheme-1",
+    "kk_moq": 12,
+    "kk_case_multiple": "24",
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
