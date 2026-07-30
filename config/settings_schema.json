@@ -1451,5 +1451,108 @@
         "default": "scheme-1"
       }
     ]
-  }
+  },
+  {
+  "name": "Kosmetikal · White label",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Setările de aici se aplică la toate produsele. Fiecare produs le poate suprascrie individual, din metacâmpurile lui."
+    },
+    {
+      "type": "header",
+      "content": "Cantități"
+    },
+    {
+      "type": "number",
+      "id": "kk_moq",
+      "label": "Cantitate minimă",
+      "default": 10,
+      "info": "Sub cât nu se poate comanda."
+    },
+    {
+      "type": "select",
+      "id": "kk_case_multiple",
+      "label": "Multiplu de bax",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "Fără multiplu" },
+        { "value": "6", "label": "6 bucăți" },
+        { "value": "12", "label": "12 bucăți" },
+        { "value": "24", "label": "24 bucăți" }
+      ],
+      "info": "Butoanele + și − sar de la un multiplu la altul. Produsele grele merg în baxuri mici, cele mici în baxuri mari."
+    },
+    {
+      "type": "number",
+      "id": "kk_cap",
+      "label": "Prag „cere ofertă”",
+      "default": 500,
+      "info": "Peste această cantitate, butoanele de comandă se înlocuiesc cu formularul de ofertă."
+    },
+    {
+      "type": "checkbox",
+      "id": "kk_allow_single",
+      "label": "Permite comandă de 1 bucată",
+      "default": false,
+      "info": "Ignoră cantitatea minimă. Util ca argument de marketing: „poți porni chiar de la o bucată”."
+    },
+    {
+      "type": "header",
+      "content": "Producție"
+    },
+    {
+      "type": "text",
+      "id": "kk_lead_time",
+      "label": "Lead time implicit",
+      "info": "Ex: 15–20 zile lucrătoare. Apare pe pagina produsului. Lasă gol ca să nu se afișeze."
+    },
+    {
+      "type": "header",
+      "content": "Calculator de marjă"
+    },
+    {
+      "type": "range",
+      "id": "kk_retail_multiplier",
+      "label": "Multiplicator preț de raft",
+      "min": 2,
+      "max": 8,
+      "step": 0.1,
+      "default": 3.5,
+      "info": "Prețul tău × acest număr = prețul de raft sugerat re-vânzătorului."
+    },
+    {
+      "type": "number",
+      "id": "kk_tier2_qty",
+      "label": "Pragul 2 — cantitate",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "kk_tier2_off",
+      "label": "Pragul 2 — reducere",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 12
+    },
+    {
+      "type": "number",
+      "id": "kk_tier3_qty",
+      "label": "Pragul 3 — cantitate",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "kk_tier3_off",
+      "label": "Pragul 3 — reducere",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 22
+    }
+  ]
+}
 ]
