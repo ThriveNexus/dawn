@@ -1521,6 +1521,36 @@
       },
       {
         "type": "header",
+        "content": "Design lead capture"
+      },
+      {
+        "type": "checkbox",
+        "id": "kk_lead_enabled",
+        "label": "Ask for contact details before design",
+        "default": true,
+        "info": "Shown once, the first time a customer opens the design area. Their answer is remembered on their device."
+      },
+      {
+        "type": "checkbox",
+        "id": "kk_lead_phone",
+        "label": "Require a phone number",
+        "default": true,
+        "info": "Email is always required. Turn this off to ask for the phone number without making it mandatory."
+      },
+      {
+        "type": "text",
+        "id": "kk_lead_title",
+        "label": "Popup heading",
+        "default": "Before you upload your design"
+      },
+      {
+        "type": "textarea",
+        "id": "kk_lead_body",
+        "label": "Popup text",
+        "default": "Every design is reviewed by our team before it goes into production. Leave your details so we can reach you if anything needs adjusting."
+      },
+      {
+        "type": "header",
         "content": "Profit calculator"
       },
       {
