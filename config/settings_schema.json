@@ -1531,7 +1531,7 @@
         "max": 8,
         "step": 0.1,
         "default": 3.5,
-        "info": "Your price × this number = the shelf price suggested to the reseller."
+        "info": "Your price × this number prefills the retail field in the calculator. The reseller can type their own price over it."
       },
       {
         "type": "textarea",
