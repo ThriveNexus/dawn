@@ -66,7 +66,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
+  /* sus e mai mult loc: acolo stau etichetele zonelor */
+  padding: 5rem 3rem 3rem;
   overflow: auto;
   background:
     repeating-conic-gradient(rgba(var(--color-foreground), 0.045) 0% 25%, transparent 0% 50%)
@@ -82,11 +83,51 @@
 
 .kk-studio-frame .canvas-container { display: block; }
 
-/* Marginea de siguranță. Nu ajunge în export — e DOM, nu obiect de canvas. */
-.kk-studio-safe {
+/* Ghidajele. Niciunul nu ajunge în export — sunt DOM, nu obiecte de canvas. */
+.kk-studio-guides {
   position: absolute;
+  inset: 0;
   pointer-events: none;
+}
+
+/* linia de siguranță: dincolo de ea se poate tăia la tipar */
+.kk-g-safe {
+  position: absolute;
   border: 1px dashed rgba(220, 50, 50, 0.55);
+}
+
+/* despărțitoarele dintre față, cotor și spate */
+.kk-g-div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed rgba(60, 90, 200, 0.6);
+}
+
+.kk-g-tag {
+  position: absolute;
+  top: -2.2rem;
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.kk-g-tag--lock { opacity: 0.85; }
+
+/* hașură discretă peste panoul legal, ca să se vadă că nu e zonă de lucru */
+.kk-g-lock {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(60, 90, 200, 0.05) 0 6px,
+    transparent 6px 12px
+  );
 }
 
 /* --- panoul de unelte --- */

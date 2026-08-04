@@ -62,9 +62,31 @@
     return {
       w: w,
       h: h,
+      back: parseFloat(s.dataset.kkBack) || 0,
+      center: parseFloat(s.dataset.kkCenter) || 0,
+      legal: s.dataset.kkLegal || '',
       fabricUrl: s.dataset.kkFabric,
       name: s.dataset.kkName || '',
       root: s
+    };
+  }
+
+  /* Eticheta desfășurată, în px pe zona de lucru: față | centru | spate.
+     Fața e ce rămâne după ce scazi cotorul și panoul legal. */
+  function zones() {
+    var size = stageSize(conf);
+    var perMm = size.w / conf.w;
+    var back = conf.back * perMm;
+    var center = conf.center * perMm;
+    var frontEnd = Math.max(0, size.w - back - center);
+    return {
+      w: size.w,
+      h: size.h,
+      pad: SAFE_MM * perMm,
+      back: back,
+      center: center,
+      frontEnd: frontEnd,
+      centerEnd: frontEnd + center
     };
   }
 
@@ -115,9 +137,19 @@
 
     /* Ghidajul de siguranță e un element DOM peste canvas, nu un obiect Fabric —
        altfel ar ajunge în exportul final. */
-    var guide = el('[data-kk-safe]');
-    /* scara e uniformă pe ambele axe, deci marginea în px e aceeași peste tot */
-    guide.style.inset = (SAFE_MM * size.w / conf.w) + 'px';
+    drawGuides();
+    addLegal();
+
+    /* Obiectele clientului rămân pe față — altfel ar acoperi panoul legal. */
+    canvas.on('object:moving', function (e) {
+      var o = e.target;
+      if (!o || o.kkLocked) return;
+      var z = zones();
+      if (z.back <= 0) return;
+      var c = o.getCenterPoint();
+      var nx = Math.min(Math.max(c.x, 0), z.frontEnd);
+      if (nx !== c.x) o.setPositionByOrigin(new fabric.Point(nx, c.y), 'center', 'center');
+    });
 
     canvas.on('selection:created', syncPanel);
     canvas.on('selection:updated', syncPanel);
@@ -127,6 +159,56 @@
     canvas.on('object:removed', checkResolution);
 
     syncPanel();
+  }
+
+  /* Ghidajele stau ca DOM peste canvas, nu ca obiecte Fabric — altfel ar ajunge
+     în fișierul exportat. Linia de siguranță e ce se poate tăia la tipar. */
+  function drawGuides() {
+    var g = el('[data-kk-guides]');
+    if (!g) return;
+    var z = zones();
+    var out = ['<div class="kk-g-safe" style="inset:' + z.pad + 'px"></div>'];
+
+    if (z.back > 0) {
+      out.push('<div class="kk-g-tag" style="left:0;width:' + z.frontEnd + 'px">Front</div>');
+      out.push('<div class="kk-g-div" style="left:' + z.frontEnd + 'px"></div>');
+
+      if (z.center > 0) {
+        out.push('<div class="kk-g-tag" style="left:' + z.frontEnd + 'px;width:' + z.center + 'px">Seam</div>');
+        out.push('<div class="kk-g-div" style="left:' + z.centerEnd + 'px"></div>');
+      }
+
+      out.push('<div class="kk-g-tag kk-g-tag--lock" style="left:' + z.centerEnd +
+               'px;width:' + (z.w - z.centerEnd) + 'px">Back &middot; locked</div>');
+      out.push('<div class="kk-g-lock" style="left:' + z.centerEnd +
+               'px;width:' + (z.w - z.centerEnd) + 'px"></div>');
+    }
+
+    g.innerHTML = out.join('');
+  }
+
+  /* Panoul legal: text obligatoriu prin Reg. (UE) 1223/2009 art. 19.
+     Nu e selectabil și nu primește evenimente — clientul nu-l poate muta,
+     nici șterge. Dacă ar putea, produsul ar deveni neconform. */
+  function addLegal() {
+    if (!conf.legal) return;
+    var z = zones();
+    if (z.back <= 0) return;
+
+    var t = new fabric.Textbox(conf.legal, {
+      left: z.centerEnd + z.pad,
+      top: z.pad,
+      width: Math.max(20, z.w - z.centerEnd - z.pad * 2),
+      fontSize: Math.max(4, Math.round(z.h / 55)),
+      lineHeight: 1.25,
+      fontFamily: 'Helvetica',
+      fill: '#111111',
+      selectable: false,
+      evented: false
+    });
+    t.kkLocked = true;
+    canvas.add(t);
+    canvas.requestRenderAll();
   }
 
   /* Un JPEG de 400px nu poate deveni etichetă la 300 dpi. Se spune la încărcare,
@@ -180,15 +262,21 @@
     }
   }
 
+  /* mijlocul feței, nu al etichetei desfășurate */
+  function frontCentre() {
+    var z = zones();
+    return { x: (z.back > 0 ? z.frontEnd : z.w) / 2, y: z.h / 2, w: (z.back > 0 ? z.frontEnd : z.w), h: z.h };
+  }
+
   function addText() {
-    var size = stageSize(conf);
+    var f = frontCentre();
     var t = new fabric.IText('Your brand', {
-      left: size.w / 2,
-      top: size.h / 2,
+      left: f.x,
+      top: f.y,
       originX: 'center',
       originY: 'center',
       fontFamily: 'Helvetica',
-      fontSize: Math.round(size.h / 10),
+      fontSize: Math.round(f.h / 10),
       fill: '#111111'
     });
     canvas.add(t);
@@ -207,12 +295,12 @@
     var r = new FileReader();
     r.onload = function (ev) {
       fabric.Image.fromURL(ev.target.result, function (img) {
-        var size = stageSize(conf);
-        /* încape pe jumătate din lățime, ca să rămână loc de text */
-        var scale = Math.min((size.w * 0.5) / img.width, (size.h * 0.5) / img.height);
+        var f = frontCentre();
+        /* încape pe jumătate din față, ca să rămână loc de text */
+        var scale = Math.min((f.w * 0.5) / img.width, (f.h * 0.5) / img.height);
         img.set({
-          left: size.w / 2,
-          top: size.h / 2,
+          left: f.x,
+          top: f.y,
           originX: 'center',
           originY: 'center',
           scaleX: scale,
@@ -240,6 +328,7 @@
     if (!canvas) return;
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
+    addLegal();                       /* panoul legal nu se șterge niciodată */
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
