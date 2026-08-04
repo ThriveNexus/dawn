@@ -208,18 +208,18 @@
       });
     }
 
-    /* linia de siguranță — dincolo de ea se poate tăia */
+    /* Convenția de tipar: întrerupt = tăiere, continuu = zona sigură.
+       Un tipograf citește desenul după ea, deci nu se inversează. */
     mk(new fabric.Rect({
       left: z.pad, top: z.pad,
       width: z.w - z.pad * 2, height: z.h - z.pad * 2,
-      fill: 'transparent', stroke: '#e81e82', strokeWidth: 1, strokeDashArray: [5, 3]
+      fill: 'transparent', stroke: '#e81e82', strokeWidth: 1
     }));
 
-    /* conturul de tăiere, pe marginea etichetei */
     mk(new fabric.Rect({
       left: 0.5, top: 0.5,
       width: z.w - 1, height: z.h - 1,
-      fill: 'transparent', stroke: '#2d4bcd', strokeWidth: 1
+      fill: 'transparent', stroke: '#2d4bcd', strokeWidth: 1, strokeDashArray: [7, 4]
     }));
 
     liftGuides();
