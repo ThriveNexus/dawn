@@ -138,6 +138,7 @@
     /* Ghidajul de siguranță e un element DOM peste canvas, nu un obiect Fabric —
        altfel ar ajunge în exportul final. */
     drawGuides();
+    buildFields();
     addLegal();
 
     /* Obiectele clientului rămân pe față — altfel ar acoperi panoul legal. */
@@ -321,6 +322,76 @@
     }
   }
 
+  /* Butoanele cu datele reale ale produsului. Selfnamed le numește „placeholders";
+     rostul lor e ca omul să nu transcrie manual INCI-ul de 40 de ingrediente. */
+  function buildFields() {
+    var host = el('[data-kk-fieldlist]');
+    var src = el('[data-kk-fields]');
+    if (!host || !src || host.childNodes.length) return;
+
+    var data = {};
+    try { data = JSON.parse(src.textContent) || {}; } catch (e) { return; }
+
+    var html = '';
+    Object.keys(data).forEach(function (k) {
+      if (!data[k]) return;
+      html += '<button type="button" class="kk-chip" data-kk-field="' +
+              k.replace(/"/g, '&quot;') + '">' + k + '</button>';
+    });
+    host.innerHTML = html;
+    host.kkData = data;
+  }
+
+  function addField(name) {
+    var host = el('[data-kk-fieldlist]');
+    var value = host && host.kkData ? host.kkData[name] : null;
+    if (!value) return;
+
+    var f = frontCentre();
+    /* Textele lungi — INCI, mod de folosire — intră ca bloc încadrat, nu ca o
+       linie care iese din etichetă. */
+    var long = value.length > 60;
+
+    var o = long
+      ? new fabric.Textbox(value, {
+          width: f.w * 0.8,
+          fontSize: Math.max(4, f.h / 26),
+          lineHeight: 1.2
+        })
+      : new fabric.IText(value, { fontSize: Math.round(f.h / 12) });
+
+    o.set({
+      left: f.x, top: f.y,
+      originX: 'center', originY: 'center',
+      fontFamily: 'Helvetica', fill: '#111111'
+    });
+
+    canvas.add(o);
+    canvas.setActiveObject(o);
+    canvas.requestRenderAll();
+    syncPanel();
+  }
+
+  function addShape(kind) {
+    var f = frontCentre();
+    var s = Math.min(f.w, f.h) * 0.32;
+    var common = {
+      left: f.x, top: f.y, originX: 'center', originY: 'center',
+      fill: '#1d1d1b'
+    };
+    var o;
+
+    if (kind === 'circle') o = new fabric.Circle(Object.assign({ radius: s / 2 }, common));
+    else if (kind === 'triangle') o = new fabric.Triangle(Object.assign({ width: s, height: s }, common));
+    else if (kind === 'line') o = new fabric.Rect(Object.assign({ width: f.w * 0.6, height: Math.max(1, f.h / 60) }, common));
+    else o = new fabric.Rect(Object.assign({ width: s, height: s }, common));
+
+    canvas.add(o);
+    canvas.setActiveObject(o);
+    canvas.requestRenderAll();
+    syncPanel();
+  }
+
   /* mijlocul feței, nu al etichetei desfășurate */
   function frontCentre() {
     var z = zones();
@@ -490,6 +561,12 @@
     if (t.closest('[data-kk-del]')) { removeActive(); return; }
     if (t.closest('[data-kk-reset]')) { reset(); return; }
 
+    var chip = t.closest('[data-kk-field]');
+    if (chip && canvas) { addField(chip.dataset.kkField); return; }
+
+    var shape = t.closest('[data-kk-shape]');
+    if (shape && canvas) { addShape(shape.dataset.kkShape); return; }
+
     if (t.closest('[data-kk-studio-done]')) {
       if (handOff()) close();
       return;
@@ -508,6 +585,12 @@
     if (e.target.matches('[data-kk-add-image]')) {
       addImage(e.target.files && e.target.files[0]);
       e.target.value = '';
+    }
+
+    /* Ghidajele se pot stinge — pe un design aproape gata încep să încurce. */
+    if (e.target.matches('[data-kk-guides-toggle]')) {
+      var g = el('[data-kk-guides]');
+      if (g) g.style.display = e.target.checked ? '' : 'none';
     }
   });
 
