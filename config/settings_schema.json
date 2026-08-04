@@ -1521,6 +1521,21 @@
       },
       {
         "type": "header",
+        "content": "Label studio"
+      },
+      {
+        "type": "number",
+        "id": "kk_label_w",
+        "label": "Default label width (mm)",
+        "info": "The design studio only appears on products that have a label size. Any product can override this from its own metafields. Leave both empty to offer file upload only."
+      },
+      {
+        "type": "number",
+        "id": "kk_label_h",
+        "label": "Default label height (mm)"
+      },
+      {
+        "type": "header",
         "content": "Design lead capture"
       },
       {

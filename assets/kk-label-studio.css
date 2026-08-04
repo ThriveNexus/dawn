@@ -1,0 +1,216 @@
+/*
+  KOSMETIKAL — Label Studio
+  Perechea de stil pentru kk-label-studio.js. Se încarcă doar pe paginile de produs
+  care au dimensiuni de etichetă definite.
+*/
+
+.kk-studio[hidden] { display: none; }
+
+.kk-studio {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+/* --- bara de sus --- */
+
+.kk-studio-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 1.6rem;
+  padding: 1.6rem 2.4rem;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.14);
+}
+
+.kk-studio-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.kk-studio-dims {
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.kk-studio-x {
+  margin-left: auto;
+  padding: 0.4rem 1rem;
+  font-size: 2.4rem;
+  line-height: 1;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.kk-studio-x:hover { opacity: 1; }
+
+/* --- corpul --- */
+
+.kk-studio-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 28rem;
+  min-height: 0;
+}
+
+.kk-studio-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  overflow: auto;
+  background:
+    repeating-conic-gradient(rgba(var(--color-foreground), 0.045) 0% 25%, transparent 0% 50%)
+    50% / 2.4rem 2.4rem;
+}
+
+/* Ramă care ține canvasul și ghidajul suprapus. Lățimea o dă canvasul. */
+.kk-studio-frame {
+  position: relative;
+  line-height: 0;
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.18);
+}
+
+.kk-studio-frame .canvas-container { display: block; }
+
+/* Marginea de siguranță. Nu ajunge în export — e DOM, nu obiect de canvas. */
+.kk-studio-safe {
+  position: absolute;
+  pointer-events: none;
+  border: 1px dashed rgba(220, 50, 50, 0.55);
+}
+
+/* --- panoul de unelte --- */
+
+.kk-studio-side {
+  padding: 2.4rem;
+  overflow-y: auto;
+  border-left: 1px solid rgba(var(--color-foreground), 0.14);
+}
+
+.kk-tool + .kk-tool {
+  margin-top: 2.4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.kk-tool-lab {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.kk-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.kk-swatch {
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.kk-swatch:hover { transform: scale(1.08); }
+
+.kk-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.3rem;
+}
+
+.kk-field input[type='color'] {
+  width: 4.4rem;
+  height: 3rem;
+  padding: 0;
+  background: none;
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  cursor: pointer;
+}
+
+.kk-field input[type='range'] { flex: 1; }
+
+.kk-field select {
+  flex: 1;
+  padding: 0.6rem;
+  font-family: inherit;
+  font-size: 1.3rem;
+  background: none;
+  color: inherit;
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+}
+
+.kk-tool-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.8rem;
+  padding: 1.2rem;
+  font-family: inherit;
+  font-size: 1.35rem;
+  text-align: center;
+  background: none;
+  color: inherit;
+  border: 1px solid rgba(var(--color-foreground), 0.3);
+  cursor: pointer;
+}
+
+.kk-tool-btn:hover { background: rgba(var(--color-foreground), 0.05); }
+.kk-tool-btn--danger { border-color: rgba(200, 50, 50, 0.5); color: #b03030; }
+
+/* input-ul de fișier stă ascuns sub eticheta lui, care arată ca un buton */
+.kk-tool-file { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+.kk-tool-hint {
+  margin: 0.8rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  opacity: 0.6;
+}
+
+/* --- bara de jos --- */
+
+.kk-studio-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.6rem 2.4rem;
+  border-top: 1px solid rgba(var(--color-foreground), 0.14);
+}
+
+.kk-studio-foot .kk-btn { min-width: 14rem; }
+
+@media screen and (max-width: 899px) {
+  .kk-studio-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .kk-studio-stage { padding: 1.6rem; }
+
+  .kk-studio-side {
+    border-left: 0;
+    border-top: 1px solid rgba(var(--color-foreground), 0.14);
+  }
+
+  .kk-studio-foot .kk-btn { flex: 1; min-width: 0; }
+}
