@@ -19,7 +19,7 @@
   var DPI = 300;
   var MM_PER_INCH = 25.4;
   var SAFE_MM = 3;          // margine în care nu se pune nimic important
-  var STAGE_MAX = 560;      // latura mare a zonei de lucru, în px
+  var STAGE_MAX = 820;      // latura mare a zonei de lucru, în px
 
   var canvas = null;        // instanța Fabric
   var loading = false;
@@ -138,6 +138,7 @@
     /* Ghidajul de siguranță e un element DOM peste canvas, nu un obiect Fabric —
        altfel ar ajunge în exportul final. */
     drawGuides();
+    drawCanvasGuides();
     buildFields();
     addLegal();
 
@@ -155,15 +156,81 @@
     canvas.on('selection:created', syncPanel);
     canvas.on('selection:updated', syncPanel);
     canvas.on('selection:cleared', syncPanel);
-    canvas.on('object:added', function () { checkResolution(); syncHint(); });
+    canvas.on('object:added', function (e) {
+      if (e.target && e.target.kkGuide) return;   /* altfel se auto-declanșează la nesfârșit */
+      checkResolution();
+      syncHint();
+      liftGuides();
+    });
     canvas.on('object:modified', checkResolution);
-    canvas.on('object:removed', function () { checkResolution(); syncHint(); });
+    canvas.on('object:removed', function (e) {
+      if (e.target && e.target.kkGuide) return;
+      checkResolution();
+      syncHint();
+    });
 
     syncPanel();
   }
 
-  /* Ghidajele stau ca DOM peste canvas, nu ca obiecte Fabric — altfel ar ajunge
-     în fișierul exportat. Linia de siguranță e ce se poate tăia la tipar. */
+  /* Ghidajele de pe etichetă se desenează ÎN canvas, nu ca DOM peste el:
+     stratul DOM ajungea sub canvasul de interacțiune al lui Fabric și nu se
+     vedea deloc, oricât de gros era conturul. `excludeFromExport` le ține în
+     afara fișierului SVG final — se văd la lucru, nu ajung la tipar.
+
+     Pastilele de zonă și cotele rămân DOM: stau în afara etichetei, unde nu
+     există conflict, și acolo se pot stiliza mai bine. */
+  var guideObjs = [];
+
+  function drawCanvasGuides() {
+    if (!canvas) return;
+    guideObjs.forEach(function (o) { canvas.remove(o); });
+    guideObjs = [];
+
+    var z = zones();
+    function mk(o) {
+      o.set({ selectable: false, evented: false, excludeFromExport: true });
+      o.kkGuide = true;
+      guideObjs.push(o);
+      canvas.add(o);
+    }
+
+    if (z.back > 0) {
+      mk(new fabric.Rect({
+        left: z.centerEnd, top: 0,
+        width: z.w - z.centerEnd, height: z.h,
+        fill: 'rgba(45, 75, 205, 0.07)'
+      }));
+
+      [z.frontEnd, z.centerEnd].forEach(function (x) {
+        mk(new fabric.Line([x, 0, x, z.h], {
+          stroke: '#2d4bcd', strokeWidth: 1, strokeDashArray: [6, 4]
+        }));
+      });
+    }
+
+    /* linia de siguranță — dincolo de ea se poate tăia */
+    mk(new fabric.Rect({
+      left: z.pad, top: z.pad,
+      width: z.w - z.pad * 2, height: z.h - z.pad * 2,
+      fill: 'transparent', stroke: '#e81e82', strokeWidth: 1, strokeDashArray: [5, 3]
+    }));
+
+    /* conturul de tăiere, pe marginea etichetei */
+    mk(new fabric.Rect({
+      left: 0.5, top: 0.5,
+      width: z.w - 1, height: z.h - 1,
+      fill: 'transparent', stroke: '#2d4bcd', strokeWidth: 1
+    }));
+
+    liftGuides();
+  }
+
+  function liftGuides() {
+    if (!canvas) return;
+    guideObjs.forEach(function (o) { canvas.bringToFront(o); });
+    canvas.requestRenderAll();
+  }
+
   function badge(left, width, text, cls) {
     /* pastilă centrată peste zona ei */
     return '<span class="kk-g-badge' + (cls || '') + '" style="left:' +
@@ -176,25 +243,12 @@
     var z = zones();
     var out = [];
 
-    /* linia de tăiere, pe conturul etichetei, și cea de siguranță, înăuntru */
-    out.push('<div class="kk-g-cut"></div>');
-    out.push('<div class="kk-g-safe" style="inset:' + z.pad + 'px"></div>');
-
     if (z.back > 0) {
-      out.push('<div class="kk-g-lock" style="left:' + z.centerEnd +
-               'px;width:' + (z.w - z.centerEnd) + 'px"></div>');
-
-      /* zona de lucru propriu-zisă, marcată explicit — altfel fața e un gol alb
-         despre care nu se înțelege că e locul unde se desenează */
-      out.push('<div class="kk-g-work" style="width:' + z.frontEnd + 'px"></div>');
       out.push('<div class="kk-g-hint" data-kk-hint style="width:' + z.frontEnd +
                'px">Your design goes here</div>');
-
-      out.push('<div class="kk-g-div" style="left:' + z.frontEnd + 'px"></div>');
       out.push(badge(0, z.frontEnd, 'Front'));
 
       if (z.center > 0) {
-        out.push('<div class="kk-g-div" style="left:' + z.centerEnd + 'px"></div>');
         out.push(badge(z.frontEnd, z.center, 'Seam', ' kk-g-badge--mute'));
       }
 
@@ -267,7 +321,7 @@
   function syncHint() {
     var h = el('[data-kk-hint]');
     if (!h || !canvas) return;
-    var mine = canvas.getObjects().filter(function (o) { return !o.kkLocked; });
+    var mine = canvas.getObjects().filter(function (o) { return !o.kkLocked && !o.kkGuide; });
     h.hidden = mine.length > 0;
   }
 
@@ -458,7 +512,9 @@
     if (!canvas) return;
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
+    drawCanvasGuides();
     addLegal();                       /* panoul legal nu se șterge niciodată */
+    syncHint();
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
@@ -589,8 +645,11 @@
 
     /* Ghidajele se pot stinge — pe un design aproape gata încep să încurce. */
     if (e.target.matches('[data-kk-guides-toggle]')) {
+      var on = e.target.checked;
       var g = el('[data-kk-guides]');
-      if (g) g.style.display = e.target.checked ? '' : 'none';
+      if (g) g.style.display = on ? '' : 'none';
+      guideObjs.forEach(function (o) { o.set('visible', on); });
+      if (canvas) canvas.requestRenderAll();
     }
   });
 
