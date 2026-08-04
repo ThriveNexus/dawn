@@ -132,6 +132,8 @@
     "kk_case_multiple": "24",
     "kk_label_w": 60,
     "kk_label_h": 90,
+    "kk_label_back": 25,
+    "kk_label_center": 4,
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
