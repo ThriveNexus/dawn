@@ -188,23 +188,30 @@
     canvas.on('object:modified', clearSnap);
     canvas.on('mouse:up', clearSnap);
 
-    canvas.on('selection:created', syncPanel);
-    canvas.on('selection:updated', syncPanel);
-    canvas.on('selection:cleared', syncPanel);
+    function refresh() { syncPanel(); renderLayers(); }
+
+    canvas.on('selection:created', refresh);
+    canvas.on('selection:updated', refresh);
+    canvas.on('selection:cleared', refresh);
     canvas.on('object:added', function (e) {
       if (e.target && e.target.kkGuide) return;   /* altfel se auto-declanșează la nesfârșit */
       checkResolution();
       syncHint();
       liftGuides();
+      renderLayers();
     });
-    canvas.on('object:modified', checkResolution);
+    canvas.on('object:modified', function () { checkResolution(); clearSnap(); renderLayers(); });
     canvas.on('object:removed', function (e) {
       if (e.target && e.target.kkGuide) return;
       checkResolution();
       syncHint();
+      renderLayers();
     });
+    /* textul editat pe canvas schimbă și numele stratului */
+    canvas.on('text:changed', renderLayers);
 
     syncPanel();
+    renderLayers();
   }
 
   /* Ghidajele de pe etichetă se desenează ÎN canvas, nu ca DOM peste el:
@@ -410,6 +417,70 @@
     }
   }
 
+  /* ---------- straturi ---------- */
+
+  var seq = 0;
+
+  function idOf(o) {
+    if (!o.kkId) o.kkId = 'o' + (++seq);
+    return o.kkId;
+  }
+
+  function byId(id) {
+    var hit = null;
+    canvas.getObjects().forEach(function (o) { if (o.kkId === id) hit = o; });
+    return hit;
+  }
+
+  function layerName(o) {
+    if (o.kkLocked) return 'Legal panel';
+    if (o.type === 'image') return 'Image';
+    if (o.type === 'i-text' || o.type === 'textbox') {
+      var t = (o.text || '').replace(/\s+/g, ' ').trim();
+      if (!t) return 'Text';
+      return t.length > 24 ? t.slice(0, 24) + '…' : t;
+    }
+    if (o.type === 'circle') return 'Circle';
+    if (o.type === 'triangle') return 'Triangle';
+    if (o.type === 'rect') return 'Rectangle';
+    return o.type;
+  }
+
+  /* Lista merge de sus în jos, ca în orice editor: primul rând e stratul
+     de deasupra. Ghidajele nu apar — nu sunt ale clientului. */
+  function renderLayers() {
+    var host = el('[data-kk-layers]');
+    if (!host || !canvas) return;
+
+    var act = canvas.getActiveObject();
+    var list = canvas.getObjects().filter(function (o) { return !o.kkGuide; });
+    var rows = [];
+
+    for (var i = list.length - 1; i >= 0; i--) {
+      var o = list[i];
+      var id = idOf(o);
+      var locked = !!o.kkLocked;
+
+      rows.push(
+        '<li class="kk-layer' + (o === act ? ' is-on' : '') + (locked ? ' is-locked' : '') + '">' +
+          '<button type="button" class="kk-layer-vis" data-kk-lvis="' + id + '" ' +
+            'aria-label="Show or hide">' + (o.visible === false ? '◌' : '●') + '</button>' +
+          '<button type="button" class="kk-layer-name" data-kk-lpick="' + id + '">' +
+            layerName(o) + '</button>' +
+          (locked
+            ? '<span class="kk-layer-lock" title="Required by law — cannot be moved">&#128274;</span>'
+            : '<button type="button" class="kk-layer-btn" data-kk-lup="' + id + '" aria-label="Move up">&#8593;</button>' +
+              '<button type="button" class="kk-layer-btn" data-kk-ldown="' + id + '" aria-label="Move down">&#8595;</button>' +
+              '<button type="button" class="kk-layer-btn kk-layer-del" data-kk-ldel="' + id + '" aria-label="Delete">&times;</button>'
+          ) +
+        '</li>'
+      );
+    }
+
+    host.innerHTML = rows.join('') ||
+      '<li class="kk-layer is-empty">Nothing on the label yet</li>';
+  }
+
   /* ---------- panoul de unelte ---------- */
 
   function active() { return canvas ? canvas.getActiveObject() : null; }
@@ -572,6 +643,7 @@
     drawCanvasGuides();
     addLegal();                       /* panoul legal nu se șterge niciodată */
     syncHint();
+    renderLayers();
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
@@ -723,6 +795,24 @@
     if (t.closest('[data-kk-add-text]')) { addText(); return; }
     if (t.closest('[data-kk-del]')) { removeActive(); return; }
     if (t.closest('[data-kk-reset]')) { reset(); return; }
+
+    var lay = t.closest('[data-kk-lpick],[data-kk-lvis],[data-kk-lup],[data-kk-ldown],[data-kk-ldel]');
+    if (lay && canvas) {
+      var d = lay.dataset;
+      var o = byId(d.kkLpick || d.kkLvis || d.kkLup || d.kkLdown || d.kkLdel);
+      if (!o) return;
+
+      if (d.kkLpick && o.selectable) { canvas.setActiveObject(o); }
+      else if (d.kkLvis) { o.set('visible', o.visible === false); }
+      else if (d.kkLup) { canvas.bringForward(o); liftGuides(); }
+      else if (d.kkLdown) { canvas.sendBackwards(o); liftGuides(); }
+      else if (d.kkLdel && !o.kkLocked) { canvas.remove(o); canvas.discardActiveObject(); }
+
+      canvas.requestRenderAll();
+      renderLayers();
+      syncPanel();
+      return;
+    }
 
     var chip = t.closest('[data-kk-field]');
     if (chip && canvas) { addField(chip.dataset.kkField); return; }
