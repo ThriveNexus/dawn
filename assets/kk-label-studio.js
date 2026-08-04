@@ -20,6 +20,7 @@
   var MM_PER_INCH = 25.4;
   var SAFE_MM = 3;          // margine în care nu se pune nimic important
   var STAGE_MAX = 820;      // latura mare a zonei de lucru, în px
+  var SNAP = 6;             // toleranța de agățare la aliniere, în px
 
   var canvas = null;        // instanța Fabric
   var loading = false;
@@ -142,16 +143,50 @@
     buildFields();
     addLegal();
 
-    /* Obiectele clientului rămân pe față — altfel ar acoperi panoul legal. */
+    /* Obiectele clientului rămân pe față, iar la mutare se aliniază singure
+       pe axele feței — linia verde apare doar cât ține alinierea, ca în orice
+       editor de prezentări. */
     canvas.on('object:moving', function (e) {
       var o = e.target;
-      if (!o || o.kkLocked) return;
+      if (!o || o.kkLocked || o.kkGuide) return;
+
       var z = zones();
-      if (z.back <= 0) return;
+      clearSnap();
+
       var c = o.getCenterPoint();
-      var nx = Math.min(Math.max(c.x, 0), z.frontEnd);
-      if (nx !== c.x) o.setPositionByOrigin(new fabric.Point(nx, c.y), 'center', 'center');
+      if (z.back > 0) {
+        var nx = Math.min(Math.max(c.x, 0), z.frontEnd);
+        if (nx !== c.x) {
+          o.setPositionByOrigin(new fabric.Point(nx, c.y), 'center', 'center');
+          c = o.getCenterPoint();
+        }
+      }
+
+      var fw = z.back > 0 ? z.frontEnd : z.w;
+      var mx = fw / 2, my = z.h / 2;
+
+      if (Math.abs(c.x - mx) < SNAP) {
+        o.setPositionByOrigin(new fabric.Point(mx, c.y), 'center', 'center');
+        snapLine(mx, 0, mx, z.h);
+        c = o.getCenterPoint();
+      }
+      if (Math.abs(c.y - my) < SNAP) {
+        o.setPositionByOrigin(new fabric.Point(c.x, my), 'center', 'center');
+        snapLine(0, my, fw, my);
+      }
     });
+
+    /* Rotirea se prinde din 15 în 15 grade, ca să nimerești drept fără efort. */
+    canvas.on('object:rotating', function (e) {
+      var o = e.target;
+      if (!o) return;
+      var a = ((o.angle % 360) + 360) % 360;
+      var near = Math.round(a / 15) * 15;
+      if (Math.abs(a - near) < 4) o.set('angle', near % 360);
+    });
+
+    canvas.on('object:modified', clearSnap);
+    canvas.on('mouse:up', clearSnap);
 
     canvas.on('selection:created', syncPanel);
     canvas.on('selection:updated', syncPanel);
@@ -225,6 +260,27 @@
     liftGuides();
   }
 
+  /* Liniile de aliniere apar cât ține alinierea și dispar la eliberare. */
+  var snapLines = [];
+
+  function clearSnap() {
+    if (!canvas || !snapLines.length) return;
+    snapLines.forEach(function (o) { canvas.remove(o); });
+    snapLines = [];
+    canvas.requestRenderAll();
+  }
+
+  function snapLine(x1, y1, x2, y2) {
+    var l = new fabric.Line([x1, y1, x2, y2], {
+      stroke: '#12b8a6', strokeWidth: 1, strokeDashArray: [4, 4],
+      selectable: false, evented: false, excludeFromExport: true
+    });
+    l.kkGuide = true;
+    snapLines.push(l);
+    canvas.add(l);
+    canvas.bringToFront(l);
+  }
+
   function liftGuides() {
     if (!canvas) return;
     guideObjs.forEach(function (o) { canvas.bringToFront(o); });
@@ -241,20 +297,21 @@
     var g = el('[data-kk-guides]');
     if (!g) return;
     var z = zones();
+    var k = zoom;                 /* pastilele sunt DOM, deci urmăresc mărimea reală */
     var out = [];
 
     if (z.back > 0) {
-      out.push('<div class="kk-g-hint" data-kk-hint style="width:' + z.frontEnd +
+      out.push('<div class="kk-g-hint" data-kk-hint style="width:' + z.frontEnd * k +
                'px">Your design goes here</div>');
-      out.push(badge(0, z.frontEnd, 'Front'));
+      out.push(badge(0, z.frontEnd * k, 'Front'));
 
       if (z.center > 0) {
-        out.push(badge(z.frontEnd, z.center, 'Seam', ' kk-g-badge--mute'));
+        out.push(badge(z.frontEnd * k, z.center * k, 'Seam', ' kk-g-badge--mute'));
       }
 
-      out.push(badge(z.centerEnd, z.w - z.centerEnd, 'Back &middot; locked', ' kk-g-badge--lock'));
+      out.push(badge(z.centerEnd * k, (z.w - z.centerEnd) * k, 'Back &middot; locked', ' kk-g-badge--lock'));
     } else {
-      out.push(badge(0, z.w, 'Front'));
+      out.push(badge(0, z.w * k, 'Front'));
     }
 
     /* cotele, ca pe un dieline: milimetri reali și pixelii la 300 dpi */
@@ -521,7 +578,56 @@
     syncPanel();
   }
 
+  /* ---------- zoom ---------- */
+
+  var zoom = 1;
+
+  /* Fabric scalează conținutul; elementul canvas trebuie crescut separat,
+     altfel etichetă mărită ar fi tăiată. Coordonatele obiectelor rămân
+     neschimbate, deci zones() și agățarea nu se ating de zoom. */
+  function applyZoom(z) {
+    if (!canvas) return;
+    zoom = Math.min(3, Math.max(0.3, z));
+    var size = stageSize(conf);
+    canvas.setZoom(zoom);
+    canvas.setDimensions({ width: size.w * zoom, height: size.h * zoom });
+    drawGuides();
+    var v = el('[data-kk-zoom-val]');
+    if (v) v.textContent = Math.round(zoom * 100) + '%';
+  }
+
   /* ---------- export ---------- */
+
+  /* Ce se vede pe etichetă, fără ghidaje, la dimensiuni reale în milimetri. */
+  function toSvg() {
+    var size = stageSize(conf);
+    return canvas.toSVG({
+      width: conf.w + 'mm',
+      height: conf.h + 'mm',
+      viewBox: { x: 0, y: 0, width: size.w, height: size.h }
+    });
+  }
+
+  function fileName() {
+    return slug(conf.name) + '-label-' + conf.w + 'x' + conf.h + 'mm.svg';
+  }
+
+  function download() {
+    if (!canvas) return;
+    canvas.discardActiveObject();
+    clearSnap();
+    canvas.requestRenderAll();
+
+    var blob = new Blob([toSvg()], { type: 'image/svg+xml' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = fileName();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
 
   function slug(s) {
     return (s || 'label').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
@@ -543,23 +649,13 @@
     if (!canvas) return false;
 
     canvas.discardActiveObject();
+    clearSnap();
     canvas.requestRenderAll();
-
-    var size = stageSize(conf);
-    var svg = canvas.toSVG({
-      width: conf.w + 'mm',
-      height: conf.h + 'mm',
-      viewBox: { x: 0, y: 0, width: size.w, height: size.h }
-    });
 
     var input = el('[data-kk-file]');
     if (!input) return false;
 
-    var file = new File(
-      [svg],
-      slug(conf.name) + '-label-' + conf.w + 'x' + conf.h + 'mm.svg',
-      { type: 'image/svg+xml' }
-    );
+    var file = new File([toSvg()], fileName(), { type: 'image/svg+xml' });
 
     try {
       var dt = new DataTransfer();
@@ -599,9 +695,20 @@
     });
   }
 
-  function close() {
+  function hasWork() {
+    if (!canvas) return false;
+    return canvas.getObjects().some(function (o) { return !o.kkLocked && !o.kkGuide; });
+  }
+
+  /* `force` doar după ce designul a fost predat comenzii. Altfel întrebăm —
+     închiderea pierde tot, iar un X arată nevinovat. */
+  function close(force) {
     var s = studio();
     if (!s) return;
+    if (!force && hasWork() &&
+        !window.confirm('Close the studio? Your design is not attached to the order yet and will be lost.')) {
+      return;
+    }
     s.hidden = true;
     document.body.style.overflow = '';
   }
@@ -624,7 +731,16 @@
     if (shape && canvas) { addShape(shape.dataset.kkShape); return; }
 
     if (t.closest('[data-kk-studio-done]')) {
-      if (handOff()) close();
+      if (handOff()) close(true);
+      return;
+    }
+
+    if (t.closest('[data-kk-studio-download]')) { download(); return; }
+
+    var zb = t.closest('[data-kk-zoom]');
+    if (zb) {
+      var k = zb.dataset.kkZoom;
+      applyZoom(k === '+' ? zoom + 0.25 : k === '-' ? zoom - 0.25 : 1);
       return;
     }
 
