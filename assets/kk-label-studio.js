@@ -154,9 +154,9 @@
     canvas.on('selection:created', syncPanel);
     canvas.on('selection:updated', syncPanel);
     canvas.on('selection:cleared', syncPanel);
-    canvas.on('object:added', checkResolution);
+    canvas.on('object:added', function () { checkResolution(); syncHint(); });
     canvas.on('object:modified', checkResolution);
-    canvas.on('object:removed', checkResolution);
+    canvas.on('object:removed', function () { checkResolution(); syncHint(); });
 
     syncPanel();
   }
@@ -182,6 +182,12 @@
     if (z.back > 0) {
       out.push('<div class="kk-g-lock" style="left:' + z.centerEnd +
                'px;width:' + (z.w - z.centerEnd) + 'px"></div>');
+
+      /* zona de lucru propriu-zisă, marcată explicit — altfel fața e un gol alb
+         despre care nu se înțelege că e locul unde se desenează */
+      out.push('<div class="kk-g-work" style="width:' + z.frontEnd + 'px"></div>');
+      out.push('<div class="kk-g-hint" data-kk-hint style="width:' + z.frontEnd +
+               'px">Your design goes here</div>');
 
       out.push('<div class="kk-g-div" style="left:' + z.frontEnd + 'px"></div>');
       out.push(badge(0, z.frontEnd, 'Front'));
@@ -214,9 +220,10 @@
     var perMm = z.w / conf.w;
     var bw = z.w - z.centerEnd;
 
-    /* Pe un panou mai îngust decât înalt, textul se rotește — așa se face pe
-       etichetele reale, altfel nu încap rândurile. Vezi orice flacon de cosmetic. */
-    var rot = bw < z.h;
+    /* Rotim doar pe panouri CHIAR înguste, unde altfel n-ar încăpea rândurile.
+       Pragul e strict dinadins: la 40 × 45 mm rotirea face textul ilizibil fără
+       să rezolve nimic. Regula bună e „mai îngust decât jumătate din înălțime". */
+    var rot = bw < z.h * 0.6;
     var box = (rot ? z.h : bw) - z.pad * 2;
 
     var t = new fabric.Textbox(conf.legal, {
@@ -238,6 +245,15 @@
     t.kkLocked = true;
     canvas.add(t);
     canvas.requestRenderAll();
+  }
+
+  /* Îndemnul din zona de lucru dispare de îndată ce clientul pune ceva.
+     Panoul legal nu se pune la socoteală — el e acolo mereu. */
+  function syncHint() {
+    var h = el('[data-kk-hint]');
+    if (!h || !canvas) return;
+    var mine = canvas.getObjects().filter(function (o) { return !o.kkLocked; });
+    h.hidden = mine.length > 0;
   }
 
   /* Un JPEG de 400px nu poate deveni etichetă la 300 dpi. Se spune la încărcare,
