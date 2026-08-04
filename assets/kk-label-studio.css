@@ -66,12 +66,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* sus e mai mult loc: acolo stau etichetele zonelor */
-  padding: 5rem 3rem 3rem;
+  /* loc de jur împrejur pentru pastile și cote */
+  padding: 6rem 9rem 6rem 4rem;
   overflow: auto;
-  background:
-    repeating-conic-gradient(rgba(var(--color-foreground), 0.045) 0% 25%, transparent 0% 50%)
-    50% / 2.4rem 2.4rem;
+  /* fundal plat, nu tablă de șah: eticheta nu e transparentă */
+  background: rgba(var(--color-foreground), 0.05);
 }
 
 /* Ramă care ține canvasul și ghidajul suprapus. Lățimea o dă canvasul. */
@@ -90,10 +89,17 @@
   pointer-events: none;
 }
 
+/* conturul de tăiere, pe marginea etichetei */
+.kk-g-cut {
+  position: absolute;
+  inset: -5px;
+  border: 1px dashed rgba(60, 90, 200, 0.75);
+}
+
 /* linia de siguranță: dincolo de ea se poate tăia la tipar */
 .kk-g-safe {
   position: absolute;
-  border: 1px dashed rgba(220, 50, 50, 0.55);
+  border: 1px solid rgba(230, 60, 140, 0.65);
 }
 
 /* despărțitoarele dintre față, cotor și spate */
@@ -102,21 +108,52 @@
   top: 0;
   bottom: 0;
   width: 0;
-  border-left: 1px dashed rgba(60, 90, 200, 0.6);
+  border-left: 1px dashed rgba(60, 90, 200, 0.35);
 }
 
-.kk-g-tag {
+/* pastilele de zonă, deasupra etichetei */
+.kk-g-badge {
   position: absolute;
-  top: -2.2rem;
-  text-align: center;
+  top: -3.4rem;
+  transform: translateX(-50%);
+  padding: 0.4rem 1.1rem;
+  border-radius: 1.4rem;
   font-size: 1rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1;
-  opacity: 0.6;
+  white-space: nowrap;
+  background: rgba(var(--color-foreground), 0.72);
+  color: rgb(var(--color-background));
 }
 
-.kk-g-tag--lock { opacity: 0.85; }
+.kk-g-badge--mute { background: rgba(var(--color-foreground), 0.32); }
+.kk-g-badge--lock { background: rgba(60, 90, 200, 0.8); }
+
+/* cotele */
+.kk-g-dim {
+  position: absolute;
+  padding: 0.3rem 0.9rem;
+  border-radius: 1.2rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(var(--color-foreground), 0.07);
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.kk-g-dim--w {
+  left: 50%;
+  bottom: -3.2rem;
+  transform: translateX(-50%);
+}
+
+.kk-g-dim--h {
+  top: 50%;
+  right: -1rem;
+  transform: translate(100%, -50%);
+}
 
 /* hașură discretă peste panoul legal, ca să se vadă că nu e zonă de lucru */
 .kk-g-lock {

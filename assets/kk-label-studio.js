@@ -163,26 +163,42 @@
 
   /* Ghidajele stau ca DOM peste canvas, nu ca obiecte Fabric — altfel ar ajunge
      în fișierul exportat. Linia de siguranță e ce se poate tăia la tipar. */
+  function badge(left, width, text, cls) {
+    /* pastilă centrată peste zona ei */
+    return '<span class="kk-g-badge' + (cls || '') + '" style="left:' +
+           (left + width / 2) + 'px">' + text + '</span>';
+  }
+
   function drawGuides() {
     var g = el('[data-kk-guides]');
     if (!g) return;
     var z = zones();
-    var out = ['<div class="kk-g-safe" style="inset:' + z.pad + 'px"></div>'];
+    var out = [];
+
+    /* linia de tăiere, pe conturul etichetei, și cea de siguranță, înăuntru */
+    out.push('<div class="kk-g-cut"></div>');
+    out.push('<div class="kk-g-safe" style="inset:' + z.pad + 'px"></div>');
 
     if (z.back > 0) {
-      out.push('<div class="kk-g-tag" style="left:0;width:' + z.frontEnd + 'px">Front</div>');
-      out.push('<div class="kk-g-div" style="left:' + z.frontEnd + 'px"></div>');
-
-      if (z.center > 0) {
-        out.push('<div class="kk-g-tag" style="left:' + z.frontEnd + 'px;width:' + z.center + 'px">Seam</div>');
-        out.push('<div class="kk-g-div" style="left:' + z.centerEnd + 'px"></div>');
-      }
-
-      out.push('<div class="kk-g-tag kk-g-tag--lock" style="left:' + z.centerEnd +
-               'px;width:' + (z.w - z.centerEnd) + 'px">Back &middot; locked</div>');
       out.push('<div class="kk-g-lock" style="left:' + z.centerEnd +
                'px;width:' + (z.w - z.centerEnd) + 'px"></div>');
+
+      out.push('<div class="kk-g-div" style="left:' + z.frontEnd + 'px"></div>');
+      out.push(badge(0, z.frontEnd, 'Front'));
+
+      if (z.center > 0) {
+        out.push('<div class="kk-g-div" style="left:' + z.centerEnd + 'px"></div>');
+        out.push(badge(z.frontEnd, z.center, 'Seam', ' kk-g-badge--mute'));
+      }
+
+      out.push(badge(z.centerEnd, z.w - z.centerEnd, 'Back &middot; locked', ' kk-g-badge--lock'));
+    } else {
+      out.push(badge(0, z.w, 'Front'));
     }
+
+    /* cotele, ca pe un dieline: milimetri reali și pixelii la 300 dpi */
+    out.push('<span class="kk-g-dim kk-g-dim--w">' + conf.w + ' mm &middot; ' + mmToPx(conf.w) + ' px</span>');
+    out.push('<span class="kk-g-dim kk-g-dim--h">' + conf.h + ' mm &middot; ' + mmToPx(conf.h) + ' px</span>');
 
     g.innerHTML = out.join('');
   }
@@ -195,14 +211,27 @@
     var z = zones();
     if (z.back <= 0) return;
 
+    var perMm = z.w / conf.w;
+    var bw = z.w - z.centerEnd;
+
+    /* Pe un panou mai îngust decât înalt, textul se rotește — așa se face pe
+       etichetele reale, altfel nu încap rândurile. Vezi orice flacon de cosmetic. */
+    var rot = bw < z.h;
+    var box = (rot ? z.h : bw) - z.pad * 2;
+
     var t = new fabric.Textbox(conf.legal, {
-      left: z.centerEnd + z.pad,
-      top: z.pad,
-      width: Math.max(20, z.w - z.centerEnd - z.pad * 2),
-      fontSize: Math.max(4, Math.round(z.h / 55)),
-      lineHeight: 1.25,
+      width: Math.max(20, box),
+      /* ~1,7 mm ≈ 5 pt — mărimea reală a textului legal, nu una comodă */
+      fontSize: Math.max(3, 1.7 * perMm),
+      lineHeight: 1.15,
+      charSpacing: -10,
       fontFamily: 'Helvetica',
       fill: '#111111',
+      originX: 'center',
+      originY: 'center',
+      left: z.centerEnd + bw / 2,
+      top: z.h / 2,
+      angle: rot ? -90 : 0,
       selectable: false,
       evented: false
     });
