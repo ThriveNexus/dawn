@@ -214,3 +214,11 @@
 
   .kk-studio-foot .kk-btn { flex: 1; min-width: 0; }
 }
+
+/* avertisment de rezoluție — apare doar când o imagine e prea mică pentru tipar */
+.kk-tool-warn {
+  padding: 0.9rem 1.1rem;
+  background: rgba(200, 120, 0, 0.1);
+  border-left: 3px solid rgba(200, 120, 0, 0.7);
+  opacity: 1;
+}

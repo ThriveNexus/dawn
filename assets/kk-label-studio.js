@@ -122,8 +122,39 @@
     canvas.on('selection:created', syncPanel);
     canvas.on('selection:updated', syncPanel);
     canvas.on('selection:cleared', syncPanel);
+    canvas.on('object:added', checkResolution);
+    canvas.on('object:modified', checkResolution);
+    canvas.on('object:removed', checkResolution);
 
     syncPanel();
+  }
+
+  /* Un JPEG de 400px nu poate deveni etichetă la 300 dpi. Se spune la încărcare,
+     nu se descoperă la tipar. Rezoluția efectivă depinde de cât de mare e întinsă
+     imaginea pe etichetă, deci se recalculează la fiecare mutare sau scalare. */
+  function checkResolution() {
+    var warn = el('[data-kk-lowres]');
+    if (!warn || !canvas) return;
+
+    var size = stageSize(conf);
+    var worst = null;
+
+    canvas.getObjects().forEach(function (o) {
+      if (o.type !== 'image' || !o._element || !o._element.naturalWidth) return;
+      var mmWide = (o.getScaledWidth() / size.w) * conf.w;
+      if (mmWide <= 0) return;
+      var dpi = o._element.naturalWidth / (mmWide / MM_PER_INCH);
+      if (worst === null || dpi < worst) worst = dpi;
+    });
+
+    if (worst !== null && worst < 150) {
+      warn.textContent =
+        'One image is about ' + Math.round(worst) + ' DPI at this size. ' +
+        'Under 150 DPI it prints soft — use a bigger file, or scale it down.';
+      warn.hidden = false;
+    } else {
+      warn.hidden = true;
+    }
   }
 
   /* ---------- panoul de unelte ---------- */
@@ -217,22 +248,22 @@
 
   /* ---------- export ---------- */
 
-  function dataUrlToFile(url, name) {
-    var parts = url.split(',');
-    var mime = parts[0].match(/:(.*?);/)[1];
-    var bin = atob(parts[1]);
-    var n = bin.length;
-    var arr = new Uint8Array(n);
-    while (n--) arr[n] = bin.charCodeAt(n);
-    return new File([arr], name, { type: mime });
-  }
-
   function slug(s) {
     return (s || 'label').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
   }
 
-  /* Pune PNG-ul în input-ul de fișier existent, ca și cum l-ar fi ales omul.
-     Așa merge pe exact același drum spre comandă ca un fișier încărcat manual. */
+  /* Ieșirea e SVG, nu PNG.
+
+     Claudio a cerut explicit fișier vectorial, pe care să poată lucra un grafician.
+     Iar asta e o decizie de model de date, nu de format de export: dacă pornești pe
+     raster, textul se aplatizează la prima salvare și nu se mai poate recupera.
+     În SVG, textul rămâne text și formele rămân forme.
+
+     Ce NU devine vector: un logo urcat ca PNG sau JPG rămâne raster, încorporat în
+     SVG. Ca să fie vector cap-coadă, clientul trebuie să urce tot SVG.
+
+     Dimensiunile sunt în milimetri reali, cu viewBox pe sistemul de coordonate al
+     zonei de lucru — deci fișierul se deschide la scara corectă în Illustrator. */
   function handOff() {
     if (!canvas) return false;
 
@@ -240,16 +271,20 @@
     canvas.requestRenderAll();
 
     var size = stageSize(conf);
-    var target = mmToPx(conf.w);
-    var url = canvas.toDataURL({
-      format: 'png',
-      multiplier: target / size.w
+    var svg = canvas.toSVG({
+      width: conf.w + 'mm',
+      height: conf.h + 'mm',
+      viewBox: { x: 0, y: 0, width: size.w, height: size.h }
     });
 
     var input = el('[data-kk-file]');
     if (!input) return false;
 
-    var file = dataUrlToFile(url, slug(conf.name) + '-label-' + conf.w + 'x' + conf.h + 'mm.png');
+    var file = new File(
+      [svg],
+      slug(conf.name) + '-label-' + conf.w + 'x' + conf.h + 'mm.svg',
+      { type: 'image/svg+xml' }
+    );
 
     try {
       var dt = new DataTransfer();
@@ -266,7 +301,7 @@
 
     var note = el('[data-kk-studio-note]');
     if (note) {
-      note.textContent = 'Designed in the studio — ' + conf.w + ' × ' + conf.h + ' mm, ' + target + ' px wide.';
+      note.textContent = 'Designed in the studio — vector file, ' + conf.w + ' × ' + conf.h + ' mm.';
       note.hidden = false;
     }
     return true;
