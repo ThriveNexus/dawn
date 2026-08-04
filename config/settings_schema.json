@@ -1547,6 +1547,13 @@
         "info": "The strip between front and back that overlaps when the label is wrapped. Nothing important should sit there."
       },
       {
+        "type": "number",
+        "id": "kk_label_bleed",
+        "label": "Bleed (mm)",
+        "default": 3,
+        "info": "Extra artwork beyond the cut line, so trimming never leaves a white edge. 3 mm is the usual standard — ask your printer for theirs. Set to 0 to work without bleed."
+      },
+      {
         "type": "header",
         "content": "Design lead capture"
       },

@@ -2,13 +2,14 @@
   KOSMETIKAL — Label Studio
   Editor de etichetă în pagina de produs.
 
-  Ce produce: un PNG la 300 DPI, la dimensiunea reală a etichetei, pe care îl pune
+  Ce produce: un SVG la dimensiuni reale în milimetri, cu bleed, pe care îl pune
   în câmpul de upload existent. De acolo merge la comandă pe fluxul deja testat —
   fără cale nouă de salvare, fără backend.
 
-  Ce NU produce încă: fișier print-ready (dieline, bleed, CMYK, zone legale blocate).
-  Alea cer specul printerului italian, care lipsește. Structura de aici le suportă:
-  se adaugă un strat de export, restul rămâne.
+  Ce NU produce încă: culori CMYK și conturul real de tăiere. Primul cere generare
+  de PDF cu profil de culoare, al doilea un fișier de dieline de la furnizorul de
+  ambalaj. Structura le suportă pe amândouă: se schimbă stratul de export și
+  geometria plănșei, restul rămâne.
 
   Fabric.js se încarcă abia la prima deschidere — 300 KB pe care nu-i plătește
   nimeni care doar se uită la produs.
@@ -65,6 +66,7 @@
       h: h,
       back: parseFloat(s.dataset.kkBack) || 0,
       center: parseFloat(s.dataset.kkCenter) || 0,
+      bleed: parseFloat(s.dataset.kkBleed) || 0,
       legal: s.dataset.kkLegal || '',
       fabricUrl: s.dataset.kkFabric,
       name: s.dataset.kkName || '',
@@ -76,13 +78,18 @@
      Fața e ce rămâne după ce scazi cotorul și panoul legal. */
   function zones() {
     var size = stageSize(conf);
-    var perMm = size.w / conf.w;
+    var perMm = size.w / (conf.w + conf.bleed * 2);
+    var b = conf.bleed * perMm;
+    var tw = conf.w * perMm;
+    var th = conf.h * perMm;
     var back = conf.back * perMm;
     var center = conf.center * perMm;
-    var frontEnd = Math.max(0, size.w - back - center);
+    var frontEnd = b + Math.max(0, tw - back - center);
     return {
-      w: size.w,
-      h: size.h,
+      w: size.w, h: size.h,        /* planșa întreagă, bleed inclus */
+      perMm: perMm,
+      b: b,                        /* lățimea bleed-ului, în px */
+      x: b, y: b, tw: tw, th: th,  /* dreptunghiul de tăiere, în coordonate de canvas */
       pad: SAFE_MM * perMm,
       back: back,
       center: center,
@@ -94,8 +101,12 @@
   function mmToPx(mm) { return Math.round(mm / MM_PER_INCH * DPI); }
 
   /* Zona de lucru păstrează proporția etichetei și încape în STAGE_MAX. */
+  /* Planșa e eticheta plus bleed pe fiecare latură — asta e suprafața pe care
+     se desenează și care ajunge la tipar. Tăierea se face pe dinăuntru. */
   function stageSize(c) {
-    var ratio = c.w / c.h;
+    var W = c.w + c.bleed * 2;
+    var H = c.h + c.bleed * 2;
+    var ratio = W / H;
     return ratio >= 1
       ? { w: STAGE_MAX, h: Math.round(STAGE_MAX / ratio) }
       : { w: Math.round(STAGE_MAX * ratio), h: STAGE_MAX };
@@ -162,17 +173,17 @@
         }
       }
 
-      var fw = z.back > 0 ? z.frontEnd : z.w;
-      var mx = fw / 2, my = z.h / 2;
+      var f = frontCentre();
+      var mx = f.x, my = f.y;
 
       if (Math.abs(c.x - mx) < SNAP) {
         o.setPositionByOrigin(new fabric.Point(mx, c.y), 'center', 'center');
-        snapLine(mx, 0, mx, z.h);
+        snapLine(mx, z.y, mx, z.y + z.th);
         c = o.getCenterPoint();
       }
       if (Math.abs(c.y - my) < SNAP) {
         o.setPositionByOrigin(new fabric.Point(c.x, my), 'center', 'center');
-        snapLine(0, my, fw, my);
+        snapLine(z.x, my, z.frontEnd > z.x ? z.frontEnd : z.x + z.tw, my);
       }
     });
 
@@ -238,13 +249,13 @@
 
     if (z.back > 0) {
       mk(new fabric.Rect({
-        left: z.centerEnd, top: 0,
-        width: z.w - z.centerEnd, height: z.h,
+        left: z.centerEnd, top: z.y,
+        width: z.x + z.tw - z.centerEnd, height: z.th,
         fill: 'rgba(45, 75, 205, 0.07)'
       }));
 
       [z.frontEnd, z.centerEnd].forEach(function (x) {
-        mk(new fabric.Line([x, 0, x, z.h], {
+        mk(new fabric.Line([x, z.y, x, z.y + z.th], {
           stroke: '#2d4bcd', strokeWidth: 1, strokeDashArray: [6, 4]
         }));
       });
@@ -253,16 +264,24 @@
     /* Convenția de tipar: întrerupt = tăiere, continuu = zona sigură.
        Un tipograf citește desenul după ea, deci nu se inversează. */
     mk(new fabric.Rect({
-      left: z.pad, top: z.pad,
-      width: z.w - z.pad * 2, height: z.h - z.pad * 2,
+      left: z.x + z.pad, top: z.y + z.pad,
+      width: z.tw - z.pad * 2, height: z.th - z.pad * 2,
       fill: 'transparent', stroke: '#e81e82', strokeWidth: 1
     }));
 
     mk(new fabric.Rect({
-      left: 0.5, top: 0.5,
-      width: z.w - 1, height: z.h - 1,
+      left: z.x, top: z.y, width: z.tw, height: z.th,
       fill: 'transparent', stroke: '#2d4bcd', strokeWidth: 1, strokeDashArray: [7, 4]
     }));
+
+    /* Marginea planșei = limita bleed-ului. Grafica de fundal trebuie să ajungă
+       până aici, nu până la linia de tăiere. */
+    if (z.b > 0) {
+      mk(new fabric.Rect({
+        left: 0.5, top: 0.5, width: z.w - 1, height: z.h - 1,
+        fill: 'transparent', stroke: '#e08a1e', strokeWidth: 1, strokeDashArray: [3, 3]
+      }));
+    }
 
     liftGuides();
   }
@@ -308,22 +327,25 @@
     var out = [];
 
     if (z.back > 0) {
-      out.push('<div class="kk-g-hint" data-kk-hint style="width:' + z.frontEnd * k +
-               'px">Your design goes here</div>');
-      out.push(badge(0, z.frontEnd * k, 'Front'));
+      out.push('<div class="kk-g-hint" data-kk-hint style="left:' + z.x * k +
+               'px;width:' + (z.frontEnd - z.x) * k + 'px">Your design goes here</div>');
+      out.push(badge(z.x * k, (z.frontEnd - z.x) * k, 'Front'));
 
       if (z.center > 0) {
         out.push(badge(z.frontEnd * k, z.center * k, 'Seam', ' kk-g-badge--mute'));
       }
 
-      out.push(badge(z.centerEnd * k, (z.w - z.centerEnd) * k, 'Back &middot; locked', ' kk-g-badge--lock'));
+      out.push(badge(z.centerEnd * k, (z.x + z.tw - z.centerEnd) * k, 'Back &middot; locked', ' kk-g-badge--lock'));
     } else {
-      out.push(badge(0, z.w * k, 'Front'));
+      out.push(badge(z.x * k, z.tw * k, 'Front'));
     }
 
-    /* cotele, ca pe un dieline: milimetri reali și pixelii la 300 dpi */
+    /* cotele sunt ale etichetei tăiate, nu ale planșei — aia e mărimea reală */
     out.push('<span class="kk-g-dim kk-g-dim--w">' + conf.w + ' mm &middot; ' + mmToPx(conf.w) + ' px</span>');
     out.push('<span class="kk-g-dim kk-g-dim--h">' + conf.h + ' mm &middot; ' + mmToPx(conf.h) + ' px</span>');
+    if (conf.bleed > 0) {
+      out.push('<span class="kk-g-bleed">+ ' + conf.bleed + ' mm bleed</span>');
+    }
 
     g.innerHTML = out.join('');
   }
@@ -336,14 +358,14 @@
     var z = zones();
     if (z.back <= 0) return;
 
-    var perMm = z.w / conf.w;
-    var bw = z.w - z.centerEnd;
+    var perMm = z.perMm;
+    var bw = z.x + z.tw - z.centerEnd;
 
     /* Rotim doar pe panouri CHIAR înguste, unde altfel n-ar încăpea rândurile.
        Pragul e strict dinadins: la 40 × 45 mm rotirea face textul ilizibil fără
        să rezolve nimic. Regula bună e „mai îngust decât jumătate din înălțime". */
-    var rot = bw < z.h * 0.6;
-    var box = (rot ? z.h : bw) - z.pad * 2;
+    var rot = bw < z.th * 0.6;
+    var box = (rot ? z.th : bw) - z.pad * 2;
 
     var t = new fabric.Textbox(conf.legal, {
       width: Math.max(20, box),
@@ -356,7 +378,7 @@
       originX: 'center',
       originY: 'center',
       left: z.centerEnd + bw / 2,
-      top: z.h / 2,
+      top: z.y + z.th / 2,
       angle: rot ? -90 : 0,
       selectable: false,
       evented: false
@@ -368,14 +390,14 @@
        cât INCI are produsul, deci mărimea nu se poate fixa dinainte — se
        micșorează până încape. Pe panou rotit, „înălțimea" textului se măsoară
        pe orizontală, adică pe lățimea panoului. */
-    var avail = (rot ? bw : z.h) - z.pad * 2;
+    var avail = (rot ? bw : z.th) - z.pad * 2;
     var guard = 0;
     while (t.height > avail && t.fontSize > 2 && guard++ < 60) {
       t.set('fontSize', t.fontSize * 0.93);
       t.initDimensions();
     }
 
-    t.set({ left: z.centerEnd + bw / 2, top: z.h / 2 });
+    t.set({ left: z.centerEnd + bw / 2, top: z.y + z.th / 2 });
     t.setCoords();
     canvas.requestRenderAll();
   }
@@ -396,12 +418,12 @@
     var warn = el('[data-kk-lowres]');
     if (!warn || !canvas) return;
 
-    var size = stageSize(conf);
+    var z = zones();
     var worst = null;
 
     canvas.getObjects().forEach(function (o) {
       if (o.type !== 'image' || !o._element || !o._element.naturalWidth) return;
-      var mmWide = (o.getScaledWidth() / size.w) * conf.w;
+      var mmWide = o.getScaledWidth() / z.perMm;
       if (mmWide <= 0) return;
       var dpi = o._element.naturalWidth / (mmWide / MM_PER_INCH);
       if (worst === null || dpi < worst) worst = dpi;
@@ -577,7 +599,8 @@
   /* mijlocul feței, nu al etichetei desfășurate */
   function frontCentre() {
     var z = zones();
-    return { x: (z.back > 0 ? z.frontEnd : z.w) / 2, y: z.h / 2, w: (z.back > 0 ? z.frontEnd : z.w), h: z.h };
+    var x1 = z.back > 0 ? z.frontEnd : z.x + z.tw;
+    return { x: (z.x + x1) / 2, y: z.y + z.th / 2, w: x1 - z.x, h: z.th };
   }
 
   function addText() {
@@ -673,11 +696,26 @@
   /* Ce se vede pe etichetă, fără ghidaje, la dimensiuni reale în milimetri. */
   function toSvg() {
     var size = stageSize(conf);
-    return canvas.toSVG({
-      width: conf.w + 'mm',
-      height: conf.h + 'mm',
+    var W = conf.w + conf.bleed * 2;
+    var H = conf.h + conf.bleed * 2;
+
+    var svg = canvas.toSVG({
+      width: W + 'mm',
+      height: H + 'mm',
       viewBox: { x: 0, y: 0, width: size.w, height: size.h }
     });
+
+    /* Fișierul are mărimea planșei, nu a etichetei. Fără o notă înăuntru,
+       cine îl deschide nu are de unde ști unde se taie. */
+    var note = 'Kosmetikal label. Artboard ' + W + ' x ' + H + ' mm' +
+      (conf.bleed > 0 ? ', including ' + conf.bleed + ' mm bleed on every side' : '') +
+      '. Trim to ' + conf.w + ' x ' + conf.h + ' mm. ' +
+      'Keep essential content at least ' + SAFE_MM + ' mm inside the trim line.';
+
+    var i = svg.indexOf('>', svg.indexOf('<svg'));
+    if (i > 0) svg = svg.slice(0, i + 1) + '\n<desc>' + note + '</desc>' + svg.slice(i + 1);
+
+    return svg;
   }
 
   function fileName() {
