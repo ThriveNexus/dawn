@@ -130,6 +130,8 @@
     "cart_color_scheme": "scheme-1",
     "kk_moq": 12,
     "kk_case_multiple": "24",
+    "kk_label_w": 60,
+    "kk_label_h": 90,
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
