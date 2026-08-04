@@ -87,28 +87,31 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Fabric pune canvasul superior pe un strat propriu; fără z-index explicit,
+     ghidajele desenate peste etichetă ajung dedesubt și nu se văd deloc. */
+  z-index: 5;
 }
 
 /* conturul de tăiere, pe marginea etichetei */
 .kk-g-cut {
   position: absolute;
-  inset: -6px;
-  border: 1.5px dashed rgba(45, 75, 205, 0.9);
+  inset: -8px;
+  border: 2px dashed #2d4bcd;
 }
 
 /* linia de siguranță: dincolo de ea se poate tăia la tipar */
 .kk-g-safe {
   position: absolute;
-  border: 1.5px solid rgba(232, 30, 130, 0.8);
+  border: 2px solid #e81e82;
 }
 
 /* despărțitoarele dintre față, cotor și spate */
 .kk-g-div {
   position: absolute;
-  top: -6px;
-  bottom: -6px;
+  top: -8px;
+  bottom: -8px;
   width: 0;
-  border-left: 1.5px dashed rgba(45, 75, 205, 0.55);
+  border-left: 2px dashed #2d4bcd;
 }
 
 /* zona de lucru: fața etichetei, singurul loc unde se poate desena */
@@ -185,8 +188,8 @@
   bottom: 0;
   background: repeating-linear-gradient(
     45deg,
-    rgba(45, 75, 205, 0.11) 0 5px,
-    transparent 5px 11px
+    rgba(45, 75, 205, 0.16) 0 4px,
+    transparent 4px 10px
   );
 }
 

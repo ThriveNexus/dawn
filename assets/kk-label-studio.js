@@ -244,6 +244,20 @@
     });
     t.kkLocked = true;
     canvas.add(t);
+
+    /* Textul legal nu are voie să iasă din panou. Câte rânduri ies depinde de
+       cât INCI are produsul, deci mărimea nu se poate fixa dinainte — se
+       micșorează până încape. Pe panou rotit, „înălțimea" textului se măsoară
+       pe orizontală, adică pe lățimea panoului. */
+    var avail = (rot ? bw : z.h) - z.pad * 2;
+    var guard = 0;
+    while (t.height > avail && t.fontSize > 2 && guard++ < 60) {
+      t.set('fontSize', t.fontSize * 0.93);
+      t.initDimensions();
+    }
+
+    t.set({ left: z.centerEnd + bw / 2, top: z.h / 2 });
+    t.setCoords();
     canvas.requestRenderAll();
   }
 
