@@ -2,14 +2,15 @@
   KOSMETIKAL — Label Studio
   Editor de etichetă în pagina de produs.
 
-  Ce produce: un SVG la dimensiuni reale în milimetri, cu bleed, pe care îl pune
-  în câmpul de upload existent. De acolo merge la comandă pe fluxul deja testat —
-  fără cale nouă de salvare, fără backend.
+  Ce produce: un pachet ZIP construit în browser — print.pdf (vectorial, text
+  conturat), print.svg, editable.svg (master cu text viu + fonturi înglobate),
+  fonturile TTF cu licențele OFL și un README. Pachetul intră în câmpul de upload
+  existent, deci merge la comandă pe fluxul deja testat — fără backend.
 
-  Ce NU produce încă: culori CMYK și conturul real de tăiere. Primul cere generare
-  de PDF cu profil de culoare, al doilea un fișier de dieline de la furnizorul de
-  ambalaj. Structura le suportă pe amândouă: se schimbă stratul de export și
-  geometria plănșei, restul rămâne.
+  Ce NU produce încă: culori CMYK (cere PDF cu profil ICC, adică serverul din V2)
+  și conturul real de tăiere (cere dieline de la furnizorul de ambalaj).
+  Structura le suportă pe amândouă: se schimbă stratul de export și geometria
+  planșei, restul rămâne.
 
   Fabric.js se încarcă abia la prima deschidere — 300 KB pe care nu-i plătește
   nimeni care doar se uită la produs.
@@ -69,9 +70,16 @@
       bleed: parseFloat(s.dataset.kkBleed) || 0,
       legal: s.dataset.kkLegal || '',
       fabricUrl: s.dataset.kkFabric,
+      libs: parseJsonAttr(s.dataset.kkLibs),
+      fonts: parseJsonAttr(s.dataset.kkFonts),
+      fontlic: s.dataset.kkFontlic || '',
       name: s.dataset.kkName || '',
       root: s
     };
+  }
+
+  function parseJsonAttr(v) {
+    try { return JSON.parse(v || '{}') || {}; } catch (e) { return {}; }
   }
 
   /* Eticheta desfășurată, în px pe zona de lucru: față | centru | spate.
@@ -778,21 +786,326 @@
     return slug(conf.name) + '-label-' + conf.w + 'x' + conf.h + 'mm.svg';
   }
 
-  function download() {
-    if (!canvas) return;
-    canvas.discardActiveObject();
-    clearSnap();
-    canvas.requestRenderAll();
-
-    var blob = new Blob([toSvg()], { type: 'image/svg+xml' });
+  function saveBlob(blob, name) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = fileName();
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  /* ---------- pachetul de export ----------
+
+     „Use this design" și „Download" livrează un ZIP construit integral în browser:
+
+       print.pdf     — vectorial, TOT textul convertit în contururi; pentru tipar
+       print.svg     — aceeași grafică conturată, în formă SVG
+       editable.svg  — masterul cu text viu + fonturile înglobate
+       fonts/        — fișierele TTF folosite + licențele OFL (obligate să
+                       călătorească împreună la redistribuire)
+       README.txt    — dimensiuni, unde se taie, ce e fiecare fișier
+
+     De ce două forme: editoarele desktop (Illustrator, Affinity) ignoră
+     @font-face din SVG și substituie fontul după numele instalat — pentru tipar
+     textul devine contururi, dar contururile nu se mai pot edita, deci masterul
+     viu se livrează separat, cu fonturile alături.
+
+     Bibliotecile (opentype.js, jsPDF, svg2pdf, JSZip) se încarcă abia la primul
+     export. Dacă orice pas eșuează, se cade pe vechiul comportament — SVG-ul
+     simplu — ca fluxul de comandă să nu se blocheze niciodată. */
+
+  var libsPromise = null;
+
+  function loadScript(url) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = url;
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('nu s-a încărcat: ' + url)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function ensureExportLibs() {
+    if (libsPromise) return libsPromise;
+    var L = conf.libs || {};
+    libsPromise = Promise.all([
+      window.opentype ? null : loadScript(L.opentype),
+      window.JSZip ? null : loadScript(L.jszip),
+      (window.jspdf && window.jspdf.jsPDF) ? null : loadScript(L.jspdf)
+    ]).then(function () {
+      /* svg2pdf se agață de jsPDF, deci strict după el */
+      var api = window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API;
+      return api && api.svg ? null : loadScript(L.svg2pdf);
+    });
+    libsPromise['catch'](function () { libsPromise = null; });   /* eșec → se poate reîncerca */
+    return libsPromise;
+  }
+
+  /* fonturile ca date: arraybuffer pentru ZIP, obiect opentype pentru conturare */
+  var fontCache = {};
+
+  function fetchFontData(family) {
+    if (fontCache[family]) return fontCache[family].promise;
+    var url = (conf.fonts || {})[family];
+    var entry = fontCache[family] = {};
+    entry.promise = !url ? Promise.resolve(null) : fetch(url)
+      .then(function (r) { if (!r.ok) throw new Error('font ' + r.status); return r.arrayBuffer(); })
+      .then(function (buf) {
+        entry.buf = buf;
+        entry.font = window.opentype.parse(buf);
+        return entry;
+      })['catch'](function () { fontCache[family] = null; return null; });
+    return entry.promise;
+  }
+
+  function bufToB64(buf) {
+    var u8 = new Uint8Array(buf), s = '', CH = 0x8000;
+    for (var i = 0; i < u8.length; i += CH) {
+      s += String.fromCharCode.apply(null, u8.subarray(i, i + CH));
+    }
+    return btoa(s);
+  }
+
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function parseSvg(str) {
+    var doc = new DOMParser().parseFromString(str, 'image/svg+xml');
+    if (doc.querySelector('parsererror')) throw new Error('SVG invalid');
+    return doc;
+  }
+
+  function serializeSvg(doc) {
+    return new XMLSerializer().serializeToString(doc.documentElement);
+  }
+
+  function familyOf(textEl) {
+    var f = textEl.getAttribute('font-family') || '';
+    return f.replace(/["']/g, '').split(',')[0].trim();
+  }
+
+  function fillOf(textEl) {
+    var st = textEl.getAttribute('style') || '';
+    var m = st.match(/(?:^|;)\s*fill:\s*([^;]+)/);
+    return m ? m[1].trim() : (textEl.getAttribute('fill') || '#000000');
+  }
+
+  function collectFamilies(doc) {
+    var seen = {};
+    Array.prototype.slice.call(doc.querySelectorAll('text')).forEach(function (t) {
+      var f = familyOf(t);
+      if (f && (conf.fonts || {})[f]) seen[f] = true;
+    });
+    return Object.keys(seen);
+  }
+
+  /* Fiecare <tspan> din exportul Fabric poartă deja poziția liniei de bază —
+     toată așezarea (împărțirea pe rânduri, alinierea) e făcută. Noi doar
+     înlocuim glifele cu contururile lor, la aceleași coordonate. */
+  function outlineTextNodes(doc) {
+    Array.prototype.slice.call(doc.querySelectorAll('text')).forEach(function (t) {
+      var entry = fontCache[familyOf(t)];
+      var font = entry && entry.font;
+      if (!font) return;                       /* fără font → rămâne text viu */
+
+      var size = parseFloat(t.getAttribute('font-size')) || 16;
+      var g = doc.createElementNS(SVGNS, 'g');
+      if (t.getAttribute('transform')) g.setAttribute('transform', t.getAttribute('transform'));
+      g.setAttribute('fill', fillOf(t));
+
+      var ok = true;
+      Array.prototype.slice.call(t.querySelectorAll('tspan')).forEach(function (sp) {
+        var txt = sp.textContent;
+        if (!txt) return;
+        try {
+          var d = font.getPath(txt, parseFloat(sp.getAttribute('x')) || 0,
+                                    parseFloat(sp.getAttribute('y')) || 0,
+                                    size, { kerning: true }).toPathData(3);
+          if (d) {
+            var p = doc.createElementNS(SVGNS, 'path');
+            p.setAttribute('d', d);
+            g.appendChild(p);
+          }
+        } catch (e) { ok = false; }
+      });
+
+      if (ok && g.childNodes.length) t.parentNode.replaceChild(g, t);
+    });
+  }
+
+  function embedFonts(doc, families) {
+    var css = '';
+    families.forEach(function (f) {
+      var e = fontCache[f];
+      if (!e || !e.buf) return;
+      if (!e.b64) e.b64 = bufToB64(e.buf);
+      css += "@font-face{font-family:'" + f + "';src:url(data:font/ttf;base64," + e.b64 + ") format('truetype');}\n";
+    });
+    if (!css) return;
+    var st = doc.createElementNS(SVGNS, 'style');
+    st.textContent = css;
+    doc.documentElement.insertBefore(st, doc.documentElement.firstChild);
+  }
+
+  function svgToPdf(svgEl, Wmm, Hmm) {
+    var jsPDF = window.jspdf.jsPDF;
+    var pdf = new jsPDF({
+      orientation: Wmm >= Hmm ? 'landscape' : 'portrait',
+      unit: 'mm',
+      format: [Wmm, Hmm]
+    });
+    /* svg2pdf citește stiluri calculate, deci elementul trebuie să fie în DOM */
+    var host = document.createElement('div');
+    host.style.cssText = 'position:fixed;left:-10000px;top:0;';
+    host.appendChild(svgEl);
+    document.body.appendChild(host);
+    function cleanup() { if (host.parentNode) document.body.removeChild(host); }
+    return pdf.svg(svgEl, { x: 0, y: 0, width: Wmm, height: Hmm }).then(function () {
+      cleanup();
+      return pdf.output('blob');
+    }, function (e) { cleanup(); throw e; });
+  }
+
+  function buildReadme(families) {
+    var W = conf.w + conf.bleed * 2, H = conf.h + conf.bleed * 2;
+    return [
+      'KOSMETIKAL — label design pack',
+      'Product: ' + conf.name,
+      '',
+      'Artboard: ' + W + ' x ' + H + ' mm' +
+        (conf.bleed > 0 ? ' (includes ' + conf.bleed + ' mm bleed on every side)' : ''),
+      'Trim — the finished label: ' + conf.w + ' x ' + conf.h + ' mm',
+      'Keep essential content at least ' + SAFE_MM + ' mm inside the trim line.',
+      '',
+      'FILES',
+      '  print.pdf    vector, all text converted to outlines. Send this to the printer.',
+      '  print.svg    the same outlined artwork, in SVG form.',
+      '  editable.svg the live-text master. Opens correctly in any browser;',
+      '               desktop editors substitute fonts by installed name, so',
+      '               install the fonts from the fonts/ folder before editing.',
+      '  fonts/       the exact font files used' + (families.length ? ' (' + families.join(', ') + ')' : '') + ',',
+      '               licensed under the SIL Open Font License - see LICENSES.txt.',
+      '',
+      'COLOUR',
+      'Colours are RGB. Most digital label printers convert to CMYK on their side;',
+      'for colour-critical brand colours, ask the printer for a proof first.',
+      '',
+      'Generated by Kosmetikal Label Studio.'
+    ].join('\n');
+  }
+
+  function buildPack() {
+    canvas.discardActiveObject();
+    clearSnap();
+    canvas.requestRenderAll();
+
+    var Wmm = conf.w + conf.bleed * 2;
+    var Hmm = conf.h + conf.bleed * 2;
+    var svgString = toSvg();
+
+    return ensureExportLibs().then(function () {
+      var families = collectFamilies(parseSvg(svgString));
+      return Promise.all(families.map(fetchFontData)).then(function () {
+
+        var editableDoc = parseSvg(svgString);
+        embedFonts(editableDoc, families);
+        var editableSvg = serializeSvg(editableDoc);
+
+        var printDoc = parseSvg(svgString);
+        outlineTextNodes(printDoc);
+        var printSvg = serializeSvg(printDoc);
+
+        var printEl = parseSvg(printSvg).documentElement;
+        return svgToPdf(printEl, Wmm, Hmm).then(function (pdfBlob) {
+          var zip = new window.JSZip();
+          zip.file('README.txt', buildReadme(families));
+          zip.file('print.pdf', pdfBlob);
+          zip.file('print.svg', printSvg);
+          zip.file('editable.svg', editableSvg);
+
+          var ff = zip.folder('fonts');
+          families.forEach(function (f) {
+            var e = fontCache[f];
+            if (e && e.buf) ff.file(f.replace(/\s+/g, '') + '.ttf', e.buf);
+          });
+
+          return fetch(conf.fontlic)
+            .then(function (r) { return r.ok ? r.text() : ''; })
+            ['catch'](function () { return ''; })
+            .then(function (lic) {
+              if (lic) ff.file('LICENSES.txt', lic);
+              return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+            });
+        });
+      });
+    });
+  }
+
+  function packName() {
+    return slug(conf.name) + '-label-pack-' + conf.w + 'x' + conf.h + 'mm.zip';
+  }
+
+  function fallbackFile() {
+    return new File([toSvg()], fileName(), { type: 'image/svg+xml' });
+  }
+
+  function attachFile(file, noteText) {
+    var input = el('[data-kk-file]');
+    if (!input) return false;
+    try {
+      var dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+    } catch (e) { return false; }
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    var note = el('[data-kk-studio-note]');
+    if (note) { note.textContent = noteText; note.hidden = false; }
+    return true;
+  }
+
+  function setBusy(on) {
+    els('[data-kk-studio-done], [data-kk-studio-download]').forEach(function (b) {
+      if (on) { b.kkLabel = b.textContent; b.textContent = 'Preparing files…'; b.disabled = true; }
+      else { if (b.kkLabel) b.textContent = b.kkLabel; b.disabled = false; }
+    });
+  }
+
+  var exporting = false;
+
+  function exportAndAttach() {
+    if (!canvas || exporting) return;
+    exporting = true;
+    setBusy(true);
+    buildPack().then(function (blob) {
+      var ok = attachFile(
+        new File([blob], packName(), { type: 'application/zip' }),
+        'Design pack attached — print-ready PDF, editable SVG and fonts (' + conf.w + ' × ' + conf.h + ' mm).'
+      );
+      if (!ok) throw new Error('attach');
+      close(true);
+    })['catch'](function () {
+      /* orice eșec → SVG-ul simplu, ca până acum; comanda nu se blochează */
+      if (attachFile(fallbackFile(),
+        'Designed in the studio — vector file, ' + conf.w + ' × ' + conf.h + ' mm.')) {
+        close(true);
+      } else {
+        alert('Could not attach the design automatically. Please use Download and upload the file.');
+      }
+    }).then(function () { exporting = false; setBusy(false); });
+  }
+
+  function exportAndSave() {
+    if (!canvas || exporting) return;
+    exporting = true;
+    setBusy(true);
+    buildPack().then(function (blob) {
+      saveBlob(blob, packName());
+    })['catch'](function () {
+      saveBlob(new Blob([toSvg()], { type: 'image/svg+xml' }), fileName());
+    }).then(function () { exporting = false; setBusy(false); });
   }
 
   function slug(s) {
@@ -811,39 +1124,6 @@
 
      Dimensiunile sunt în milimetri reali, cu viewBox pe sistemul de coordonate al
      zonei de lucru — deci fișierul se deschide la scara corectă în Illustrator. */
-  function handOff() {
-    if (!canvas) return false;
-
-    canvas.discardActiveObject();
-    clearSnap();
-    canvas.requestRenderAll();
-
-    var input = el('[data-kk-file]');
-    if (!input) return false;
-
-    var file = new File([toSvg()], fileName(), { type: 'image/svg+xml' });
-
-    try {
-      var dt = new DataTransfer();
-      dt.items.add(file);
-      input.files = dt.files;
-    } catch (e) {
-      alert('Your browser could not attach the design automatically. Please download it and upload the file.');
-      return false;
-    }
-
-    /* Handlerul existent din blocul de butoane ascultă „change" — el schimbă
-       eticheta butonului și confirmă atașarea. */
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-
-    var note = el('[data-kk-studio-note]');
-    if (note) {
-      note.textContent = 'Designed in the studio — vector file, ' + conf.w + ' × ' + conf.h + ' mm.';
-      note.hidden = false;
-    }
-    return true;
-  }
-
   /* ---------- deschidere / închidere ---------- */
 
   function open() {
@@ -922,12 +1202,9 @@
     var shape = t.closest('[data-kk-shape]');
     if (shape && canvas) { addShape(shape.dataset.kkShape); return; }
 
-    if (t.closest('[data-kk-studio-done]')) {
-      if (handOff()) close(true);
-      return;
-    }
+    if (t.closest('[data-kk-studio-done]')) { exportAndAttach(); return; }
 
-    if (t.closest('[data-kk-studio-download]')) { download(); return; }
+    if (t.closest('[data-kk-studio-download]')) { exportAndSave(); return; }
 
     var zb = t.closest('[data-kk-zoom]');
     if (zb) {
