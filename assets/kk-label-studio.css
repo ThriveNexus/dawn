@@ -538,3 +538,52 @@
   background: rgba(224, 138, 30, 0.16);
   color: rgba(var(--color-foreground), 0.8);
 }
+
+/* --- fonturile editorului ---
+   Familii OFL găzduite în temă (vezi kk-fonts-LICENSES.txt). Motivele:
+   fonturile de sistem diferă între mașini (Helvetica nici nu există pe Windows),
+   iar la export textul trebuie conturat din EXACT fișierul care l-a randat.
+   Fișiere TTF, nu WOFF2 — opentype.js, care face conturarea, nu citește WOFF2.
+   Se încarcă doar pe paginile cu studio, ca tot restul fișierului ăsta. */
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('kk-font-montserrat.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('kk-font-inter.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('kk-font-sourcesans.ttf') format('truetype');
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bodoni Moda';
+  src: url('kk-font-bodonimoda.ttf') format('truetype');
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Archivo Narrow';
+  src: url('kk-font-archivonarrow.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Arimo';
+  src: url('kk-font-arimo.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+}

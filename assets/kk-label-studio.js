@@ -114,6 +114,24 @@
 
   /* ---------- încărcarea bibliotecii ---------- */
 
+  /* Fonturile editorului, găzduite în temă (OFL). Randarea pe canvas măsoară
+     textul O SINGURĂ DATĂ, la crearea obiectului — dacă fontul real nu e gata,
+     măsurătorile se fac pe fontul de rezervă și layoutul rămâne strâmb și după
+     ce fontul sosește. De asta construcția așteaptă fonturile, cu plafon de
+     3 secunde ca să nu blocheze studioul dacă un fișier nu se încarcă. */
+  var FONT_FAMILIES = ['Montserrat', 'Inter', 'Source Sans 3', 'Bodoni Moda', 'Archivo Narrow', 'Arimo'];
+
+  function withFonts(cb) {
+    if (!document.fonts || !document.fonts.load) return cb();
+    var loads = FONT_FAMILIES.map(function (f) {
+      return document.fonts.load('16px "' + f + '"')['catch'](function () {});
+    });
+    var done = false;
+    function once() { if (!done) { done = true; cb(); } }
+    Promise.all(loads).then(once, once);
+    setTimeout(once, 3000);
+  }
+
   function withFabric(cb) {
     if (window.fabric) return cb();
     if (loading) return;
@@ -373,7 +391,8 @@
       fontSize: Math.max(3, 1.7 * perMm),
       lineHeight: 1.15,
       charSpacing: -10,
-      fontFamily: 'Helvetica',
+      /* Inter ține la mărimi mici — de asta e fontul panoului legal */
+      fontFamily: 'Inter',
       fill: '#111111',
       originX: 'center',
       originY: 'center',
@@ -567,7 +586,7 @@
     o.set({
       left: f.x, top: f.y,
       originX: 'center', originY: 'center',
-      fontFamily: 'Helvetica', fill: '#111111'
+      fontFamily: 'Inter', fill: '#111111'
     });
 
     canvas.add(o);
@@ -610,7 +629,7 @@
       top: f.y,
       originX: 'center',
       originY: 'center',
-      fontFamily: 'Helvetica',
+      fontFamily: 'Montserrat',
       fontSize: Math.round(f.h / 10),
       fill: '#111111'
     });
@@ -795,14 +814,14 @@
     conf = readConf();
     if (!conf) return;
 
-    withFabric(function () {
+    withFabric(function () { withFonts(function () {
       build();
       conf.root.hidden = false;
       document.body.style.overflow = 'hidden';
       if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
         try { Shopify.analytics.publish('design_studio_opened', { product: conf.name }); } catch (e) {}
       }
-    });
+    }); });
   }
 
   function hasWork() {
