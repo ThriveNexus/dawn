@@ -587,3 +587,78 @@
   font-weight: 400 700;
   font-display: swap;
 }
+
+/* --- previzualizarea de mockup --- */
+
+.kk-mock[hidden] { display: none; }
+
+.kk-mock {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 1fr 28rem;
+  background: rgb(var(--color-background));
+}
+
+.kk-mock-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  overflow: auto;
+  background: rgba(var(--color-foreground), 0.05);
+}
+
+.kk-mock-wrap {
+  position: relative;
+  line-height: 0;
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.18);
+}
+
+.kk-mock-wrap canvas {
+  max-width: 100%;
+  max-height: calc(100vh - 16rem);
+  display: block;
+}
+
+.kk-mock-side {
+  padding: 2.4rem;
+  overflow-y: auto;
+  border-left: 1px solid rgba(var(--color-foreground), 0.14);
+}
+
+/* colțurile de calibrare */
+.kk-mock-h {
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #2d4bcd;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  cursor: grab;
+  touch-action: none;
+}
+
+.kk-mock-h[hidden] { display: none; }
+.kk-mock-h:active { cursor: grabbing; }
+
+.kk-mock-json {
+  width: 100%;
+  margin: 1rem 0 0.8rem;
+  padding: 0.8rem;
+  font-family: monospace;
+  font-size: 1.05rem;
+  background: rgba(var(--color-foreground), 0.05);
+  color: inherit;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  resize: vertical;
+}
+
+@media screen and (max-width: 899px) {
+  .kk-mock { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .kk-mock-side { border-left: 0; border-top: 1px solid rgba(var(--color-foreground), 0.14); }
+}

@@ -69,6 +69,8 @@
       center: parseFloat(s.dataset.kkCenter) || 0,
       bleed: parseFloat(s.dataset.kkBleed) || 0,
       legal: s.dataset.kkLegal || '',
+      photo: s.dataset.kkPhoto || '',
+      mockup: s.dataset.kkMockup || '',
       fabricUrl: s.dataset.kkFabric,
       libs: parseJsonAttr(s.dataset.kkLibs),
       fonts: parseJsonAttr(s.dataset.kkFonts),
@@ -1113,6 +1115,233 @@
     }).then(function () { exporting = false; setBusy(false); });
   }
 
+  /* ---------- mockup 2D ----------
+
+     Eticheta desenată, înfășurată pe poza produsului. Metoda dovedită de ONOXA,
+     100% în browser: patru colțuri pe poză + curbură cilindrică, apoi umbrele și
+     luciul pozei aplicate peste (multiply/screen) — de la ele vine realismul.
+     Niciun serviciu extern, nicio cheie.
+
+     Calibrarea per produs stă în metacâmpul custom.mockup ca JSON. Interfața de
+     calibrare apare doar cu ?kk-cal în adresă — clientul primește doar rezultatul. */
+
+  var mock = { photoC: null, drag: -1, raf: 0 };
+  var CAL_MODE = /[?&]kk-cal\b/.test(location.search);
+
+  function mockDefaults() {
+    return { quad: [[28, 28], [72, 28], [72, 68], [28, 68]], wrap: 60, bulge: 3, shade: 35, shine: 18 };
+  }
+
+  function mockCfg() {
+    if (mock.cfg) return mock.cfg;
+    var stored = null;
+    if (conf.mockup) { try { stored = JSON.parse(conf.mockup); } catch (e) { stored = null; } }
+    mock.cfg = Object.assign(mockDefaults(), stored || {});
+    return mock.cfg;
+  }
+
+  function mockAvailable() {
+    return !!conf.photo && (!!conf.mockup || CAL_MODE);
+  }
+
+  /* poza produsului, o singură dată, plafonată la 1600 px */
+  function loadPhoto() {
+    if (mock.photoC) return Promise.resolve(mock.photoC);
+    if (mock.photoP) return mock.photoP;
+    mock.photoP = new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';          /* altfel canvasul devine tainted și nu mai exportă */
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k);
+        c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        mock.photoC = c;
+        resolve(c);
+      };
+      img.onerror = function () { reject(new Error('photo')); };
+      img.src = conf.photo;
+    });
+    return mock.photoP;
+  }
+
+  /* Fața etichetei, fără ghidaje — sursa înfășurării. La zoom, canvasul de jos
+     e scalat, deci decupajul se face în coordonate înmulțite cu zoomul. */
+  function captureFront() {
+    var z = zones();
+    var k = canvas.getZoom ? canvas.getZoom() : 1;
+    var vis = guideObjs.map(function (o) { return o.visible; });
+    guideObjs.forEach(function (o) { o.set('visible', false); });
+    clearSnap();
+    canvas.renderAll();
+
+    var w = Math.max(1, Math.round(z.frontEnd - z.x));
+    var h = Math.max(1, Math.round(z.th));
+    var c = document.createElement('canvas');
+    c.width = w * 2;                          /* 2× pentru calitate la scalare */
+    c.height = h * 2;
+    c.getContext('2d').drawImage(canvas.lowerCanvasEl,
+      z.x * k, z.y * k, w * k, h * k, 0, 0, c.width, c.height);
+
+    guideObjs.forEach(function (o, i) { o.set('visible', vis[i]); });
+    canvas.renderAll();
+    return c;
+  }
+
+  /* Înfășurarea pe felii: pentru fiecare coloană de destinație, felia-sursă
+     corespunzătoare de pe eticheta plată. Pe un cilindru văzut frontal,
+     marginile se comprimă cu cos(φ) — de aici maparea prin arcsin. */
+  function warpLabel(cfg, W, H) {
+    var label = captureFront();
+    var q = cfg.quad.map(function (p) { return [p[0] / 100 * W, p[1] / 100 * H]; });
+    var phiMax = Math.max(0, Math.min(85, cfg.wrap / 2)) * Math.PI / 180;
+    var qh = (q[3][1] - q[0][1] + q[2][1] - q[1][1]) / 2;
+    var bulgePx = cfg.bulge / 100 * qh;
+
+    var out = document.createElement('canvas');
+    out.width = W; out.height = H;
+    var ctx = out.getContext('2d');
+
+    var COLS = 240;
+    function srcU(u) {
+      if (phiMax < 0.02) return u;
+      return 0.5 + Math.asin((2 * u - 1) * Math.sin(phiMax)) / (2 * phiMax);
+    }
+    function top(u) {
+      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
+      return [q[0][0] + (q[1][0] - q[0][0]) * u, q[0][1] + (q[1][1] - q[0][1]) * u + b];
+    }
+    function bot(u) {
+      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
+      return [q[3][0] + (q[2][0] - q[3][0]) * u, q[3][1] + (q[2][1] - q[3][1]) * u + b];
+    }
+
+    for (var i = 0; i < COLS; i++) {
+      var u0 = i / COLS, u1 = (i + 1) / COLS;
+      var t0 = top(u0), t1 = top(u1), b0 = bot(u0);
+      var s0 = srcU(u0) * label.width;
+      var s1 = srcU(u1) * label.width;
+
+      /* pătratul unitate → felia din patrulater; 1.04 acoperă rosturile dintre felii */
+      ctx.setTransform(t1[0] - t0[0], t1[1] - t0[1], b0[0] - t0[0], b0[1] - t0[1], t0[0], t0[1]);
+      ctx.drawImage(label, s0, 0, Math.max(1, s1 - s0), label.height, 0, 0, 1.04, 1);
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return out;
+  }
+
+  function renderMock() {
+    var cfg = mockCfg();
+    var photo = mock.photoC;
+    var mc = el('[data-kk-mock-canvas]');
+    if (!photo || !mc) return;
+
+    var W = photo.width, H = photo.height;
+    mc.width = W; mc.height = H;
+    var ctx = mc.getContext('2d');
+    ctx.drawImage(photo, 0, 0);
+
+    var warped = warpLabel(cfg, W, H);
+
+    /* umbrele pozei (multiply) și luciul ei (screen), doar peste etichetă;
+       destination-in taie înapoi pe conturul etichetei ce s-a vărsat în afară */
+    var lit = document.createElement('canvas');
+    lit.width = W; lit.height = H;
+    var lc = lit.getContext('2d');
+    lc.drawImage(warped, 0, 0);
+    lc.globalCompositeOperation = 'multiply';
+    lc.globalAlpha = cfg.shade / 100;
+    lc.drawImage(photo, 0, 0);
+    lc.globalCompositeOperation = 'screen';
+    lc.globalAlpha = cfg.shine / 100;
+    lc.drawImage(photo, 0, 0);
+    lc.globalCompositeOperation = 'destination-in';
+    lc.globalAlpha = 1;
+    lc.drawImage(warped, 0, 0);
+
+    ctx.drawImage(lit, 0, 0);
+    syncMockUi();
+  }
+
+  function syncMockUi() {
+    var cfg = mockCfg();
+    els('[data-kk-mock-h]').forEach(function (h) {
+      h.hidden = !CAL_MODE;
+      var p = cfg.quad[parseInt(h.dataset.kkMockH, 10)];
+      h.style.left = p[0] + '%';
+      h.style.top = p[1] + '%';
+    });
+    var cal = el('[data-kk-mock-cal]');
+    if (cal) cal.hidden = !CAL_MODE;
+    if (CAL_MODE) {
+      els('[data-kk-mock-p]').forEach(function (r) { r.value = cfg[r.dataset.kkMockP]; });
+      var ta = el('[data-kk-mock-json]');
+      if (ta) ta.value = JSON.stringify(cfg);
+    }
+  }
+
+  function scheduleMock() {
+    if (mock.raf) return;
+    mock.raf = requestAnimationFrame(function () { mock.raf = 0; renderMock(); });
+  }
+
+  function openMock() {
+    var m = el('[data-kk-mock]');
+    if (!m) return;
+    loadPhoto().then(function () {
+      m.hidden = false;
+      renderMock();
+      if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
+        try { Shopify.analytics.publish('design_mockup_previewed', { product: conf.name }); } catch (e) {}
+      }
+    })['catch'](function () {
+      alert('The product photo could not be loaded for the mockup.');
+    });
+  }
+
+  function closeMock() {
+    var m = el('[data-kk-mock]');
+    if (m) m.hidden = true;
+  }
+
+  function mockBlob(cb) {
+    var mc = el('[data-kk-mock-canvas]');
+    if (!mc) return;
+    mc.toBlob(cb, 'image/png');
+  }
+
+  /* tragerea colțurilor, doar în modul de calibrare */
+  document.addEventListener('pointerdown', function (e) {
+    var h = e.target.closest && e.target.closest('[data-kk-mock-h]');
+    if (!h || !CAL_MODE) return;
+    mock.drag = parseInt(h.dataset.kkMockH, 10);
+    h.setPointerCapture && h.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  document.addEventListener('pointermove', function (e) {
+    if (mock.drag < 0) return;
+    var wrap = el('[data-kk-mock-wrap]');
+    if (!wrap) return;
+    var r = wrap.getBoundingClientRect();
+    var cfg = mockCfg();
+    cfg.quad[mock.drag] = [
+      Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)),
+      Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100))
+    ];
+    scheduleMock();
+  });
+
+  document.addEventListener('pointerup', function () { mock.drag = -1; });
+
+  document.addEventListener('input', function (e) {
+    if (e.target.matches && e.target.matches('[data-kk-mock-p]')) {
+      mockCfg()[e.target.dataset.kkMockP] = parseFloat(e.target.value);
+      scheduleMock();
+    }
+  });
+
   function slug(s) {
     return (s || 'label').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
   }
@@ -1141,6 +1370,8 @@
       if (!fontsSettled && fontsPromise) {
         fontsPromise.then(lateFontRefresh, lateFontRefresh);
       }
+      var mo = el('[data-kk-mock-open]');
+      if (mo) mo.hidden = !mockAvailable();
       conf.root.hidden = false;
       document.body.style.overflow = 'hidden';
       if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
@@ -1211,6 +1442,43 @@
 
     if (t.closest('[data-kk-studio-download]')) { exportAndSave(); return; }
 
+    if (t.closest('[data-kk-mock-open]')) { openMock(); return; }
+    if (t.closest('[data-kk-mock-close]')) { closeMock(); return; }
+
+    if (t.closest('[data-kk-mock-dl]')) {
+      mockBlob(function (blob) {
+        if (blob) saveBlob(blob, slug(conf.name) + '-mockup.png');
+      });
+      return;
+    }
+
+    if (t.closest('[data-kk-mock-attach]')) {
+      mockBlob(function (blob) {
+        if (!blob) return;
+        var input = el('[data-kk-mockfile]');
+        var note = el('[data-kk-mock-note]');
+        if (!input) return;
+        try {
+          var dt = new DataTransfer();
+          dt.items.add(new File([blob], slug(conf.name) + '-mockup.png', { type: 'image/png' }));
+          input.files = dt.files;
+          if (note) { note.textContent = 'Mockup attached — it travels with the order.'; note.hidden = false; }
+        } catch (e) {
+          if (note) { note.textContent = 'Could not attach — use Download instead.'; note.hidden = false; }
+        }
+      });
+      return;
+    }
+
+    if (t.closest('[data-kk-mock-copy]')) {
+      var ta = el('[data-kk-mock-json]');
+      if (ta && navigator.clipboard) {
+        navigator.clipboard.writeText(ta.value);
+        t.closest('[data-kk-mock-copy]').textContent = 'Copied!';
+      }
+      return;
+    }
+
     var zb = t.closest('[data-kk-zoom]');
     if (zb) {
       var k = zb.dataset.kkZoom;
@@ -1261,7 +1529,11 @@
   document.addEventListener('keydown', function (e) {
     var s = studio();
     if (!s || s.hidden) return;
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') {
+      var mv = el('[data-kk-mock]');
+      if (mv && !mv.hidden) { closeMock(); return; }   /* întâi mockup-ul, apoi studioul */
+      close();
+    }
     /* Delete pe obiect, dar nu în timp ce se tastează într-un text */
     if ((e.key === 'Delete' || e.key === 'Backspace')) {
       var o = active();
