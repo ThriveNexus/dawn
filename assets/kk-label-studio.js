@@ -1173,6 +1173,7 @@
     var k = canvas.getZoom ? canvas.getZoom() : 1;
     var vis = guideObjs.map(function (o) { return o.visible; });
     guideObjs.forEach(function (o) { o.set('visible', false); });
+    canvas.discardActiveObject();     /* altfel chenarul de selecție intră în captură */
     clearSnap();
     canvas.renderAll();
 
@@ -1203,31 +1204,39 @@
     out.width = W; out.height = H;
     var ctx = out.getContext('2d');
 
-    var COLS = 240;
     function srcU(u) {
       if (phiMax < 0.02) return u;
       return 0.5 + Math.asin((2 * u - 1) * Math.sin(phiMax)) / (2 * phiMax);
     }
-    function top(u) {
-      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
-      return [q[0][0] + (q[1][0] - q[0][0]) * u, q[0][1] + (q[1][1] - q[0][1]) * u + b];
-    }
-    function bot(u) {
-      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
-      return [q[3][0] + (q[2][0] - q[3][0]) * u, q[3][1] + (q[2][1] - q[3][1]) * u + b];
-    }
 
-    for (var i = 0; i < COLS; i++) {
-      var u0 = i / COLS, u1 = (i + 1) / COLS;
-      var t0 = top(u0), t1 = top(u1), b0 = bot(u0);
-      var s0 = srcU(u0) * label.width;
-      var s1 = srcU(u1) * label.width;
+    /* Coloane ÎNTREGI de pixeli, late de exact 1 px — prima versiune desena
+       felii prin transformări cu capete fracționare, iar antialiasul lăsa
+       rosturi de transparență între ele: eticheta ieșea vărgată și străvezie.
 
-      /* pătratul unitate → felia din patrulater; 1.04 acoperă rosturile dintre felii */
-      ctx.setTransform(t1[0] - t0[0], t1[1] - t0[1], b0[0] - t0[0], b0[1] - t0[1], t0[0], t0[1]);
-      ctx.drawImage(label, s0, 0, Math.max(1, s1 - s0), label.height, 0, 0, 1.04, 1);
+       Marginile stânga/dreapta se mediază între sus și jos, deci înclinarea
+       verticală a patrulaterului merge (yT/yB pe coloană); rotirea propriu-zisă
+       nu — irelevant pentru etichete pe flacoane. */
+    var xL = (q[0][0] + q[3][0]) / 2;
+    var xR = (q[1][0] + q[2][0]) / 2;
+    if (xR - xL < 2) return out;
+
+    var x0 = Math.max(0, Math.floor(xL));
+    var x1 = Math.min(W, Math.ceil(xR));
+
+    for (var x = x0; x < x1; x++) {
+      var u = (x + 0.5 - xL) / (xR - xL);
+      if (u < 0 || u > 1) continue;
+
+      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
+      var yT = q[0][1] + (q[1][1] - q[0][1]) * u + b;
+      var yB = q[3][1] + (q[2][1] - q[3][1]) * u + b;
+      if (yB - yT < 1) continue;
+
+      var s0 = srcU(Math.max(0, (x - xL) / (xR - xL))) * label.width;
+      var s1 = srcU(Math.min(1, (x + 1 - xL) / (xR - xL))) * label.width;
+
+      ctx.drawImage(label, s0, 0, Math.max(0.5, s1 - s0), label.height, x, yT, 1, yB - yT);
     }
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
     return out;
   }
 
