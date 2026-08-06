@@ -858,7 +858,12 @@
         entry.buf = buf;
         entry.font = window.opentype.parse(buf);
         return entry;
-      })['catch'](function () { fontCache[family] = null; return null; });
+      })['catch'](function (e) {
+        /* vizibil în consolă — o degradare tăcută ne-a costat deja o rundă de diagnoză */
+        if (window.console && console.warn) console.warn('[kk] font indisponibil pentru export:', family, e && e.message);
+        fontCache[family] = null;
+        return null;
+      });
     return entry.promise;
   }
 
