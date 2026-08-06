@@ -121,15 +121,52 @@
      3 secunde ca să nu blocheze studioul dacă un fișier nu se încarcă. */
   var FONT_FAMILIES = ['Montserrat', 'Inter', 'Source Sans 3', 'Bodoni Moda', 'Archivo Narrow', 'Arimo'];
 
-  function withFonts(cb) {
-    if (!document.fonts || !document.fonts.load) return cb();
-    var loads = FONT_FAMILIES.map(function (f) {
+  /* Descărcarea pornește o singură dată și cât mai devreme — la primul click pe
+     „Add design", nu la deschiderea studioului. Sunt ~3 MB; secundele dintre
+     deschiderea sertarului și intrarea în studio sunt exact avansul care lipsea. */
+  var fontsPromise = null;
+  var fontsSettled = false;
+
+  function kickFonts() {
+    if (fontsPromise || !document.fonts || !document.fonts.load) return fontsPromise;
+    fontsPromise = Promise.all(FONT_FAMILIES.map(function (f) {
       return document.fonts.load('16px "' + f + '"')['catch'](function () {});
-    });
+    }));
+    fontsPromise.then(function () { fontsSettled = true; }, function () { fontsSettled = true; });
+    return fontsPromise;
+  }
+
+  function withFonts(cb) {
+    var p = kickFonts();
+    if (!p) return cb();
     var done = false;
     function once() { if (!done) { done = true; cb(); } }
-    Promise.all(loads).then(once, once);
+    p.then(once, once);
     setTimeout(once, 3000);
+  }
+
+  /* Plafonul de 3s poate expira înaintea fonturilor. Canvasul măsoară textul la
+     crearea obiectului, deci ce s-a creat pe fontul de rezervă rămâne strâmb și
+     după ce sosește fontul bun. Când ajung târziu: golim cache-ul de lățimi al
+     lui Fabric, remăsurăm textele clientului și reconstruim panoul legal —
+     mărimea lui se calculase tot pe metrici greșite. */
+  function lateFontRefresh() {
+    if (!canvas) return;
+    if (window.fabric && fabric.charWidthsCache) fabric.charWidthsCache = {};
+
+    var hadLegal = false;
+    canvas.getObjects().slice().forEach(function (o) {
+      if (o.kkGuide) return;
+      if (o.kkLocked) { canvas.remove(o); hadLegal = true; return; }
+      if ((o.type === 'i-text' || o.type === 'textbox') && o.initDimensions) {
+        o.initDimensions();
+        o.setCoords();
+      }
+    });
+    if (hadLegal) addLegal();
+
+    canvas.requestRenderAll();
+    renderLayers();
   }
 
   function withFabric(cb) {
@@ -816,6 +853,9 @@
 
     withFabric(function () { withFonts(function () {
       build();
+      if (!fontsSettled && fontsPromise) {
+        fontsPromise.then(lateFontRefresh, lateFontRefresh);
+      }
       conf.root.hidden = false;
       document.body.style.overflow = 'hidden';
       if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
@@ -843,6 +883,11 @@
   }
 
   /* ---------- legături ---------- */
+
+  /* pe capture, ca să pornească indiferent ce fac ceilalți handleri cu evenimentul */
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-kk-design-toggle], [data-kk-studio-open]')) kickFonts();
+  }, true);
 
   document.addEventListener('click', function (e) {
     var t = e.target;
