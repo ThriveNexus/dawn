@@ -684,3 +684,8 @@
 
 /* regula .kk-mock-wrap canvas { display:block } ar bate atributul hidden */
 .kk-mock-wrap canvas[hidden] { display: none; }
+
+/* Ca și în blocul de butoane: [hidden] e o regulă de browser cu prioritate
+   minimă, iar orice display din clasele noastre o bate. Fără asta, butonul
+   Photo dezactivat arată activ și clickul moare în tăcere. */
+.kk-studio [hidden] { display: none !important; }
