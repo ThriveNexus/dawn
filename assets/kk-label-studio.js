@@ -275,6 +275,12 @@
       if (e.target && e.target.kkGuide) return;   /* altfel se auto-declanșează la nesfârșit */
       checkResolution();
       syncHint();
+      /* panoul legal + scutul lui stau DEASUPRA oricărui obiect al clientului —
+         altfel un logo adăugat după ele le-ar acoperi; ordinea: scut, text, ghidaje */
+      if (!(e.target && e.target.kkLocked)) {
+        canvas.getObjects().filter(function (o) { return o.kkLocked; })
+              .forEach(function (o) { canvas.bringToFront(o); });
+      }
       liftGuides();
       renderLayers();
     });
@@ -425,6 +431,23 @@
     var z = zones();
     if (z.back <= 0) return;
 
+    /* Scutul panoului legal: alb opac peste toată zona din spate, cu tot cu
+       bleed. Grafica clientului poate fi mai lată decât fața și se revarsă pe
+       sub panou — fizic real, dar textul legal trebuie să rămână lizibil pe
+       alb ORIUNDE: în editor, în mockup, în PDF-ul de tipar. Blocat, exportat. */
+    var shield = new fabric.Rect({
+      left: z.centerEnd,
+      top: 0,
+      width: z.w - z.centerEnd,
+      height: z.h,
+      fill: '#ffffff',
+      selectable: false,
+      evented: false
+    });
+    shield.kkLocked = true;
+    shield.kkShield = true;           /* detaliu de implementare — nu apare în Layers */
+    canvas.add(shield);
+
     var perMm = z.perMm;
     var bw = z.x + z.tw - z.centerEnd;
 
@@ -543,7 +566,7 @@
     if (!host || !canvas) return;
 
     var act = canvas.getActiveObject();
-    var list = canvas.getObjects().filter(function (o) { return !o.kkGuide; });
+    var list = canvas.getObjects().filter(function (o) { return !o.kkGuide && !o.kkShield; });
     var rows = [];
 
     for (var i = list.length - 1; i >= 0; i--) {
