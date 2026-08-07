@@ -1467,18 +1467,22 @@
        stochează: se calculează din milimetrii reali — lățimea siluetei
        corespunde diametrului, de acolo iese px-per-mm, iar eticheta aterizează
        mereu la proporțiile ei adevărate, oricare ar fi produsul. */
+    /* Cifrele NU sunt din ochi: calibrate în bancul local cu lupă pe muchii și
+       repere numerice — delta linie–muchie sub ±1,5px la cinci înălțimi, pe
+       conductele exacte ale temei (poza de pe CDN, plafonată la 1600). Restul
+       abaterii e bombarea naturală a muchiei, pe care o dreaptă n-o poate urma. */
     return {
       tube: {
         photo: photo,
-        top: { y: 20.5, xL: 39.5, xR: 61.5 },
-        bot: { y: 53,   xL: 41.5, xR: 58.5 },
+        top: { y: 20.5, xL: 38.31, xR: 61.95 },
+        bot: { y: 52.8, xL: 40.96, xR: 58.5 },
         yC: 36,
         bulge: 1, shade: 36, shine: 12
       },
       jar: {
         photo: photo,
-        top: { y: 63.5, xL: 66.5, xR: 85.5 },
-        bot: { y: 78.5, xL: 66.5, xR: 85.5 },
+        top: { y: 63.5, xL: 65.2, xR: 86.4 },
+        bot: { y: 78.5, xL: 64.3, xR: 86.0 },
         yC: 70.5,
         bulge: 2.5, shade: 34, shine: 8
       }
@@ -1506,92 +1510,14 @@
       };
     }
 
-    /* Conturul recipientului, găsit pe pixeli — verificat vizual în bancul de
-       test local, nu ghicit. Două idei, amândouă câștigate din încercări eșuate:
-
-       1. PRIMA muchie suficient de puternică dinspre centru spre exterior, nu
-          pragul de luminozitate (lumina cade lin pe cilindru și pragul se oprea
-          la banda strălucitoare din mijloc) și nici gradientul maxim global
-          (sare pe cutele luminoase ale draperiei).
-       2. Muchiile pe un singur rând mint lângă umăr — silueta pe zona etichetei
-          e o pereche de DREPTE, deci: 9 rânduri, dreaptă prin mediana pantelor
-          (Theil–Sen), aruncăm cele 3 puncte cu abaterea cea mai mare, repotrivim. */
-    function refineEdge(approx, yPx) {
-      var photo = mock.photoC;
-      if (!photo) return approx;
-      try {
-        var y = Math.max(1, Math.min(photo.height - 2, Math.round(yPx)));
-        var pad = Math.round(W * 0.015);
-        var x0 = Math.max(0, Math.round(approx.xL) - pad);
-        var x1 = Math.min(W, Math.round(approx.xR) + pad);
-        var n = x1 - x0;
-        var ctx = photo.getContext('2d');
-        var rows = [ctx.getImageData(x0, y - 1, n, 1).data,
-                    ctx.getImageData(x0, y, n, 1).data,
-                    ctx.getImageData(x0, y + 1, n, 1).data];
-        function lum(i) {
-          var s = 0;
-          for (var r = 0; r < 3; r++) s += 0.299 * rows[r][i * 4] + 0.587 * rows[r][i * 4 + 1] + 0.114 * rows[r][i * 4 + 2];
-          return s / 3;
-        }
-        /* Dinspre EXTERIOR spre interior: prima urcare puternică de la fundalul
-           întunecat la recipientul luminos = silueta. Dinspre centru, umbrele
-           interne de lângă umăr opreau scanarea devreme (verificat în banc pe
-           poza plafonată la 1600, unde înmuierea le făcea dominante). Rândurile
-           unde nici asta nu găsește nimic întorc centrul — potrivirea robustă
-           de mai jos le aruncă. */
-        function firstRise(from, dir, lim) {
-          var maxG = 0, i, g;
-          for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
-            g = dir > 0 ? lum(i + 1) - lum(i - 1) : lum(i - 1) - lum(i + 1);
-            if (g > maxG) maxG = g;
-          }
-          var TH = Math.max(9, maxG * 0.5);
-          for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
-            g = dir > 0 ? lum(i + 1) - lum(i - 1) : lum(i - 1) - lum(i + 1);
-            if (g >= TH) return i;
-          }
-          return lim;
-        }
-        var c = Math.round((approx.xL + approx.xR) / 2) - x0;
-        return { xL: x0 + firstRise(2, 1, c), xR: x0 + firstRise(n - 3, -1, c) };
-      } catch (e) { return approx; }
-    }
-
-    function fitSides(yTop, yBot) {
-      var pts = [];
-      for (var i = 0; i < 9; i++) {
-        var y = yTop + (yBot - yTop) * i / 8;
-        var e = refineEdge(edgeAt(y / H * 100), y);
-        pts.push({ y: y, xL: e.xL, xR: e.xR });
-      }
-      function theilSen(get, set) {
-        var slopes = [];
-        for (var a = 0; a < set.length; a++)
-          for (var b = a + 1; b < set.length; b++)
-            slopes.push((get(set[b]) - get(set[a])) / (set[b].y - set[a].y));
-        slopes.sort(function (p, q) { return p - q; });
-        var m = slopes[Math.floor(slopes.length / 2)];
-        var inters = set.map(function (p) { return get(p) - m * p.y; }).sort(function (p, q) { return p - q; });
-        var cc = inters[Math.floor(inters.length / 2)];
-        return function (y) { return m * y + cc; };
-      }
-      function robust(get) {
-        var f = theilSen(get, pts);
-        var keep = pts.map(function (p) { return { p: p, r: Math.abs(get(p) - f(p.y)) }; })
-                      .sort(function (a, b) { return a.r - b.r; })
-                      .slice(0, 6).map(function (x) { return x.p; });
-        return theilSen(get, keep);
-      }
-      return { L: robust(function (p) { return p.xL; }), R: robust(function (p) { return p.xR; }) };
-    }
-
+    /* Fără detecție la runtime. Am încercat-o în trei variante (prag, gradient
+       maxim, prima muchie, cu potrivire robustă de drepte) și pe poza asta —
+       muchii moi de cilindru, reflexe, cute de draperie — fiecare a găsit
+       altceva pe alt ecran. Modelul final e cel Selfnamed: scena vine
+       calibrată de platformă, determinist, identic pe orice mașină. */
     var yC = cfg.yC / 100 * H;
-    var seed = refineEdge(edgeAt(cfg.yC), yC);
-    var seedHalf = (seed.xR - seed.xL) * (conf.h * Math.PI / conf.w) / 2;
-    var sides = fitSides(yC - seedHalf, yC + seedHalf);
-
-    var faceW = sides.R(yC) - sides.L(yC);            /* ↔ 2r în px */
+    var mid = edgeAt(cfg.yC);
+    var faceW = mid.xR - mid.xL;                      /* ↔ 2r în px */
     var pxPerMm = faceW / (conf.w / Math.PI);         /* 2r = lățime/π */
     var labelH = conf.h * pxPerMm;
 
@@ -1610,8 +1536,8 @@
     var halfArc = Math.min(85 * Math.PI / 180, zoneMm * Math.PI / conf.w);
     var frac = Math.sin(halfArc);
 
-    var e0 = { xL: sides.L(y0), xR: sides.R(y0) };
-    var e1 = { xL: sides.L(y1), xR: sides.R(y1) };
+    var e0 = edgeAt(y0 / H * 100);
+    var e1 = edgeAt(y1 / H * 100);
     function shrink(e) {
       var c = (e.xL + e.xR) / 2, half = (e.xR - e.xL) / 2 * frac;
       return { xL: c - half, xR: c + half };
