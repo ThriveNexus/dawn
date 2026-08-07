@@ -1483,19 +1483,50 @@
       };
     }
 
-    var mid = edgeAt(cfg.yC);
+    /* Liniile scenei sunt măsurate cu ochiul și au eroare de câteva procente —
+       destul cât să lase o margine albă între etichetă și conturul recipientului,
+       iar marginea aia strică toată iluzia („abțibild lipit"). Recipientul e alb
+       pe fundal gri, deci conturul lui adevărat se găsește pe pixeli: din centru
+       spre exterior, până unde cade luminozitatea. Scena rămâne doar punct de
+       pornire și plasă de siguranță. */
+    function refineEdge(approx, yPx) {
+      var photo = mock.photoC;
+      if (!photo) return approx;
+      try {
+        var y = Math.max(0, Math.min(photo.height - 1, Math.round(yPx)));
+        var pad = Math.round(W * 0.06);
+        var x0 = Math.max(0, Math.round(approx.xL) - pad);
+        var x1 = Math.min(W, Math.round(approx.xR) + pad);
+        var row = photo.getContext('2d').getImageData(x0, y, x1 - x0, 1).data;
+        function lum(i) { return 0.299 * row[i * 4] + 0.587 * row[i * 4 + 1] + 0.114 * row[i * 4 + 2]; }
+
+        var c = Math.round((approx.xL + approx.xR) / 2) - x0;
+        var base = (lum(c - 2) + lum(c) + lum(c + 2)) / 3;
+        if (base < 170) return approx;            /* centrul nu e pe recipient */
+        var TH = base - 45;
+
+        var L = c, R = c, n = x1 - x0 - 1;
+        while (L > 0 && lum(L - 1) > TH) L--;
+        while (R < n && lum(R + 1) > TH) R++;
+        if (R - L < (approx.xR - approx.xL) * 0.5) return approx;   /* scanare suspectă */
+        return { xL: x0 + L, xR: x0 + R };
+      } catch (e) { return approx; }
+    }
+
+    var yC = cfg.yC / 100 * H;
+    var mid = refineEdge(edgeAt(cfg.yC), yC);
     var faceW = mid.xR - mid.xL;                      /* ↔ 2r în px */
     var pxPerMm = faceW / (conf.w / Math.PI);         /* 2r = lățime/π */
     var labelH = conf.h * pxPerMm;
 
-    var yC = cfg.yC / 100 * H;
     var y0 = yC - labelH / 2, y1 = yC + labelH / 2;
 
     /* semi-arcul zonei de etichetă; peste 90° eticheta dă după siluetă */
     var halfArc = Math.min(85 * Math.PI / 180, zoneMm * Math.PI / conf.w);
     var frac = Math.sin(halfArc);
 
-    var e0 = edgeAt(y0 / H * 100), e1 = edgeAt(y1 / H * 100);
+    var e0 = refineEdge(edgeAt(y0 / H * 100), y0);
+    var e1 = refineEdge(edgeAt(y1 / H * 100), y1);
     function shrink(e) {
       var c = (e.xL + e.xR) / 2, half = (e.xR - e.xL) / 2 * frac;
       return { xL: c - half, xR: c + half };
