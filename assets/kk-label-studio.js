@@ -1377,9 +1377,12 @@
       if (!m3.renderer) build3d(); else refresh3dTexture();
       mockSize();
       if (!m3.raf) animate3d();
-      /* calibrarea e o treabă de vedere foto — sari direct acolo */
-      if (CAL_MODE) setMView('photo');
-      else if (mview === 'photo') renderPhoto();   /* eticheta s-a putut schimba între timp */
+      /* Fotografia vinde mai bine decât geometria — unde există scenă, ea e
+         vederea implicită, ca la Selfnamed. 3D-ul rămâne un click distanță. */
+      var pv = el('[data-kk-mview="photo"]');
+      if (pv) pv.hidden = !photoAvailable();
+      if (CAL_MODE || photoAvailable()) setMView('photo');
+      else setMView('threed');
       if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
         try { Shopify.analytics.publish('design_mockup_previewed', { product: conf.name }); } catch (e) {}
       }
@@ -1420,14 +1423,30 @@
      Calibrarea (colțuri + slidere) apare doar cu ?kk-cal în adresă. */
 
   var mview = 'threed';
+  var mface = 'front';
   var mock = { cfg: null, photoC: null, photoP: null, drag: -1, raf: 0 };
   var CAL_MODE = /[?&]kk-cal\b/.test(location.search);
 
-  function mockDefaults() {
+  /* Scene pre-calibrate, ca la Selfnamed: clientul nu așază nimic, platforma
+     vine cu poza și poziția gata măsurate. Cheia e tipul de ambalaj; tube și
+     jar folosesc aceeași fotografie de studio (tubul alb + borcanele albe),
+     cu patrulatere diferite. Metacâmpul custom.mockup suprascrie tot, iar
+     ?kk-cal rămâne unealta noastră de reglaj fin, invizibilă clienților.
+
+     Coordonatele sunt procente din poza de 1200×1800, măsurate pe imagine. */
+  function SCENES() {
+    var photo = conf.photodef || '';
     return {
-      photo: conf.photodef || conf.photo || '',
-      quad: [[39, 22], [61, 22], [61, 50], [39, 50]],
-      wrap: 70, bulge: 2, shade: 30, shine: 12
+      tube: {
+        photo: photo,
+        quad: [[39.5, 21.5], [61.5, 21.5], [58.5, 52], [41.5, 52]],
+        wrap: 65, bulge: 1, shade: 28, shine: 10
+      },
+      jar: {
+        photo: photo,
+        quad: [[67, 63.5], [85, 63.5], [85, 78], [67, 78]],
+        wrap: 70, bulge: 2.5, shade: 34, shine: 8
+      }
     };
   }
 
@@ -1435,9 +1454,14 @@
     if (mock.cfg) return mock.cfg;
     var stored = null;
     if (conf.mockup) { try { stored = JSON.parse(conf.mockup); } catch (e) { stored = null; } }
-    mock.cfg = Object.assign(mockDefaults(), stored || {});
+    var scene = SCENES()[conf.pack] || null;
+    if (!stored && !scene) return null;          /* fără scenă → vederea foto nu există */
+    mock.cfg = Object.assign({}, scene || {}, stored || {});
+    if (!mock.cfg.photo) return (mock.cfg = null);
     return mock.cfg;
   }
+
+  function photoAvailable() { return !!mockCfg(); }
 
   function loadPhoto() {
     if (mock.photoC) return Promise.resolve(mock.photoC);
@@ -1460,23 +1484,27 @@
     return mock.photoP;
   }
 
-  /* doar fața etichetei — pe poză se vede o singură parte a ambalajului */
-  function captureFront() {
+  /* Pe poză se vede o singură parte a ambalajului: fața sau spatele.
+     Front = zona de design; Back = panoul legal. */
+  function captureZone(face) {
     var z = zones();
     var k = canvas.lowerCanvasEl.width / stageSize(conf).w;   /* zoom × retina */
+    var x0 = face === 'back' ? z.centerEnd : z.x;
+    var x1 = face === 'back' ? z.x + z.tw : z.frontEnd;
+
     var vis = guideObjs.map(function (o) { return o.visible; });
     guideObjs.forEach(function (o) { o.set('visible', false); });
     canvas.discardActiveObject();
     clearSnap();
     canvas.renderAll();
 
-    var w = Math.max(1, Math.round(z.frontEnd - z.x));
+    var w = Math.max(1, Math.round(x1 - x0));
     var h = Math.max(1, Math.round(z.th));
     var c = document.createElement('canvas');
     c.width = w * 2;
     c.height = h * 2;
     c.getContext('2d').drawImage(canvas.lowerCanvasEl,
-      z.x * k, z.y * k, w * k, h * k, 0, 0, c.width, c.height);
+      x0 * k, z.y * k, w * k, h * k, 0, 0, c.width, c.height);
 
     guideObjs.forEach(function (o, i) { o.set('visible', vis[i]); });
     canvas.renderAll();
@@ -1487,7 +1515,7 @@
      de transparență și eticheta iese vărgată. Compresie asin la margini
      (cilindru văzut frontal), bombare parabolică sus/jos. */
   function warpFront(cfg, W, H) {
-    var label = captureFront();
+    var label = captureZone(mface);
     var q = cfg.quad.map(function (p) { return [p[0] / 100 * W, p[1] / 100 * H]; });
     var phiMax = Math.max(0, Math.min(85, cfg.wrap / 2)) * Math.PI / 180;
     var qh = (q[3][1] - q[0][1] + q[2][1] - q[1][1]) / 2;
@@ -1530,7 +1558,7 @@
     var cfg = mockCfg();
     var photo = mock.photoC;
     var pc = el('[data-kk-mock-photo]');
-    if (!photo || !pc) return;
+    if (!cfg || !photo || !pc) return;
 
     var W = photo.width, H = photo.height;
     pc.width = W; pc.height = H;
@@ -1559,8 +1587,20 @@
     syncCalUi();
   }
 
+  function syncFaceUi() {
+    var row = el('[data-kk-mface-row]');
+    if (!row) return;
+    row.hidden = mview !== 'photo';
+    var hasBack = zones().back > 0;
+    els('[data-kk-mface]').forEach(function (b) {
+      b.classList.toggle('is-on', b.dataset.kkMface === mface);
+      if (b.dataset.kkMface === 'back') b.hidden = !hasBack;
+    });
+  }
+
   function syncCalUi() {
     var cfg = mockCfg();
+    if (!cfg) return;
     var showCal = CAL_MODE && mview === 'photo';
     els('[data-kk-mock-h]').forEach(function (h) {
       h.hidden = !showCal;
@@ -1583,17 +1623,19 @@
   }
 
   function setMView(v) {
+    if (v === 'photo' && !photoAvailable()) v = 'threed';
     mview = v;
     var c3 = el('[data-kk-mock-canvas]');
     var cp = el('[data-kk-mock-photo]');
     if (c3) c3.hidden = v !== 'threed';
     if (cp) cp.hidden = v !== 'photo';
-    els('.kk-mview-btn').forEach(function (b) {
+    els('[data-kk-mview]').forEach(function (b) {
       b.classList.toggle('is-on', b.dataset.kkMview === v);
     });
     var h3 = el('[data-kk-mock-hint-3d]'), hp = el('[data-kk-mock-hint-photo]');
     if (h3) h3.hidden = v !== 'threed';
     if (hp) hp.hidden = v !== 'photo';
+    syncFaceUi();
     syncCalUi();
 
     if (v === 'photo') {
@@ -1602,6 +1644,12 @@
         setMView('threed');
       });
     }
+  }
+
+  function setMFace(f) {
+    mface = f;
+    syncFaceUi();
+    schedulePhoto();
   }
 
   /* tragerea colțurilor, doar în calibrare */
@@ -1741,6 +1789,9 @@
 
     var mv = t.closest('[data-kk-mview]');
     if (mv) { setMView(mv.dataset.kkMview); return; }
+
+    var mf = t.closest('[data-kk-mface]');
+    if (mf) { setMFace(mf.dataset.kkMface); return; }
 
     if (t.closest('[data-kk-mock-copy]')) {
       var ta = el('[data-kk-mock-json]');
