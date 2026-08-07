@@ -1450,7 +1450,7 @@
         top: { y: 20.5, xL: 39.5, xR: 61.5 },
         bot: { y: 53,   xL: 41.5, xR: 58.5 },
         yC: 36,
-        bulge: 1, shade: 28, shine: 10
+        bulge: 1, shade: 36, shine: 12
       },
       jar: {
         photo: photo,
@@ -1483,41 +1483,97 @@
       };
     }
 
-    /* Liniile scenei sunt măsurate cu ochiul și au eroare de câteva procente —
-       destul cât să lase o margine albă între etichetă și conturul recipientului,
-       iar marginea aia strică toată iluzia („abțibild lipit"). Recipientul e alb
-       pe fundal gri, deci conturul lui adevărat se găsește pe pixeli: din centru
-       spre exterior, până unde cade luminozitatea. Scena rămâne doar punct de
-       pornire și plasă de siguranță. */
+    /* Conturul recipientului, găsit pe pixeli — verificat vizual în bancul de
+       test local, nu ghicit. Două idei, amândouă câștigate din încercări eșuate:
+
+       1. PRIMA muchie suficient de puternică dinspre centru spre exterior, nu
+          pragul de luminozitate (lumina cade lin pe cilindru și pragul se oprea
+          la banda strălucitoare din mijloc) și nici gradientul maxim global
+          (sare pe cutele luminoase ale draperiei).
+       2. Muchiile pe un singur rând mint lângă umăr — silueta pe zona etichetei
+          e o pereche de DREPTE, deci: 9 rânduri, dreaptă prin mediana pantelor
+          (Theil–Sen), aruncăm cele 3 puncte cu abaterea cea mai mare, repotrivim. */
     function refineEdge(approx, yPx) {
       var photo = mock.photoC;
       if (!photo) return approx;
       try {
-        var y = Math.max(0, Math.min(photo.height - 1, Math.round(yPx)));
-        var pad = Math.round(W * 0.06);
+        var y = Math.max(1, Math.min(photo.height - 2, Math.round(yPx)));
+        var pad = Math.round(W * 0.015);
         var x0 = Math.max(0, Math.round(approx.xL) - pad);
         var x1 = Math.min(W, Math.round(approx.xR) + pad);
-        var row = photo.getContext('2d').getImageData(x0, y, x1 - x0, 1).data;
-        function lum(i) { return 0.299 * row[i * 4] + 0.587 * row[i * 4 + 1] + 0.114 * row[i * 4 + 2]; }
-
+        var n = x1 - x0;
+        var ctx = photo.getContext('2d');
+        var rows = [ctx.getImageData(x0, y - 1, n, 1).data,
+                    ctx.getImageData(x0, y, n, 1).data,
+                    ctx.getImageData(x0, y + 1, n, 1).data];
+        function lum(i) {
+          var s = 0;
+          for (var r = 0; r < 3; r++) s += 0.299 * rows[r][i * 4] + 0.587 * rows[r][i * 4 + 1] + 0.114 * rows[r][i * 4 + 2];
+          return s / 3;
+        }
         var c = Math.round((approx.xL + approx.xR) / 2) - x0;
-        var base = (lum(c - 2) + lum(c) + lum(c + 2)) / 3;
-        if (base < 170) return approx;            /* centrul nu e pe recipient */
-        var TH = base - 45;
-
-        var L = c, R = c, n = x1 - x0 - 1;
-        while (L > 0 && lum(L - 1) > TH) L--;
-        while (R < n && lum(R + 1) > TH) R++;
-        if (R - L < (approx.xR - approx.xL) * 0.5) return approx;   /* scanare suspectă */
-        return { xL: x0 + L, xR: x0 + R };
+        function firstEdge(from, dir, lim) {
+          var maxG = 0, i, g;
+          for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
+            g = dir > 0 ? lum(i - 1) - lum(i + 1) : lum(i + 1) - lum(i - 1);
+            if (g > maxG) maxG = g;
+          }
+          var TH = Math.max(9, maxG * 0.45);
+          for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
+            g = dir > 0 ? lum(i - 1) - lum(i + 1) : lum(i + 1) - lum(i - 1);
+            if (g >= TH) return i;
+          }
+          return lim;
+        }
+        return { xL: x0 + firstEdge(c, -1, 2), xR: x0 + firstEdge(c, 1, n - 2) };
       } catch (e) { return approx; }
     }
 
+    function fitSides(yTop, yBot) {
+      var pts = [];
+      for (var i = 0; i < 9; i++) {
+        var y = yTop + (yBot - yTop) * i / 8;
+        var e = refineEdge(edgeAt(y / H * 100), y);
+        pts.push({ y: y, xL: e.xL, xR: e.xR });
+      }
+      function theilSen(get, set) {
+        var slopes = [];
+        for (var a = 0; a < set.length; a++)
+          for (var b = a + 1; b < set.length; b++)
+            slopes.push((get(set[b]) - get(set[a])) / (set[b].y - set[a].y));
+        slopes.sort(function (p, q) { return p - q; });
+        var m = slopes[Math.floor(slopes.length / 2)];
+        var inters = set.map(function (p) { return get(p) - m * p.y; }).sort(function (p, q) { return p - q; });
+        var cc = inters[Math.floor(inters.length / 2)];
+        return function (y) { return m * y + cc; };
+      }
+      function robust(get) {
+        var f = theilSen(get, pts);
+        var keep = pts.map(function (p) { return { p: p, r: Math.abs(get(p) - f(p.y)) }; })
+                      .sort(function (a, b) { return a.r - b.r; })
+                      .slice(0, 6).map(function (x) { return x.p; });
+        return theilSen(get, keep);
+      }
+      return { L: robust(function (p) { return p.xL; }), R: robust(function (p) { return p.xR; }) };
+    }
+
     var yC = cfg.yC / 100 * H;
-    var mid = refineEdge(edgeAt(cfg.yC), yC);
-    var faceW = mid.xR - mid.xL;                      /* ↔ 2r în px */
+    var seed = refineEdge(edgeAt(cfg.yC), yC);
+    var seedHalf = (seed.xR - seed.xL) * (conf.h * Math.PI / conf.w) / 2;
+    var sides = fitSides(yC - seedHalf, yC + seedHalf);
+
+    var faceW = sides.R(yC) - sides.L(yC);            /* ↔ 2r în px */
     var pxPerMm = faceW / (conf.w / Math.PI);         /* 2r = lățime/π */
     var labelH = conf.h * pxPerMm;
+
+    /* Dacă produsul nu încape în recipientul din poză (proporții foarte
+       diferite), preview-ul se scalează la limită în loc să explodeze. */
+    var span = (cfg.bot.y - cfg.top.y) / 100 * H;
+    if (labelH > span * 0.92) {
+      var kk = span * 0.92 / labelH;
+      pxPerMm *= kk;
+      labelH *= kk;
+    }
 
     var y0 = yC - labelH / 2, y1 = yC + labelH / 2;
 
@@ -1525,8 +1581,8 @@
     var halfArc = Math.min(85 * Math.PI / 180, zoneMm * Math.PI / conf.w);
     var frac = Math.sin(halfArc);
 
-    var e0 = refineEdge(edgeAt(y0 / H * 100), y0);
-    var e1 = refineEdge(edgeAt(y1 / H * 100), y1);
+    var e0 = { xL: sides.L(y0), xR: sides.R(y0) };
+    var e1 = { xL: sides.L(y1), xR: sides.R(y1) };
     function shrink(e) {
       var c = (e.xL + e.xR) / 2, half = (e.xR - e.xL) / 2 * frac;
       return { xL: c - half, xR: c + half };
