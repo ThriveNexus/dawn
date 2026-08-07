@@ -134,6 +134,7 @@
     "kk_label_h": 45,
     "kk_label_back": 40,
     "kk_label_center": 4,
+    "kk_packaging": "tube",
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
