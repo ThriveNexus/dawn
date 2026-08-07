@@ -70,6 +70,9 @@
       bleed: parseFloat(s.dataset.kkBleed) || 0,
       legal: s.dataset.kkLegal || '',
       pack: s.dataset.kkPack || 'bottle',
+      photo: s.dataset.kkPhoto || '',
+      photodef: s.dataset.kkPhotodef || '',
+      mockup: s.dataset.kkMockup || '',
       fabricUrl: s.dataset.kkFabric,
       libs: parseJsonAttr(s.dataset.kkLibs),
       fonts: parseJsonAttr(s.dataset.kkFonts),
@@ -1361,6 +1364,7 @@
 
   function animate3d() {
     m3.raf = requestAnimationFrame(animate3d);
+    if (mview !== 'threed') return;      /* în vederea foto nu ardem GPU degeaba */
     m3.controls.update();
     m3.renderer.render(m3.scene, m3.camera);
   }
@@ -1373,6 +1377,9 @@
       if (!m3.renderer) build3d(); else refresh3dTexture();
       mockSize();
       if (!m3.raf) animate3d();
+      /* calibrarea e o treabă de vedere foto — sari direct acolo */
+      if (CAL_MODE) setMView('photo');
+      else if (mview === 'photo') renderPhoto();   /* eticheta s-a putut schimba între timp */
       if (window.Shopify && Shopify.analytics && typeof Shopify.analytics.publish === 'function') {
         try { Shopify.analytics.publish('design_mockup_previewed', { product: conf.name }); } catch (e) {}
       }
@@ -1388,6 +1395,11 @@
   }
 
   function mockBlob(cb) {
+    if (mview === 'photo') {
+      var pc = el('[data-kk-mock-photo]');
+      if (pc) pc.toBlob(cb, 'image/png');
+      return;
+    }
     if (!m3.renderer) return;
     m3.renderer.render(m3.scene, m3.camera);
     m3.renderer.domElement.toBlob(cb, 'image/png');
@@ -1396,6 +1408,230 @@
   window.addEventListener('resize', function () {
     var m = el('[data-kk-mock]');
     if (m && !m.hidden) mockSize();
+  });
+
+  /* ---------- vederea foto (compunere 2D) ----------
+
+     Eticheta (doar fața) înfășurată pe o fotografie de studio a unui ambalaj
+     neutru — drumul spre randările fotorealiste tip Selfnamed, 100% în browser.
+     Fundalul implicit e poza cu tubul alb nebrandat din pachetul Kosmetikal;
+     per produs se poate schimba prin JSON-ul din metacâmpul custom.mockup.
+
+     Calibrarea (colțuri + slidere) apare doar cu ?kk-cal în adresă. */
+
+  var mview = 'threed';
+  var mock = { cfg: null, photoC: null, photoP: null, drag: -1, raf: 0 };
+  var CAL_MODE = /[?&]kk-cal\b/.test(location.search);
+
+  function mockDefaults() {
+    return {
+      photo: conf.photodef || conf.photo || '',
+      quad: [[39, 22], [61, 22], [61, 50], [39, 50]],
+      wrap: 70, bulge: 2, shade: 30, shine: 12
+    };
+  }
+
+  function mockCfg() {
+    if (mock.cfg) return mock.cfg;
+    var stored = null;
+    if (conf.mockup) { try { stored = JSON.parse(conf.mockup); } catch (e) { stored = null; } }
+    mock.cfg = Object.assign(mockDefaults(), stored || {});
+    return mock.cfg;
+  }
+
+  function loadPhoto() {
+    if (mock.photoC) return Promise.resolve(mock.photoC);
+    if (mock.photoP) return mock.photoP;
+    mock.photoP = new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';   /* altfel canvasul devine tainted și nu mai exportă */
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k);
+        c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        mock.photoC = c;
+        resolve(c);
+      };
+      img.onerror = function () { reject(new Error('photo')); };
+      img.src = mockCfg().photo;
+    });
+    return mock.photoP;
+  }
+
+  /* doar fața etichetei — pe poză se vede o singură parte a ambalajului */
+  function captureFront() {
+    var z = zones();
+    var k = canvas.lowerCanvasEl.width / stageSize(conf).w;   /* zoom × retina */
+    var vis = guideObjs.map(function (o) { return o.visible; });
+    guideObjs.forEach(function (o) { o.set('visible', false); });
+    canvas.discardActiveObject();
+    clearSnap();
+    canvas.renderAll();
+
+    var w = Math.max(1, Math.round(z.frontEnd - z.x));
+    var h = Math.max(1, Math.round(z.th));
+    var c = document.createElement('canvas');
+    c.width = w * 2;
+    c.height = h * 2;
+    c.getContext('2d').drawImage(canvas.lowerCanvasEl,
+      z.x * k, z.y * k, w * k, h * k, 0, 0, c.width, c.height);
+
+    guideObjs.forEach(function (o, i) { o.set('visible', vis[i]); });
+    canvas.renderAll();
+    return c;
+  }
+
+  /* Înfășurare pe coloane întregi de pixeli — capete fracționare lasă rosturi
+     de transparență și eticheta iese vărgată. Compresie asin la margini
+     (cilindru văzut frontal), bombare parabolică sus/jos. */
+  function warpFront(cfg, W, H) {
+    var label = captureFront();
+    var q = cfg.quad.map(function (p) { return [p[0] / 100 * W, p[1] / 100 * H]; });
+    var phiMax = Math.max(0, Math.min(85, cfg.wrap / 2)) * Math.PI / 180;
+    var qh = (q[3][1] - q[0][1] + q[2][1] - q[1][1]) / 2;
+    var bulgePx = cfg.bulge / 100 * qh;
+
+    var out = document.createElement('canvas');
+    out.width = W; out.height = H;
+    var ctx = out.getContext('2d');
+
+    function srcU(u) {
+      if (phiMax < 0.02) return u;
+      return 0.5 + Math.asin((2 * u - 1) * Math.sin(phiMax)) / (2 * phiMax);
+    }
+
+    var xL = (q[0][0] + q[3][0]) / 2;
+    var xR = (q[1][0] + q[2][0]) / 2;
+    if (xR - xL < 2) return out;
+
+    var x0 = Math.max(0, Math.floor(xL));
+    var x1 = Math.min(W, Math.ceil(xR));
+
+    for (var x = x0; x < x1; x++) {
+      var u = (x + 0.5 - xL) / (xR - xL);
+      if (u < 0 || u > 1) continue;
+
+      var b = bulgePx * (1 - Math.pow(2 * u - 1, 2));
+      var yT = q[0][1] + (q[1][1] - q[0][1]) * u + b;
+      var yB = q[3][1] + (q[2][1] - q[3][1]) * u + b;
+      if (yB - yT < 1) continue;
+
+      var s0 = srcU(Math.max(0, (x - xL) / (xR - xL))) * label.width;
+      var s1 = srcU(Math.min(1, (x + 1 - xL) / (xR - xL))) * label.width;
+
+      ctx.drawImage(label, s0, 0, Math.max(0.5, s1 - s0), label.height, x, yT, 1, yB - yT);
+    }
+    return out;
+  }
+
+  function renderPhoto() {
+    var cfg = mockCfg();
+    var photo = mock.photoC;
+    var pc = el('[data-kk-mock-photo]');
+    if (!photo || !pc) return;
+
+    var W = photo.width, H = photo.height;
+    pc.width = W; pc.height = H;
+    var ctx = pc.getContext('2d');
+    ctx.drawImage(photo, 0, 0);
+
+    var warped = warpFront(cfg, W, H);
+
+    /* umbrele pozei (multiply) și luciul ei (screen), doar peste etichetă;
+       destination-in taie înapoi pe conturul etichetei */
+    var lit = document.createElement('canvas');
+    lit.width = W; lit.height = H;
+    var lc = lit.getContext('2d');
+    lc.drawImage(warped, 0, 0);
+    lc.globalCompositeOperation = 'multiply';
+    lc.globalAlpha = cfg.shade / 100;
+    lc.drawImage(photo, 0, 0);
+    lc.globalCompositeOperation = 'screen';
+    lc.globalAlpha = cfg.shine / 100;
+    lc.drawImage(photo, 0, 0);
+    lc.globalCompositeOperation = 'destination-in';
+    lc.globalAlpha = 1;
+    lc.drawImage(warped, 0, 0);
+
+    ctx.drawImage(lit, 0, 0);
+    syncCalUi();
+  }
+
+  function syncCalUi() {
+    var cfg = mockCfg();
+    var showCal = CAL_MODE && mview === 'photo';
+    els('[data-kk-mock-h]').forEach(function (h) {
+      h.hidden = !showCal;
+      var p = cfg.quad[parseInt(h.dataset.kkMockH, 10)];
+      h.style.left = p[0] + '%';
+      h.style.top = p[1] + '%';
+    });
+    var cal = el('[data-kk-mock-cal]');
+    if (cal) cal.hidden = !showCal;
+    if (showCal) {
+      els('[data-kk-mock-p]').forEach(function (r) { r.value = cfg[r.dataset.kkMockP]; });
+      var ta = el('[data-kk-mock-json]');
+      if (ta) ta.value = JSON.stringify(cfg);
+    }
+  }
+
+  function schedulePhoto() {
+    if (mock.raf) return;
+    mock.raf = requestAnimationFrame(function () { mock.raf = 0; renderPhoto(); });
+  }
+
+  function setMView(v) {
+    mview = v;
+    var c3 = el('[data-kk-mock-canvas]');
+    var cp = el('[data-kk-mock-photo]');
+    if (c3) c3.hidden = v !== 'threed';
+    if (cp) cp.hidden = v !== 'photo';
+    els('.kk-mview-btn').forEach(function (b) {
+      b.classList.toggle('is-on', b.dataset.kkMview === v);
+    });
+    var h3 = el('[data-kk-mock-hint-3d]'), hp = el('[data-kk-mock-hint-photo]');
+    if (h3) h3.hidden = v !== 'threed';
+    if (hp) hp.hidden = v !== 'photo';
+    syncCalUi();
+
+    if (v === 'photo') {
+      loadPhoto().then(renderPhoto)['catch'](function () {
+        alert('The studio photo could not be loaded.');
+        setMView('threed');
+      });
+    }
+  }
+
+  /* tragerea colțurilor, doar în calibrare */
+  document.addEventListener('pointerdown', function (e) {
+    var h = e.target.closest && e.target.closest('[data-kk-mock-h]');
+    if (!h || !CAL_MODE) return;
+    mock.drag = parseInt(h.dataset.kkMockH, 10);
+    if (h.setPointerCapture) h.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  document.addEventListener('pointermove', function (e) {
+    if (mock.drag < 0) return;
+    var wrap = el('[data-kk-mock-wrap]');
+    if (!wrap) return;
+    var r = wrap.getBoundingClientRect();
+    mockCfg().quad[mock.drag] = [
+      Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)),
+      Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100))
+    ];
+    schedulePhoto();
+  });
+
+  document.addEventListener('pointerup', function () { mock.drag = -1; });
+
+  document.addEventListener('input', function (e) {
+    if (e.target.matches && e.target.matches('[data-kk-mock-p]')) {
+      mockCfg()[e.target.dataset.kkMockP] = parseFloat(e.target.value);
+      schedulePhoto();
+    }
   });
 
 
@@ -1502,6 +1738,18 @@
 
     if (t.closest('[data-kk-mock-open]')) { openMock(); return; }
     if (t.closest('[data-kk-mock-close]')) { closeMock(); return; }
+
+    var mv = t.closest('[data-kk-mview]');
+    if (mv) { setMView(mv.dataset.kkMview); return; }
+
+    if (t.closest('[data-kk-mock-copy]')) {
+      var ta = el('[data-kk-mock-json]');
+      if (ta && navigator.clipboard) {
+        navigator.clipboard.writeText(ta.value);
+        t.closest('[data-kk-mock-copy]').textContent = 'Copied!';
+      }
+      return;
+    }
 
     if (t.closest('[data-kk-mock-dl]')) {
       mockBlob(function (blob) {

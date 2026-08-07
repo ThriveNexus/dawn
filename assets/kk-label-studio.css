@@ -662,3 +662,25 @@
   .kk-mock { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .kk-mock-side { border-left: 0; border-top: 1px solid rgba(var(--color-foreground), 0.14); }
 }
+
+/* comutatorul 3D / Photo din panoul de mockup */
+.kk-mview {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.2rem;
+}
+
+.kk-mview-btn {
+  flex: 1;
+  padding: 0.9rem;
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+}
+
+.kk-mview-btn.is-on {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+/* regula .kk-mock-wrap canvas { display:block } ar bate atributul hidden */
+.kk-mock-wrap canvas[hidden] { display: none; }
