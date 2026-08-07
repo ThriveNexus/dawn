@@ -1200,10 +1200,13 @@
   function tubeSurface(T, r, y0, y1, H, withUv) {
     var NU = 128, NV = 32;
     var pos = [], uv = [], idx = [];
+    /* Turtirea începe abia în treimea de sus — pornită de la jumătate, tubul
+       arăta a vază. sx crește blând (lățimea crimpului), sz cade aproape de
+       zero (sudura e o linie). */
     function squish(t) {
-      var f = Math.max(0, Math.min(1, (t - 0.45) / 0.55));
+      var f = Math.max(0, Math.min(1, (t - 0.62) / 0.38));
       f = f * f * (3 - 2 * f);
-      return { sx: 1 + 0.55 * f, sz: 1 - 0.92 * f };
+      return { sx: 1 + 0.42 * f, sz: 1 - 0.9 * f };
     }
     for (var j = 0; j <= NV; j++) {
       var v = j / NV;
@@ -1247,7 +1250,7 @@
       parts.push(body);
 
       /* eticheta pe zona de jos, care e încă rotundă; urmează profilul */
-      var pad = Math.max(1.5, (bodyH * 0.45 - h) / 2);
+      var pad = Math.max(1.5, (bodyH * 0.62 - h) / 2);
       bandGeo = tubeSurface(T, r + 0.12, pad, pad + h, bodyH, true);
       bandY = capH;
       topY = capH + bodyH;
@@ -1436,17 +1439,72 @@
      Coordonatele sunt procente din poza de 1200×1800, măsurate pe imagine. */
   function SCENES() {
     var photo = conf.photodef || '';
+    /* Scena descrie doar CONTURUL recipientului în poză (marginile siluetei,
+       sus și jos, în procente) plus lumina. Cât de mare e eticheta pe el NU se
+       stochează: se calculează din milimetrii reali — lățimea siluetei
+       corespunde diametrului, de acolo iese px-per-mm, iar eticheta aterizează
+       mereu la proporțiile ei adevărate, oricare ar fi produsul. */
     return {
       tube: {
         photo: photo,
-        quad: [[39.5, 21.5], [61.5, 21.5], [58.5, 52], [41.5, 52]],
-        wrap: 65, bulge: 1, shade: 28, shine: 10
+        top: { y: 20.5, xL: 39.5, xR: 61.5 },
+        bot: { y: 53,   xL: 41.5, xR: 58.5 },
+        yC: 36,
+        bulge: 1, shade: 28, shine: 10
       },
       jar: {
         photo: photo,
-        quad: [[67, 63.5], [85, 63.5], [85, 78], [67, 78]],
-        wrap: 70, bulge: 2.5, shade: 34, shine: 8
+        top: { y: 63.5, xL: 66.5, xR: 85.5 },
+        bot: { y: 78.5, xL: 66.5, xR: 85.5 },
+        yC: 70.5,
+        bulge: 2.5, shade: 34, shine: 8
       }
+    };
+  }
+
+  /* Așezarea etichetei pe poză, din geometrie reală:
+     silueta la înălțimea etichetei ↔ diametrul (2r), de unde px/mm;
+     lățimea vizibilă a feței = sin(semi-arcul zonei), fiindcă pe un cilindru
+     văzut frontal vezi cel mult jumătate de circumferință. */
+  function computePlacement(cfg, W, H, face) {
+    if (cfg.quad) {           /* metacâmpul poate fixa manual patrulaterul */
+      return { quad: cfg.quad.map(function (p) { return [p[0] / 100 * W, p[1] / 100 * H]; }),
+               wrap: cfg.wrap || 70 };
+    }
+    var z = zones();
+    var zoneMm = (face === 'back' ? conf.back
+                                  : conf.w - conf.back - conf.center) || conf.w;
+
+    function edgeAt(yPct) {
+      var t = (yPct - cfg.top.y) / (cfg.bot.y - cfg.top.y);
+      return {
+        xL: (cfg.top.xL + (cfg.bot.xL - cfg.top.xL) * t) / 100 * W,
+        xR: (cfg.top.xR + (cfg.bot.xR - cfg.top.xR) * t) / 100 * W
+      };
+    }
+
+    var mid = edgeAt(cfg.yC);
+    var faceW = mid.xR - mid.xL;                      /* ↔ 2r în px */
+    var pxPerMm = faceW / (conf.w / Math.PI);         /* 2r = lățime/π */
+    var labelH = conf.h * pxPerMm;
+
+    var yC = cfg.yC / 100 * H;
+    var y0 = yC - labelH / 2, y1 = yC + labelH / 2;
+
+    /* semi-arcul zonei de etichetă; peste 90° eticheta dă după siluetă */
+    var halfArc = Math.min(85 * Math.PI / 180, zoneMm * Math.PI / conf.w);
+    var frac = Math.sin(halfArc);
+
+    var e0 = edgeAt(y0 / H * 100), e1 = edgeAt(y1 / H * 100);
+    function shrink(e) {
+      var c = (e.xL + e.xR) / 2, half = (e.xR - e.xL) / 2 * frac;
+      return { xL: c - half, xR: c + half };
+    }
+    e0 = shrink(e0); e1 = shrink(e1);
+
+    return {
+      quad: [[e0.xL, y0], [e0.xR, y0], [e1.xR, y1], [e1.xL, y1]],
+      wrap: halfArc * 2 * 180 / Math.PI
     };
   }
 
@@ -1516,8 +1574,9 @@
      (cilindru văzut frontal), bombare parabolică sus/jos. */
   function warpFront(cfg, W, H) {
     var label = captureZone(mface);
-    var q = cfg.quad.map(function (p) { return [p[0] / 100 * W, p[1] / 100 * H]; });
-    var phiMax = Math.max(0, Math.min(85, cfg.wrap / 2)) * Math.PI / 180;
+    var place = computePlacement(cfg, W, H, mface);
+    var q = place.quad;
+    var phiMax = Math.max(0, Math.min(85, place.wrap / 2)) * Math.PI / 180;
     var qh = (q[3][1] - q[0][1] + q[2][1] - q[1][1]) / 2;
     var bulgePx = cfg.bulge / 100 * qh;
 
@@ -1601,9 +1660,12 @@
   function syncCalUi() {
     var cfg = mockCfg();
     if (!cfg) return;
-    var showCal = CAL_MODE && mview === 'photo';
+    /* colțurile trăgabile există doar când patrulaterul e fixat manual (metacâmp);
+       la scenele calculate din geometrie n-au obiect pe care să tragă */
+    var showCal = CAL_MODE && mview === 'photo' && !!cfg.quad;
     els('[data-kk-mock-h]').forEach(function (h) {
       h.hidden = !showCal;
+      if (!showCal) return;
       var p = cfg.quad[parseInt(h.dataset.kkMockH, 10)];
       h.style.left = p[0] + '%';
       h.style.top = p[1] + '%';
