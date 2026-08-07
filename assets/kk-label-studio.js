@@ -1511,21 +1511,27 @@
           for (var r = 0; r < 3; r++) s += 0.299 * rows[r][i * 4] + 0.587 * rows[r][i * 4 + 1] + 0.114 * rows[r][i * 4 + 2];
           return s / 3;
         }
-        var c = Math.round((approx.xL + approx.xR) / 2) - x0;
-        function firstEdge(from, dir, lim) {
+        /* Dinspre EXTERIOR spre interior: prima urcare puternică de la fundalul
+           întunecat la recipientul luminos = silueta. Dinspre centru, umbrele
+           interne de lângă umăr opreau scanarea devreme (verificat în banc pe
+           poza plafonată la 1600, unde înmuierea le făcea dominante). Rândurile
+           unde nici asta nu găsește nimic întorc centrul — potrivirea robustă
+           de mai jos le aruncă. */
+        function firstRise(from, dir, lim) {
           var maxG = 0, i, g;
           for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
-            g = dir > 0 ? lum(i - 1) - lum(i + 1) : lum(i + 1) - lum(i - 1);
+            g = dir > 0 ? lum(i + 1) - lum(i - 1) : lum(i - 1) - lum(i + 1);
             if (g > maxG) maxG = g;
           }
-          var TH = Math.max(9, maxG * 0.45);
+          var TH = Math.max(9, maxG * 0.5);
           for (i = from; dir > 0 ? i < lim : i > lim; i += dir) {
-            g = dir > 0 ? lum(i - 1) - lum(i + 1) : lum(i + 1) - lum(i - 1);
+            g = dir > 0 ? lum(i + 1) - lum(i - 1) : lum(i - 1) - lum(i + 1);
             if (g >= TH) return i;
           }
           return lim;
         }
-        return { xL: x0 + firstEdge(c, -1, 2), xR: x0 + firstEdge(c, 1, n - 2) };
+        var c = Math.round((approx.xL + approx.xR) / 2) - x0;
+        return { xL: x0 + firstRise(2, 1, c), xR: x0 + firstRise(n - 3, -1, c) };
       } catch (e) { return approx; }
     }
 
