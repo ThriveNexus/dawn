@@ -1547,6 +1547,31 @@
         "info": "The strip between front and back that overlaps when the label is wrapped. Nothing important should sit there."
       },
       {
+        "type": "select",
+        "id": "kk_packaging",
+        "label": "3D preview container",
+        "default": "bottle",
+        "options": [
+          {
+            "value": "bottle",
+            "label": "Bottle"
+          },
+          {
+            "value": "tube",
+            "label": "Tube"
+          },
+          {
+            "value": "jar",
+            "label": "Jar"
+          },
+          {
+            "value": "dropper",
+            "label": "Dropper bottle"
+          }
+        ],
+        "info": "The container shape shown in the 3D label preview. Any product can override this from its own metafields (custom.packaging_type)."
+      },
+      {
         "type": "number",
         "id": "kk_label_bleed",
         "label": "Bleed (mm)",

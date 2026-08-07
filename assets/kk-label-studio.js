@@ -69,6 +69,7 @@
       center: parseFloat(s.dataset.kkCenter) || 0,
       bleed: parseFloat(s.dataset.kkBleed) || 0,
       legal: s.dataset.kkLegal || '',
+      pack: s.dataset.kkPack || 'bottle',
       fabricUrl: s.dataset.kkFabric,
       libs: parseJsonAttr(s.dataset.kkLibs),
       fonts: parseJsonAttr(s.dataset.kkFonts),
@@ -1144,7 +1145,11 @@
      Fără ghidaje și fără chenarul de selecție. */
   function captureLabel() {
     var z = zones();
-    var k = canvas.getZoom ? canvas.getZoom() : 1;
+    /* Bufferul lui Fabric e mai mare decât coordonatele logice cu zoom ×
+       devicePixelRatio (retina). Raportul buffer/scenă le acoperă pe amândouă —
+       cu k doar din zoom, la scalarea Windows de 125% captura pierdea 20% din
+       lățimea etichetei și textul legal ieșea tăiat pe flacon. */
+    var k = canvas.lowerCanvasEl.width / stageSize(conf).w;
     var vis = guideObjs.map(function (o) { return o.visible; });
     guideObjs.forEach(function (o) { o.set('visible', false); });
     canvas.discardActiveObject();
@@ -1180,6 +1185,124 @@
     m3.camera.updateProjectionMatrix();
   }
 
+  var MAT = {
+    body: function (T) { return new T.MeshStandardMaterial({ color: 0xf5f4f0, roughness: 0.38, metalness: 0 }); },
+    dark: function (T) { return new T.MeshStandardMaterial({ color: 0x1d1d1b, roughness: 0.3, metalness: 0 }); }
+  };
+
+  /* Suprafață cilindrică ce se turtește spre vârf — corpul unui tub.
+     Parametrizarea (x = r·sinθ, z = r·cosθ) e aceeași ca la CylinderGeometry,
+     deci u=0 privește camera și textul rămâne cu orientarea corectă.
+     Cu withUv, aceeași suprafață devine banda de etichetă: urmează turtirea. */
+  function tubeSurface(T, r, y0, y1, H, withUv) {
+    var NU = 128, NV = 32;
+    var pos = [], uv = [], idx = [];
+    function squish(t) {
+      var f = Math.max(0, Math.min(1, (t - 0.45) / 0.55));
+      f = f * f * (3 - 2 * f);
+      return { sx: 1 + 0.55 * f, sz: 1 - 0.92 * f };
+    }
+    for (var j = 0; j <= NV; j++) {
+      var v = j / NV;
+      var y = y0 + (y1 - y0) * v;
+      var s = squish(y / H);
+      for (var i = 0; i <= NU; i++) {
+        var th = i / NU * Math.PI * 2;
+        pos.push(r * s.sx * Math.sin(th), y, r * s.sz * Math.cos(th));
+        if (withUv) uv.push(i / NU, v);
+      }
+    }
+    for (var jj = 0; jj < NV; jj++) {
+      for (var ii = 0; ii < NU; ii++) {
+        var a = jj * (NU + 1) + ii, b = a + 1, c = a + NU + 1, d = c + 1;
+        idx.push(a, b, c, b, d, c);
+      }
+    }
+    var g = new T.BufferGeometry();
+    g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+    if (withUv) g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  /* Recipientul, pe tipuri. Raza vine mereu din lățimea etichetei
+     (circumferința), deci proporțiile sunt cele reale ale produsului. */
+  function buildContainer(T, type, r, h) {
+    var parts = [], bandGeo = null, bandY = 0, topY = 0;
+
+    if (type === 'tube') {
+      /* stă pe capac, ca în pozele de produs; corpul se turtește spre sudură */
+      var capH = r * 0.85, bodyH = h * 1.7;
+      var cap = new T.Mesh(new T.CylinderGeometry(r * 0.98, r * 0.98, capH, 64), MAT.dark(T));
+      cap.position.y = capH / 2;
+      parts.push(cap);
+
+      var body = new T.Mesh(tubeSurface(T, r, 0, bodyH, bodyH, false), MAT.body(T));
+      body.material.side = T.DoubleSide;    /* geometria e proprie — nu riscăm sensul fețelor */
+      body.position.y = capH;
+      parts.push(body);
+
+      /* eticheta pe zona de jos, care e încă rotundă; urmează profilul */
+      var pad = Math.max(1.5, (bodyH * 0.45 - h) / 2);
+      bandGeo = tubeSurface(T, r + 0.12, pad, pad + h, bodyH, true);
+      bandY = capH;
+      topY = capH + bodyH;
+
+    } else if (type === 'jar') {
+      var jarH = Math.max(h * 1.15, r * 1.1);
+      var pts = [
+        new T.Vector2(0.01, 0), new T.Vector2(r * 0.9, 0),
+        new T.Vector2(r, r * 0.1), new T.Vector2(r, jarH)
+      ];
+      parts.push(new T.Mesh(new T.LatheGeometry(pts, 96), MAT.body(T)));
+      var lid = new T.Mesh(new T.CylinderGeometry(r * 1.03, r * 1.03, r * 0.4, 96), MAT.dark(T));
+      lid.position.y = jarH + r * 0.2;
+      parts.push(lid);
+      bandGeo = new T.CylinderGeometry(r + 0.12, r + 0.12, h, 128, 1, true);
+      bandY = jarH * 0.5;      /* cilindrul e centrat pe propriul mijloc */
+      topY = jarH + r * 0.4;
+
+    } else if (type === 'dropper') {
+      var dH = h * 1.35;
+      var dpts = [
+        new T.Vector2(0.01, 0), new T.Vector2(r * 0.88, 0),
+        new T.Vector2(r, r * 0.14), new T.Vector2(r, dH),
+        new T.Vector2(r * 0.6, dH + r * 0.25), new T.Vector2(r * 0.3, dH + r * 0.4)
+      ];
+      parts.push(new T.Mesh(new T.LatheGeometry(dpts, 96), MAT.body(T)));
+      var dcap = new T.Mesh(new T.CylinderGeometry(r * 0.3, r * 0.34, r * 1.7, 48), MAT.dark(T));
+      dcap.position.y = dH + r * 0.4 + r * 0.85;
+      parts.push(dcap);
+      var bulb = new T.Mesh(new T.SphereGeometry(r * 0.3, 32, 24), MAT.dark(T));
+      bulb.scale.y = 1.25;
+      bulb.position.y = dH + r * 0.4 + r * 1.7;
+      parts.push(bulb);
+      bandGeo = new T.CylinderGeometry(r + 0.12, r + 0.12, h, 128, 1, true);
+      bandY = dH * 0.5;
+      topY = dH + r * 2.1;
+
+    } else {
+      /* bottle — implicit */
+      var bH = h * 1.5;
+      var bpts = [
+        new T.Vector2(0.01, 0), new T.Vector2(r * 0.88, 0),
+        new T.Vector2(r, r * 0.14), new T.Vector2(r, bH),
+        new T.Vector2(r * 0.8, bH + r * 0.3), new T.Vector2(r * 0.45, bH + r * 0.52),
+        new T.Vector2(r * 0.45, bH + r * 0.58)
+      ];
+      parts.push(new T.Mesh(new T.LatheGeometry(bpts, 96), MAT.body(T)));
+      var bcap = new T.Mesh(new T.CylinderGeometry(r * 0.47, r * 0.47, r * 0.8, 64), MAT.dark(T));
+      bcap.position.y = bH + r * 0.58 + r * 0.4;
+      parts.push(bcap);
+      bandGeo = new T.CylinderGeometry(r + 0.12, r + 0.12, h, 128, 1, true);
+      bandY = bH * 0.5;
+      topY = bH + r * 1.4;
+    }
+
+    return { parts: parts, bandGeo: bandGeo, bandY: bandY, topY: topY };
+  }
+
   function build3d() {
     var T = window.THREE;
     var cv = el('[data-kk-mock-canvas]');
@@ -1187,7 +1310,7 @@
     /* dimensiuni reale, în mm — scena lucrează direct în mm */
     var r = conf.w / (2 * Math.PI);
     var h = conf.h;
-    var bodyH = h * 1.5;
+    var built = buildContainer(T, conf.pack || 'bottle', r, h);
 
     m3.renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: true });
     m3.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
@@ -1199,51 +1322,28 @@
     var pmrem = new T.PMREMGenerator(m3.renderer);
     m3.scene.environment = pmrem.fromScene(new T.RoomEnvironment(), 0.04).texture;
 
-    var dist = Math.max(bodyH * 1.9, r * 7);
+    var dist = Math.max(built.topY * 1.6, r * 7);
     m3.camera = new T.PerspectiveCamera(32, 1, 1, dist * 6);
-    m3.camera.position.set(0, bodyH * 0.62, dist);
+    m3.camera.position.set(0, built.topY * 0.58, dist);
 
     m3.controls = new T.OrbitControls(m3.camera, cv);
-    m3.controls.target.set(0, bodyH * 0.52, 0);
+    m3.controls.target.set(0, built.topY * 0.48, 0);
     m3.controls.enablePan = false;
     m3.controls.enableDamping = true;
     m3.controls.minDistance = dist * 0.45;
     m3.controls.maxDistance = dist * 2;
 
-    /* corpul: profil strunjit — fund ușor rotunjit, perete drept, umăr, gât */
-    var pts = [
-      new T.Vector2(0.01, 0),
-      new T.Vector2(r * 0.88, 0),
-      new T.Vector2(r, r * 0.14),
-      new T.Vector2(r, bodyH),
-      new T.Vector2(r * 0.8, bodyH + r * 0.3),
-      new T.Vector2(r * 0.45, bodyH + r * 0.52),
-      new T.Vector2(r * 0.45, bodyH + r * 0.58)
-    ];
-    var body = new T.Mesh(
-      new T.LatheGeometry(pts, 96),
-      new T.MeshStandardMaterial({ color: 0xf5f4f0, roughness: 0.38, metalness: 0 })
-    );
-
-    var cap = new T.Mesh(
-      new T.CylinderGeometry(r * 0.47, r * 0.47, r * 0.8, 64),
-      new T.MeshStandardMaterial({ color: 0x1d1d1b, roughness: 0.3, metalness: 0 })
-    );
-    cap.position.y = bodyH + r * 0.58 + r * 0.4;
-
-    /* banda de etichetă: cilindru deschis, o idee peste corp; UV-urile acoperă
-       exact 0..1, deci textura = eticheta întreagă, de jur împrejur */
     var tex = new T.CanvasTexture(captureLabel());
     tex.encoding = T.sRGBEncoding;
     tex.anisotropy = m3.renderer.capabilities.getMaxAnisotropy();
-    m3.band = new T.Mesh(
-      new T.CylinderGeometry(r + 0.12, r + 0.12, h, 128, 1, true),
-      new T.MeshStandardMaterial({ map: tex, roughness: 0.5, metalness: 0 })
-    );
-    m3.band.position.y = bodyH * 0.5;
+    m3.band = new T.Mesh(built.bandGeo, new T.MeshStandardMaterial({
+      map: tex, roughness: 0.5, metalness: 0, side: T.DoubleSide
+    }));
+    m3.band.position.y = built.bandY;
     m3.band.rotation.y = -frontCenterU() * Math.PI * 2;
 
-    m3.scene.add(body, cap, m3.band);
+    built.parts.forEach(function (p) { m3.scene.add(p); });
+    m3.scene.add(m3.band);
     mockSize();
   }
 
