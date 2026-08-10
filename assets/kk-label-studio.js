@@ -1617,7 +1617,9 @@
 
   /* Înfășurare pe coloane întregi de pixeli — capete fracționare lasă rosturi
      de transparență și eticheta iese vărgată. Compresie asin la margini
-     (cilindru văzut frontal), bombare parabolică sus/jos. */
+     (cilindru văzut frontal), bombare parabolică sus/jos.
+     Pasul 2 mapează dreptunghiul pe trapezul siluetei, rând cu rând — tuburile
+     fotografiate sunt conice, iar laturi verticale ar lăsa pană sus sau jos. */
   function warpFront(cfg, W, H) {
     var label = captureZone(mface);
     var place = computePlacement(cfg, W, H, mface);
@@ -1642,6 +1644,10 @@
     var x0 = Math.max(0, Math.floor(xL));
     var x1 = Math.min(W, Math.ceil(xR));
 
+    var tmp = document.createElement('canvas');
+    tmp.width = W; tmp.height = H;
+    var tc = tmp.getContext('2d');
+
     for (var x = x0; x < x1; x++) {
       var u = (x + 0.5 - xL) / (xR - xL);
       if (u < 0 || u > 1) continue;
@@ -1654,7 +1660,20 @@
       var s0 = srcU(Math.max(0, (x - xL) / (xR - xL))) * label.width;
       var s1 = srcU(Math.min(1, (x + 1 - xL) / (xR - xL))) * label.width;
 
-      ctx.drawImage(label, s0, 0, Math.max(0.5, s1 - s0), label.height, x, yT, 1, yB - yT);
+      tc.drawImage(label, s0, 0, Math.max(0.5, s1 - s0), label.height, x, yT, 1, yB - yT);
+    }
+
+    var yTop = (q[0][1] + q[1][1]) / 2;
+    var yBot = (q[2][1] + q[3][1]) / 2;
+    var pad = Math.abs(bulgePx) + 1;
+    var yy0 = Math.max(0, Math.floor(yTop - pad));
+    var yy1 = Math.min(H, Math.ceil(yBot + pad));
+    for (var yy = yy0; yy < yy1; yy++) {
+      var t = (yy + 0.5 - yTop) / (yBot - yTop);
+      var lx = q[0][0] + (q[3][0] - q[0][0]) * t;
+      var rx = q[1][0] + (q[2][0] - q[1][0]) * t;
+      if (rx - lx < 1) continue;
+      ctx.drawImage(tmp, xL, yy, xR - xL, 1, lx, yy, rx - lx, 1);
     }
     return out;
   }
