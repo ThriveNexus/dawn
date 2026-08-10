@@ -1468,18 +1468,19 @@
        stochează: se calculează din milimetrii reali — lățimea siluetei
        corespunde diametrului, de acolo iese px-per-mm, iar eticheta aterizează
        mereu la proporțiile ei adevărate, oricare ar fi produsul. */
-    /* Cifrele NU sunt din ochi: calibrate în bancul local cu lupă pe muchii și
-       repere numerice — delta linie–muchie sub ±1,5px la cinci înălțimi, pe
-       conductele exacte ale temei (poza de pe CDN, plafonată la 1600). Restul
-       abaterii e bombarea naturală a muchiei, pe care o dreaptă n-o poate urma. */
+    /* Cifrele NU sunt din ochi: regresie liniară pe muchiile măsurate direct
+       pe poza servită de CDN, în pagina live — nu pe fișiere locale. Lecție
+       plătită: un banc local poate primi din cache-ul browserului altă imagine
+       decât cea de pe disc, și atunci „verificat" nu mai înseamnă nimic. */
     return {
       tube: {
-        /* packshot AI dedicat tubului (corp drept ~4:1); cădem pe poza
-           generică doar dacă tema nu l-a livrat */
+        /* packshot AI dedicat tubului; cădem pe poza generică doar dacă
+           tema nu l-a livrat. Liniile: regresie pe muchiile măsurate din
+           POZA DE PE CDN (nu de pe disc) — tubul se îngustează spre bază. */
         photo: conf.phototube || photo,
-        top: { y: 22, xL: 34.8, xR: 65.2 },
-        bot: { y: 88, xL: 33.2, xR: 66.8 },
-        yC: 52,
+        top: { y: 30, xL: 36.47, xR: 63.07 },
+        bot: { y: 72, xL: 38.60, xR: 61.08 },
+        yC: 51,
         bulge: 1, shade: 36, shine: 12
       },
       jar: {
