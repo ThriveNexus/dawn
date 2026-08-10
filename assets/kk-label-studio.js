@@ -427,6 +427,30 @@
   /* Panoul legal: text obligatoriu prin Reg. (UE) 1223/2009 art. 19.
      Nu e selectabil și nu primește evenimente — clientul nu-l poate muta,
      nici șterge. Dacă ar putea, produsul ar deveni neconform. */
+
+  /* Culorile panoului RĂMÂN editabile — pe o etichetă neagră, panoul alb ar
+     arăta ca un plasture. Textul în sine e tot blocat; doar culorile se schimbă,
+     cu avertisment când contrastul scade sub pragul de lizibilitate. */
+  var legalColors = { bg: '#ffffff', fg: '#111111' };
+
+  function relLum(hex) {
+    var n = parseInt(hex.slice(1), 16);
+    var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * f(n >> 16 & 255) + 0.7152 * f(n >> 8 & 255) + 0.0722 * f(n & 255);
+  }
+
+  function applyLegalColors() {
+    if (!canvas) return;
+    canvas.getObjects().forEach(function (o) {
+      if (o.kkShield) o.set('fill', legalColors.bg);
+      else if (o.kkLocked) o.set('fill', legalColors.fg);
+    });
+    var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
+    var w = el('[data-kk-legal-warn]');
+    if (w) w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
+    canvas.requestRenderAll();
+  }
+
   function addLegal() {
     if (!conf.legal) return;
     var z = zones();
@@ -441,7 +465,7 @@
       top: 0,
       width: z.w - z.centerEnd,
       height: z.h,
-      fill: '#ffffff',
+      fill: legalColors.bg,
       selectable: false,
       evented: false
     });
@@ -466,7 +490,7 @@
       charSpacing: -10,
       /* Inter ține la mărimi mici — de asta e fontul panoului legal */
       fontFamily: 'Inter',
-      fill: '#111111',
+      fill: legalColors.fg,
       originX: 'center',
       originY: 'center',
       left: z.centerEnd + bw / 2,
@@ -766,6 +790,14 @@
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
+    legalColors = { bg: '#ffffff', fg: '#111111' };
+    var lb = el('[data-kk-legal-bg]');
+    if (lb) lb.value = legalColors.bg;
+    var lf = el('[data-kk-legal-fg]');
+    if (lf) lf.value = legalColors.fg;
+    var lw = el('[data-kk-legal-warn]');
+    if (lw) lw.hidden = true;
+    applyLegalColors();
     syncPanel();
   }
 
@@ -1999,6 +2031,8 @@
       canvas.backgroundColor = e.target.value;
       canvas.requestRenderAll();
     }
+    if (e.target.matches('[data-kk-legal-bg]')) { legalColors.bg = e.target.value; applyLegalColors(); }
+    if (e.target.matches('[data-kk-legal-fg]')) { legalColors.fg = e.target.value; applyLegalColors(); }
     if (!o) return;
 
     if (e.target.matches('[data-kk-font]'))  { o.set('fontFamily', e.target.value); canvas.requestRenderAll(); }
