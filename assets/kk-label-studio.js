@@ -72,6 +72,7 @@
       pack: s.dataset.kkPack || 'bottle',
       photo: s.dataset.kkPhoto || '',
       photodef: s.dataset.kkPhotodef || '',
+      phototube: s.dataset.kkPhototube || '',
       mockup: s.dataset.kkMockup || '',
       fabricUrl: s.dataset.kkFabric,
       libs: parseJsonAttr(s.dataset.kkLibs),
@@ -1473,10 +1474,12 @@
        abaterii e bombarea naturală a muchiei, pe care o dreaptă n-o poate urma. */
     return {
       tube: {
-        photo: photo,
-        top: { y: 20.5, xL: 38.31, xR: 61.95 },
-        bot: { y: 52.8, xL: 40.96, xR: 58.5 },
-        yC: 36,
+        /* packshot AI dedicat tubului (corp drept ~4:1); cădem pe poza
+           generică doar dacă tema nu l-a livrat */
+        photo: conf.phototube || photo,
+        top: { y: 22, xL: 34.8, xR: 65.2 },
+        bot: { y: 88, xL: 33.2, xR: 66.8 },
+        yC: 52,
         bulge: 1, shade: 36, shine: 12
       },
       jar: {
