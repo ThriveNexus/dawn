@@ -491,6 +491,10 @@
 
     t.set({ left: z.centerEnd + bw / 2, top: z.y + z.th / 2 });
     t.setCoords();
+    /* scutul e opac și tocmai a fost adăugat peste ghidaje — pe un canvas
+       proaspăt liniile de tăiere/siguranță ar rămâne ascunse sub el până la
+       primul obiect al clientului; le ridicăm din prima */
+    liftGuides();
     canvas.requestRenderAll();
   }
 
