@@ -545,6 +545,12 @@
       t.initDimensions();
     }
 
+    /* Textul legal are mărime FIZICĂ fixă (~1,7 mm, norma de tipar), nu crește
+       cu eticheta. Poate doar să SCADĂ când panoul nu-l încape — iar sub
+       ~1,3 mm devine greu lizibil la tipar și merită spus, nu descoperit. */
+    var sizeHint = el('[data-kk-legal-size]');
+    if (sizeHint) sizeHint.hidden = t.fontSize >= 1.3 * perMm;
+
     t.set({ left: z.centerEnd + bw / 2, top: z.y + z.th / 2 });
     t.setCoords();
     /* scutul e opac și tocmai a fost adăugat peste ghidaje — pe un canvas
