@@ -279,6 +279,7 @@
       if (e.target && e.target.kkGuide) return;   /* altfel se auto-declanșează la nesfârșit */
       checkResolution();
       syncHint();
+      updateLegalHint();
       /* panoul legal + scutul lui stau DEASUPRA oricărui obiect al clientului —
          altfel un logo adăugat după ele le-ar acoperi; ordinea: scut, text, ghidaje */
       if (!(e.target && e.target.kkLocked)) {
@@ -292,6 +293,7 @@
       if (e.target && e.target.kkGuide) return;
       checkResolution();
       syncHint();
+      updateLegalHint();
       renderLayers();
     });
     /* textul editat pe canvas schimbă și numele stratului */
@@ -441,7 +443,9 @@
   /* Culorile panoului RĂMÂN editabile — pe o etichetă neagră, panoul alb ar
      arăta ca un plasture. Textul în sine e tot blocat; doar culorile se schimbă,
      cu avertisment când contrastul scade sub pragul de lizibilitate. */
-  var legalColors = { bg: '#ffffff', fg: '#111111', noPanel: false };
+  /* implicit FĂRĂ panou: grafica clientului curge sub textul legal, ca pe
+     ambalajele reale; panoul alb e opțiunea, pentru designuri aglomerate */
+  var legalColors = { bg: '#ffffff', fg: '#111111', noPanel: true };
 
   function relLum(hex) {
     var n = parseInt(hex.slice(1), 16);
@@ -455,20 +459,27 @@
       if (o.kkShield) { o.set('fill', legalColors.bg); o.set('visible', !legalColors.noPanel); }
       else if (o.kkLocked) o.set('fill', legalColors.fg);
     });
-    var w = el('[data-kk-legal-warn]');
-    if (w) {
-      if (legalColors.noPanel) {
-        /* fără panou nu putem măsura contrastul — grafica de dedesubt e a
-           clientului; îi lăsăm răspunderea, dar nu fără s-o spunem */
-        w.textContent = 'Transparent panel — make sure the legal text stays readable on your artwork.';
-        w.hidden = false;
-      } else {
-        var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
-        w.textContent = 'Low contrast — the legal text must stay readable on the panel.';
-        w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
-      }
-    }
+    var lb = el('[data-kk-legal-bg]');
+    if (lb) lb.disabled = legalColors.noPanel;   /* fără panou, culoarea lui n-are obiect */
+    updateLegalHint();
     canvas.requestRenderAll();
+  }
+
+  function updateLegalHint() {
+    var w = el('[data-kk-legal-warn]');
+    if (!w || !canvas) return;
+    if (legalColors.noPanel) {
+      /* fără panou nu putem măsura contrastul — grafica de dedesubt e a
+         clientului. Reamintim doar când chiar există ceva sub text, altfel
+         avertismentul permanent devine zgomot. */
+      var busy = hasWork() || (canvas.backgroundColor && canvas.backgroundColor !== '#ffffff');
+      w.textContent = 'Make sure the legal text stays readable on your artwork.';
+      w.hidden = !busy;
+    } else {
+      var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
+      w.textContent = 'Low contrast — the legal text must stay readable on the panel.';
+      w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
+    }
   }
 
   function addLegal() {
@@ -539,6 +550,7 @@
     /* scutul e opac și tocmai a fost adăugat peste ghidaje — pe un canvas
        proaspăt liniile de tăiere/siguranță ar rămâne ascunse sub el până la
        primul obiect al clientului; le ridicăm din prima */
+    applyLegalColors();               /* sincronizează și starea controalelor din panou */
     liftGuides();
     canvas.requestRenderAll();
   }
@@ -813,12 +825,12 @@
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
-    legalColors = { bg: '#ffffff', fg: '#111111', noPanel: false };
+    legalColors = { bg: '#ffffff', fg: '#111111', noPanel: true };
     var lb = el('[data-kk-legal-bg]');
     if (lb) lb.value = legalColors.bg;
     var lf = el('[data-kk-legal-fg]');
     if (lf) lf.value = legalColors.fg;
-    var lnp = el('[data-kk-legal-nopanel]');
+    var lnp = el('[data-kk-legal-panel]');
     if (lnp) lnp.checked = false;
     var lw = el('[data-kk-legal-warn]');
     if (lw) lw.hidden = true;
@@ -2053,8 +2065,8 @@
       e.target.value = '';
     }
 
-    if (e.target.matches('[data-kk-legal-nopanel]')) {
-      legalColors.noPanel = e.target.checked;
+    if (e.target.matches('[data-kk-legal-panel]')) {
+      legalColors.noPanel = !e.target.checked;
       applyLegalColors();
     }
 
