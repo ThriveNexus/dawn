@@ -282,8 +282,7 @@
       /* panoul legal + scutul lui stau DEASUPRA oricărui obiect al clientului —
          altfel un logo adăugat după ele le-ar acoperi; ordinea: scut, text, ghidaje */
       if (!(e.target && e.target.kkLocked)) {
-        canvas.getObjects().filter(function (o) { return o.kkLocked; })
-              .forEach(function (o) { canvas.bringToFront(o); });
+        liftLocked();
       }
       liftGuides();
       renderLayers();
@@ -390,6 +389,14 @@
     canvas.requestRenderAll();
   }
 
+  /* Scutul și textul legal stau DEASUPRA oricărui obiect al clientului, oricum
+     ar reordona straturile — altfel săgețile din Layers le pot depăși pe tăcute. */
+  function liftLocked() {
+    if (!canvas) return;
+    canvas.getObjects().filter(function (o) { return o.kkLocked; })
+          .forEach(function (o) { canvas.bringToFront(o); });
+  }
+
   function badge(left, width, text, cls) {
     /* pastilă centrată peste zona ei */
     return '<span class="kk-g-badge' + (cls || '') + '" style="left:' +
@@ -434,7 +441,7 @@
   /* Culorile panoului RĂMÂN editabile — pe o etichetă neagră, panoul alb ar
      arăta ca un plasture. Textul în sine e tot blocat; doar culorile se schimbă,
      cu avertisment când contrastul scade sub pragul de lizibilitate. */
-  var legalColors = { bg: '#ffffff', fg: '#111111' };
+  var legalColors = { bg: '#ffffff', fg: '#111111', noPanel: false };
 
   function relLum(hex) {
     var n = parseInt(hex.slice(1), 16);
@@ -445,12 +452,22 @@
   function applyLegalColors() {
     if (!canvas) return;
     canvas.getObjects().forEach(function (o) {
-      if (o.kkShield) o.set('fill', legalColors.bg);
+      if (o.kkShield) { o.set('fill', legalColors.bg); o.set('visible', !legalColors.noPanel); }
       else if (o.kkLocked) o.set('fill', legalColors.fg);
     });
-    var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
     var w = el('[data-kk-legal-warn]');
-    if (w) w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
+    if (w) {
+      if (legalColors.noPanel) {
+        /* fără panou nu putem măsura contrastul — grafica de dedesubt e a
+           clientului; îi lăsăm răspunderea, dar nu fără s-o spunem */
+        w.textContent = 'Transparent panel — make sure the legal text stays readable on your artwork.';
+        w.hidden = false;
+      } else {
+        var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
+        w.textContent = 'Low contrast — the legal text must stay readable on the panel.';
+        w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
+      }
+    }
     canvas.requestRenderAll();
   }
 
@@ -469,6 +486,7 @@
       width: z.w - z.centerEnd,
       height: z.h,
       fill: legalColors.bg,
+      visible: !legalColors.noPanel,
       selectable: false,
       evented: false
     });
@@ -608,8 +626,10 @@
 
       rows.push(
         '<li class="kk-layer' + (o === act ? ' is-on' : '') + (locked ? ' is-locked' : '') + '">' +
-          '<button type="button" class="kk-layer-vis" data-kk-lvis="' + id + '" ' +
-            'aria-label="Show or hide">' + (o.visible === false ? '◌' : '●') + '</button>' +
+          (locked
+            ? '<span class="kk-layer-vis" aria-hidden="true">●</span>'
+            : '<button type="button" class="kk-layer-vis" data-kk-lvis="' + id + '" ' +
+              'aria-label="Show or hide">' + (o.visible === false ? '◌' : '●') + '</button>') +
           '<button type="button" class="kk-layer-name" data-kk-lpick="' + id + '">' +
             layerName(o) + '</button>' +
           (locked
@@ -793,11 +813,13 @@
     canvas.requestRenderAll();
     var bg = el('[data-kk-bg]');
     if (bg) bg.value = '#ffffff';
-    legalColors = { bg: '#ffffff', fg: '#111111' };
+    legalColors = { bg: '#ffffff', fg: '#111111', noPanel: false };
     var lb = el('[data-kk-legal-bg]');
     if (lb) lb.value = legalColors.bg;
     var lf = el('[data-kk-legal-fg]');
     if (lf) lf.value = legalColors.fg;
+    var lnp = el('[data-kk-legal-nopanel]');
+    if (lnp) lnp.checked = false;
     var lw = el('[data-kk-legal-warn]');
     if (lw) lw.hidden = true;
     applyLegalColors();
@@ -1943,9 +1965,10 @@
       if (!o) return;
 
       if (d.kkLpick && o.selectable) { canvas.setActiveObject(o); }
-      else if (d.kkLvis) { o.set('visible', o.visible === false); }
-      else if (d.kkLup) { canvas.bringForward(o); liftGuides(); }
-      else if (d.kkLdown) { canvas.sendBackwards(o); liftGuides(); }
+      /* obiectele legale nu se pot ascunde — o etichetă fără INCI e neconformă */
+      else if (d.kkLvis && !o.kkLocked) { o.set('visible', o.visible === false); }
+      else if (d.kkLup) { canvas.bringForward(o); liftLocked(); liftGuides(); }
+      else if (d.kkLdown) { canvas.sendBackwards(o); liftLocked(); liftGuides(); }
       else if (d.kkLdel && !o.kkLocked) { canvas.remove(o); canvas.discardActiveObject(); }
 
       canvas.requestRenderAll();
@@ -2028,6 +2051,11 @@
     if (e.target.matches('[data-kk-add-image]')) {
       addImage(e.target.files && e.target.files[0]);
       e.target.value = '';
+    }
+
+    if (e.target.matches('[data-kk-legal-nopanel]')) {
+      legalColors.noPanel = e.target.checked;
+      applyLegalColors();
     }
 
     /* Ghidajele se pot stinge — pe un design aproape gata încep să încurce. */
