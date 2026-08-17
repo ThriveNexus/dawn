@@ -1523,11 +1523,25 @@
         bulge: 1, shade: 36, shine: 12
       },
       jar: {
-        photo: photo,
-        top: { y: 63.5, xL: 65.2, xR: 86.4 },
-        bot: { y: 78.5, xL: 64.3, xR: 86.0 },
-        yC: 70.5,
-        bulge: 2.5, shade: 34, shine: 8
+        photo: conf.photojar || photo,
+        top: { y: 45.6, xL: 12.60, xR: 87.50 },
+        bot: { y: 71.6, xL: 12.63, xR: 87.68 },
+        yC: 58.6,
+        bulge: 1.5, shade: 34, shine: 8
+      },
+      bottle: {
+        photo: conf.photobottle || photo,
+        top: { y: 28.6, xL: 34.56, xR: 64.06 },
+        bot: { y: 83.3, xL: 34.63, xR: 64.06 },
+        yC: 56,
+        bulge: 1, shade: 36, shine: 12
+      },
+      dropper: {
+        photo: conf.photodropper || photo,
+        top: { y: 40.4, xL: 35.55, xR: 64.10 },
+        bot: { y: 83.3, xL: 35.55, xR: 63.89 },
+        yC: 61.8,
+        bulge: 1, shade: 36, shine: 12
       }
     };
   }
