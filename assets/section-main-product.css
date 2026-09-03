@@ -1000,6 +1000,65 @@ a.product__text {
   }
 }
 
+/* kk: săgeți prev/next peste imaginea mare (layout cu miniaturi, desktop).
+   Pe mobil rămâne caruselul cu glisare al temei. */
+.kk-gallery-arrow {
+  display: none;
+}
+
+@media screen and (min-width: 750px) {
+  media-gallery > [id^='GalleryViewer'] {
+    position: relative;
+  }
+
+  .kk-gallery-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4.4rem;
+    height: 4.4rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(var(--color-background), 0.92);
+    color: rgb(var(--color-foreground));
+    box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.85;
+    transition: opacity 0.15s ease;
+  }
+
+  .kk-gallery-arrow:hover,
+  .kk-gallery-arrow:focus-visible {
+    opacity: 1;
+  }
+
+  .kk-gallery-arrow--prev {
+    left: 1.2rem;
+  }
+
+  .kk-gallery-arrow--next {
+    right: 1.2rem;
+  }
+
+  .kk-gallery-arrow .icon {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  .kk-gallery-arrow--prev .icon {
+    transform: rotate(90deg);
+  }
+
+  .kk-gallery-arrow--next .icon {
+    transform: rotate(-90deg);
+  }
+}
+
 @media screen and (min-width: 900px) {
   .product--small .thumbnail-list.slider--tablet-up .thumbnail-list__item.slider__slide {
     width: calc(25% - 0.8rem);

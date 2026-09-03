@@ -153,6 +153,29 @@
         </span>
       </button>
     </div>
+    {%- comment -%}
+      kk: săgeți peste imaginea mare pentru layout-ul cu miniaturi (desktop).
+      Pe desktop lista mare nu e carusel — media-gallery.js schimbă imaginea
+      activă (kkStep), exact ca la click pe miniatură.
+    {%- endcomment -%}
+    {%- if media_count > 1 and section.settings.gallery_layout contains 'thumbnail' -%}
+      <button
+        type="button"
+        class="kk-gallery-arrow kk-gallery-arrow--prev quick-add-hidden"
+        aria-label="{{ 'general.slider.previous_slide' | t }}"
+        data-kk-arrow="prev"
+      >
+        {{- 'icon-caret.svg' | inline_asset_content -}}
+      </button>
+      <button
+        type="button"
+        class="kk-gallery-arrow kk-gallery-arrow--next quick-add-hidden"
+        aria-label="{{ 'general.slider.next_slide' | t }}"
+        data-kk-arrow="next"
+      >
+        {{- 'icon-caret.svg' | inline_asset_content -}}
+      </button>
+    {%- endif -%}
   </slider-component>
   {%- if first_3d_model -%}
     <button
