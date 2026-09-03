@@ -1028,11 +1028,12 @@ a.product__text {
     box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.18);
     cursor: pointer;
     z-index: 2;
-    opacity: 0.85;
+    opacity: 0;
     transition: opacity 0.15s ease;
   }
 
-  .kk-gallery-arrow:hover,
+  /* vizibile doar cât mouse-ul e pe imagine (sau la navigare cu tastatura) */
+  media-gallery > [id^='GalleryViewer']:hover .kk-gallery-arrow,
   .kk-gallery-arrow:focus-visible {
     opacity: 1;
   }
