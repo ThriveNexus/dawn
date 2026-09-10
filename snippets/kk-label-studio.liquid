@@ -43,35 +43,35 @@
     {%- endcomment -%}
     <script type="application/json" data-kk-i18n>
       {
-        "not_loaded": {{ 'kk.studio_js.not_loaded' | t | json }},
-        "seam": {{ 'kk.studio_js.seam' | t | json }},
-        "back_locked": {{ 'kk.studio_js.back_locked' | t | json }},
-        "legal_readable": {{ 'kk.studio_js.legal_readable' | t | json }},
-        "low_contrast": {{ 'kk.studio.low_contrast' | t | json }},
-        "dpi_warn": {{ 'kk.studio_js.dpi_warn' | t: dpi: '__dpi__' | json }},
-        "layer_legal": {{ 'kk.studio.legal_panel' | t | json }},
-        "layer_image": {{ 'kk.studio_js.layer_image' | t | json }},
-        "layer_text": {{ 'kk.studio.text' | t | json }},
-        "layer_circle": {{ 'kk.studio.circle' | t | json }},
-        "layer_triangle": {{ 'kk.studio.triangle' | t | json }},
-        "layer_rect": {{ 'kk.studio_js.layer_rect' | t | json }},
-        "show_hide": {{ 'kk.studio_js.show_hide' | t | json }},
-        "required_by_law": {{ 'kk.studio_js.required_by_law' | t | json }},
-        "move_up": {{ 'kk.studio_js.move_up' | t | json }},
-        "move_down": {{ 'kk.studio_js.move_down' | t | json }},
-        "delete": {{ 'kk.studio_js.delete' | t | json }},
-        "your_brand": {{ 'kk.fields.your_brand' | t | json }},
-        "img_too_big": {{ 'kk.studio_js.img_too_big' | t | json }},
-        "preparing": {{ 'kk.studio_js.preparing' | t | json }},
-        "pack_attached": {{ 'kk.studio_js.pack_attached' | t: w: '__w__', h: '__h__' | json }},
-        "svg_attached": {{ 'kk.studio_js.svg_attached' | t: w: '__w__', h: '__h__' | json }},
-        "attach_failed": {{ 'kk.studio_js.attach_failed' | t | json }},
-        "preview3d_failed": {{ 'kk.studio_js.preview3d_failed' | t | json }},
-        "photo_failed": {{ 'kk.studio_js.photo_failed' | t | json }},
-        "close_confirm": {{ 'kk.studio_js.close_confirm' | t | json }},
-        "copied": {{ 'kk.studio_js.copied' | t | json }},
-        "mockup_attached": {{ 'kk.studio_js.mockup_attached' | t | json }},
-        "mockup_failed": {{ 'kk.studio_js.mockup_failed' | t | json }}
+        "not_loaded": {{ 'kk.studio_js.not_loaded_html' | t | json }},
+        "seam": {{ 'kk.studio_js.seam_html' | t | json }},
+        "back_locked": {{ 'kk.studio_js.back_locked_html' | t | json }},
+        "legal_readable": {{ 'kk.studio_js.legal_readable_html' | t | json }},
+        "low_contrast": {{ 'kk.studio_js.low_contrast_html' | t | json }},
+        "dpi_warn": {{ 'kk.studio_js.dpi_warn_html' | t: dpi: '__dpi__' | json }},
+        "layer_legal": {{ 'kk.studio_js.layer_legal_html' | t | json }},
+        "layer_image": {{ 'kk.studio_js.layer_image_html' | t | json }},
+        "layer_text": {{ 'kk.studio_js.layer_text_html' | t | json }},
+        "layer_circle": {{ 'kk.studio_js.layer_circle_html' | t | json }},
+        "layer_triangle": {{ 'kk.studio_js.layer_triangle_html' | t | json }},
+        "layer_rect": {{ 'kk.studio_js.layer_rect_html' | t | json }},
+        "show_hide": {{ 'kk.studio_js.show_hide_html' | t | json }},
+        "required_by_law": {{ 'kk.studio_js.required_by_law_html' | t | json }},
+        "move_up": {{ 'kk.studio_js.move_up_html' | t | json }},
+        "move_down": {{ 'kk.studio_js.move_down_html' | t | json }},
+        "delete": {{ 'kk.studio_js.delete_html' | t | json }},
+        "your_brand": {{ 'kk.fields.your_brand_html' | t | json }},
+        "img_too_big": {{ 'kk.studio_js.img_too_big_html' | t | json }},
+        "preparing": {{ 'kk.studio_js.preparing_html' | t | json }},
+        "pack_attached": {{ 'kk.studio_js.pack_attached_html' | t: w: '__w__', h: '__h__' | json }},
+        "svg_attached": {{ 'kk.studio_js.svg_attached_html' | t: w: '__w__', h: '__h__' | json }},
+        "attach_failed": {{ 'kk.studio_js.attach_failed_html' | t | json }},
+        "preview3d_failed": {{ 'kk.studio_js.preview3d_failed_html' | t | json }},
+        "photo_failed": {{ 'kk.studio_js.photo_failed_html' | t | json }},
+        "close_confirm": {{ 'kk.studio_js.close_confirm_html' | t | json }},
+        "copied": {{ 'kk.studio_js.copied_html' | t | json }},
+        "mockup_attached": {{ 'kk.studio_js.mockup_attached_html' | t | json }},
+        "mockup_failed": {{ 'kk.studio_js.mockup_failed_html' | t | json }}
       }
     </script>
 
@@ -113,15 +113,15 @@
         {%- endcomment -%}
         <script type="application/json" data-kk-fields>
           {
-            {{ 'kk.fields.brand' | t | json }}: {{ 'kk.fields.your_brand' | t | json }},
-            {{ 'kk.fields.title' | t | json }}: {{ product.title | json }}
-            {%- if kk_vol != blank -%}, {{ 'kk.fields.volume' | t | json }}: {{ kk_vol | json }}{%- endif -%}
-            {%- if m.inci.value != blank -%}, {{ 'kk.fields.inci' | t | json }}: {{ m.inci.value | json }}{%- endif -%}
-            {%- if m.active_ingredients.value != blank -%}, {{ 'kk.fields.key_ingredients' | t | json }}: {{ m.active_ingredients.value | join: ', ' | json }}{%- endif -%}
-            {%- if m.claims.value != blank -%}, {{ 'kk.fields.claims' | t | json }}: {{ m.claims.value | join: ' · ' | json }}{%- endif -%}
-            {%- if m.recommended_for.value != blank -%}, {{ 'kk.fields.skin_type' | t | json }}: {{ m.recommended_for.value | join: ', ' | json }}{%- endif -%}
-            {%- if m.skin_concerns.value != blank -%}, {{ 'kk.fields.concerns' | t | json }}: {{ m.skin_concerns.value | join: ', ' | json }}{%- endif -%}
-            {%- if m.how_to_use.value != blank -%}, {{ 'kk.fields.how_to_use' | t | json }}: {{ m.how_to_use.value | json }}{%- endif -%}
+            {{ 'kk.fields.brand_html' | t | json }}: {{ 'kk.fields.your_brand_html' | t | json }},
+            {{ 'kk.fields.title_html' | t | json }}: {{ product.title | json }}
+            {%- if kk_vol != blank -%}, {{ 'kk.fields.volume_html' | t | json }}: {{ kk_vol | json }}{%- endif -%}
+            {%- if m.inci.value != blank -%}, {{ 'kk.fields.inci_html' | t | json }}: {{ m.inci.value | json }}{%- endif -%}
+            {%- if m.active_ingredients.value != blank -%}, {{ 'kk.fields.key_ingredients_html' | t | json }}: {{ m.active_ingredients.value | join: ', ' | json }}{%- endif -%}
+            {%- if m.claims.value != blank -%}, {{ 'kk.fields.claims_html' | t | json }}: {{ m.claims.value | join: ' · ' | json }}{%- endif -%}
+            {%- if m.recommended_for.value != blank -%}, {{ 'kk.fields.skin_type_html' | t | json }}: {{ m.recommended_for.value | join: ', ' | json }}{%- endif -%}
+            {%- if m.skin_concerns.value != blank -%}, {{ 'kk.fields.concerns_html' | t | json }}: {{ m.skin_concerns.value | join: ', ' | json }}{%- endif -%}
+            {%- if m.how_to_use.value != blank -%}, {{ 'kk.fields.how_to_use_html' | t | json }}: {{ m.how_to_use.value | json }}{%- endif -%}
           }
         </script>
 
@@ -291,7 +291,7 @@
           <textarea class="kk-mock-json" data-kk-mock-json rows="4" readonly></textarea>
           <button type="button" class="kk-tool-btn" data-kk-mock-copy>{{ 'kk.studio.copy_json' | t }}</button>
           <p class="kk-tool-hint">
-            {{ 'kk.studio.cal_paste' | t }}
+            {{ 'kk.studio.cal_paste_html' | t }}
           </p>
         </div>
       </aside>

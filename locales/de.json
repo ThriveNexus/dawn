@@ -541,7 +541,7 @@
       "upload_hint": "PNG, JPG, PDF, AI, EPS oder SVG · max. 20 MB",
       "attached_ok": "✓ Angehängt. Ihr Design wird vor der Produktion geprüft und bestätigt.",
       "quantity": "Menge",
-      "pcs": "Stk.",
+      "pcs_html": "Stk.",
       "cost_pc": "Ihre Kosten / Stk.",
       "you_save": "Sie sparen",
       "retail_pc": "Ihr Verkaufspreis / Stk.",
@@ -552,7 +552,7 @@
       "retail_hint": "Der Verkaufspreis ist unser Vorschlag – tragen Sie Ihren ein, um Ihre Marge zu sehen.",
       "ladder_lab": "Mengenstaffel – Zeile antippen, um zu springen",
       "indicative": "Richtwerte. Der Endpreis wird mit Ihrer Bestellung bestätigt.",
-      "add_with_design": "Mit meinem Design in den Warenkorb"
+      "add_with_design_html": "Mit meinem Design in den Warenkorb"
     },
     "lead": {
       "title": "Bevor Sie Ihr Design hochladen",
@@ -563,8 +563,8 @@
       "optional": "(optional)",
       "continue": "Weiter zum Design",
       "privacy": "Wir nutzen dies nur, um Sie zu dieser Bestellung zu kontaktieren.",
-      "err_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-      "err_phone": "Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen."
+      "err_email_html": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "err_phone_html": "Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen."
     },
     "legal": {
       "ingredients": "INHALTSSTOFFE",
@@ -577,16 +577,16 @@
       "made_in": "MADE IN ITALY"
     },
     "fields": {
-      "brand": "Markenname",
-      "your_brand": "Ihre Marke",
-      "title": "Produktname",
-      "volume": "Inhalt",
-      "inci": "INCI",
-      "key_ingredients": "Hauptinhaltsstoffe",
-      "claims": "Wirkversprechen",
-      "skin_type": "Hauttyp",
-      "concerns": "Hautbedürfnisse",
-      "how_to_use": "Anwendung"
+      "brand_html": "Markenname",
+      "your_brand_html": "Ihre Marke",
+      "title_html": "Produktname",
+      "volume_html": "Inhalt",
+      "inci_html": "INCI",
+      "key_ingredients_html": "Hauptinhaltsstoffe",
+      "claims_html": "Wirkversprechen",
+      "skin_type_html": "Hauttyp",
+      "concerns_html": "Hautbedürfnisse",
+      "how_to_use_html": "Anwendung"
     },
     "studio": {
       "title": "Etikettenstudio",
@@ -653,33 +653,38 @@
       "shade": "Schatten",
       "shine": "Glanz",
       "copy_json": "JSON kopieren",
-      "cal_paste": "In das Metafeld <b>custom.mockup</b> des Produkts einfügen. Käufer erhalten dann genau diese Platzierung, ohne die Kalibrierwerkzeuge.",
+      "cal_paste_html": "In das Metafeld <b>custom.mockup</b> des Produkts einfügen. Käufer erhalten dann genau diese Platzierung, ohne die Kalibrierwerkzeuge.",
       "corner": "Ecke {{ n }}"
     },
     "studio_js": {
-      "not_loaded": "Das Designstudio konnte nicht geladen werden. Bitte laden Sie stattdessen eine fertige Datei hoch.",
-      "seam": "Naht",
-      "back_locked": "Rückseite · gesperrt",
-      "legal_readable": "Achten Sie darauf, dass die Pflichtangaben auf Ihrer Grafik lesbar bleiben.",
-      "dpi_warn": "Ein Bild hat in dieser Größe etwa {{ dpi }} DPI. Unter 150 DPI wird der Druck unscharf – größere Datei verwenden oder verkleinern.",
-      "layer_image": "Bild",
-      "layer_rect": "Rechteck",
-      "show_hide": "Ein- oder ausblenden",
-      "required_by_law": "Gesetzlich vorgeschrieben – kann nicht verschoben werden",
-      "move_up": "Nach oben",
-      "move_down": "Nach unten",
-      "delete": "Löschen",
-      "img_too_big": "Dieses Bild ist größer als 12 MB. Bitte verwenden Sie eine kleinere Datei.",
-      "preparing": "Dateien werden vorbereitet…",
-      "pack_attached": "Designpaket angehängt – druckfertiges PDF, editierbares SVG und Schriften ({{ w }} × {{ h }} mm).",
-      "svg_attached": "Im Studio gestaltet – Vektordatei, {{ w }} × {{ h }} mm.",
-      "attach_failed": "Das Design konnte nicht automatisch angehängt werden. Bitte „Herunterladen“ nutzen und die Datei hochladen.",
-      "preview3d_failed": "Die 3D-Vorschau konnte nicht geladen werden.",
-      "photo_failed": "Das Studiofoto konnte nicht geladen werden.",
-      "close_confirm": "Studio schließen? Ihr Design ist noch nicht an die Bestellung angehängt und geht verloren.",
-      "copied": "Kopiert!",
-      "mockup_attached": "Mockup angehängt – es begleitet die Bestellung.",
-      "mockup_failed": "Anhängen fehlgeschlagen – bitte „Herunterladen“ nutzen."
+      "low_contrast_html": "Geringer Kontrast – die Pflichtangaben müssen auf dem Feld lesbar bleiben.",
+      "layer_legal_html": "Pflichtangaben",
+      "layer_text_html": "Text",
+      "layer_circle_html": "Kreis",
+      "layer_triangle_html": "Dreieck",
+      "not_loaded_html": "Das Designstudio konnte nicht geladen werden. Bitte laden Sie stattdessen eine fertige Datei hoch.",
+      "seam_html": "Naht",
+      "back_locked_html": "Rückseite · gesperrt",
+      "legal_readable_html": "Achten Sie darauf, dass die Pflichtangaben auf Ihrer Grafik lesbar bleiben.",
+      "dpi_warn_html": "Ein Bild hat in dieser Größe etwa {{ dpi }} DPI. Unter 150 DPI wird der Druck unscharf – größere Datei verwenden oder verkleinern.",
+      "layer_image_html": "Bild",
+      "layer_rect_html": "Rechteck",
+      "show_hide_html": "Ein- oder ausblenden",
+      "required_by_law_html": "Gesetzlich vorgeschrieben – kann nicht verschoben werden",
+      "move_up_html": "Nach oben",
+      "move_down_html": "Nach unten",
+      "delete_html": "Löschen",
+      "img_too_big_html": "Dieses Bild ist größer als 12 MB. Bitte verwenden Sie eine kleinere Datei.",
+      "preparing_html": "Dateien werden vorbereitet…",
+      "pack_attached_html": "Designpaket angehängt – druckfertiges PDF, editierbares SVG und Schriften ({{ w }} × {{ h }} mm).",
+      "svg_attached_html": "Im Studio gestaltet – Vektordatei, {{ w }} × {{ h }} mm.",
+      "attach_failed_html": "Das Design konnte nicht automatisch angehängt werden. Bitte „Herunterladen“ nutzen und die Datei hochladen.",
+      "preview3d_failed_html": "Die 3D-Vorschau konnte nicht geladen werden.",
+      "photo_failed_html": "Das Studiofoto konnte nicht geladen werden.",
+      "close_confirm_html": "Studio schließen? Ihr Design ist noch nicht an die Bestellung angehängt und geht verloren.",
+      "copied_html": "Kopiert!",
+      "mockup_attached_html": "Mockup angehängt – es begleitet die Bestellung.",
+      "mockup_failed_html": "Anhängen fehlgeschlagen – bitte „Herunterladen“ nutzen."
     },
     "panel": {
       "price_pc": "Preis / 1 Stk.",
@@ -695,7 +700,7 @@
       "over_cap": "Über {{ n }} Stück läuft die Bestellung über unseren Großhandelsprozess.",
       "request_quote": "Angebot anfragen →",
       "trust": "Made in Italy · Zertifiziert bio · Design vor der Produktion geprüft",
-      "discount_applied": "{{ pct }}% Mengenrabatt wird an der Kasse abgezogen."
+      "discount_applied_html": "{{ pct }}% Mengenrabatt wird an der Kasse abgezogen."
     },
     "consumer": {
       "resell_note": "Das ist die Produktseite, die Ihre Kunden beim Weiterverkauf sehen – mit Ihrer Marke.",
@@ -711,9 +716,9 @@
       "free_from": "Ohne Parabene, SLS/SLES, Paraffine, Silikone, Mineralöle, PEG und synthetische Farbstoffe"
     },
     "cart": {
-      "min_order": "Die Mindestbestellmenge beträgt <strong>{{ min }} Stück</strong> – die kleinste Produktionscharge.",
-      "cases": "Dieses Produkt wird in Kartons zu <strong>{{ mult }}</strong> verkauft.",
-      "remove_hint": "Um einen Artikel zu entfernen, nutzen Sie das Papierkorb-Symbol."
+      "min_order_html": "Die Mindestbestellmenge beträgt <strong>{{ min }} Stück</strong> – die kleinste Produktionscharge.",
+      "cases_html": "Dieses Produkt wird in Kartons zu <strong>{{ mult }}</strong> verkauft.",
+      "remove_hint_html": "Um einen Artikel zu entfernen, nutzen Sie das Papierkorb-Symbol."
     }
   }
 }

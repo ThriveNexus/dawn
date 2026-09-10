@@ -541,7 +541,7 @@
       "upload_hint": "PNG, JPG, PDF, AI, EPS or SVG · max 20 MB",
       "attached_ok": "✓ Attached. Your design is reviewed and confirmed before production.",
       "quantity": "Quantity",
-      "pcs": "pcs",
+      "pcs_html": "pcs",
       "cost_pc": "Your cost / pc",
       "you_save": "You save",
       "retail_pc": "Your retail / pc",
@@ -552,7 +552,7 @@
       "retail_hint": "Retail price is our suggestion — type yours over it to see your own margin.",
       "ladder_lab": "Volume scale — tap a row to jump",
       "indicative": "Indicative figures. Final pricing is confirmed with your order.",
-      "add_with_design": "Add to cart with my design"
+      "add_with_design_html": "Add to cart with my design"
     },
     "lead": {
       "title": "Before you upload your design",
@@ -563,8 +563,8 @@
       "optional": "(optional)",
       "continue": "Continue to design",
       "privacy": "We use this only to contact you about this order.",
-      "err_email": "Please enter a valid email address.",
-      "err_phone": "Please enter a phone number we can reach you on."
+      "err_email_html": "Please enter a valid email address.",
+      "err_phone_html": "Please enter a phone number we can reach you on."
     },
     "legal": {
       "ingredients": "INGREDIENTS",
@@ -577,16 +577,16 @@
       "made_in": "MADE IN ITALY"
     },
     "fields": {
-      "brand": "Brand name",
-      "your_brand": "Your brand",
-      "title": "Product title",
-      "volume": "Volume",
-      "inci": "INCI",
-      "key_ingredients": "Key ingredients",
-      "claims": "Claims",
-      "skin_type": "Skin type",
-      "concerns": "Concerns",
-      "how_to_use": "How to use"
+      "brand_html": "Brand name",
+      "your_brand_html": "Your brand",
+      "title_html": "Product title",
+      "volume_html": "Volume",
+      "inci_html": "INCI",
+      "key_ingredients_html": "Key ingredients",
+      "claims_html": "Claims",
+      "skin_type_html": "Skin type",
+      "concerns_html": "Concerns",
+      "how_to_use_html": "How to use"
     },
     "studio": {
       "title": "Label studio",
@@ -653,33 +653,38 @@
       "shade": "Shade",
       "shine": "Shine",
       "copy_json": "Copy JSON",
-      "cal_paste": "Paste it into the product's <b>custom.mockup</b> metafield. Buyers then get this exact placement, without the calibration tools.",
+      "cal_paste_html": "Paste it into the product's <b>custom.mockup</b> metafield. Buyers then get this exact placement, without the calibration tools.",
       "corner": "Corner {{ n }}"
     },
     "studio_js": {
-      "not_loaded": "The design studio could not be loaded. Please upload a ready file instead.",
-      "seam": "Seam",
-      "back_locked": "Back · locked",
-      "legal_readable": "Make sure the legal text stays readable on your artwork.",
-      "dpi_warn": "One image is about {{ dpi }} DPI at this size. Under 150 DPI it prints soft — use a bigger file, or scale it down.",
-      "layer_image": "Image",
-      "layer_rect": "Rectangle",
-      "show_hide": "Show or hide",
-      "required_by_law": "Required by law — cannot be moved",
-      "move_up": "Move up",
-      "move_down": "Move down",
-      "delete": "Delete",
-      "img_too_big": "That image is larger than 12 MB. Please use a smaller file.",
-      "preparing": "Preparing files…",
-      "pack_attached": "Design pack attached — print-ready PDF, editable SVG and fonts ({{ w }} × {{ h }} mm).",
-      "svg_attached": "Designed in the studio — vector file, {{ w }} × {{ h }} mm.",
-      "attach_failed": "Could not attach the design automatically. Please use Download and upload the file.",
-      "preview3d_failed": "The 3D preview could not be loaded.",
-      "photo_failed": "The studio photo could not be loaded.",
-      "close_confirm": "Close the studio? Your design is not attached to the order yet and will be lost.",
-      "copied": "Copied!",
-      "mockup_attached": "Mockup attached — it travels with the order.",
-      "mockup_failed": "Could not attach — use Download instead."
+      "low_contrast_html": "Low contrast — the legal text must stay readable on the panel.",
+      "layer_legal_html": "Legal panel",
+      "layer_text_html": "Text",
+      "layer_circle_html": "Circle",
+      "layer_triangle_html": "Triangle",
+      "not_loaded_html": "The design studio could not be loaded. Please upload a ready file instead.",
+      "seam_html": "Seam",
+      "back_locked_html": "Back · locked",
+      "legal_readable_html": "Make sure the legal text stays readable on your artwork.",
+      "dpi_warn_html": "One image is about {{ dpi }} DPI at this size. Under 150 DPI it prints soft — use a bigger file, or scale it down.",
+      "layer_image_html": "Image",
+      "layer_rect_html": "Rectangle",
+      "show_hide_html": "Show or hide",
+      "required_by_law_html": "Required by law — cannot be moved",
+      "move_up_html": "Move up",
+      "move_down_html": "Move down",
+      "delete_html": "Delete",
+      "img_too_big_html": "That image is larger than 12 MB. Please use a smaller file.",
+      "preparing_html": "Preparing files…",
+      "pack_attached_html": "Design pack attached — print-ready PDF, editable SVG and fonts ({{ w }} × {{ h }} mm).",
+      "svg_attached_html": "Designed in the studio — vector file, {{ w }} × {{ h }} mm.",
+      "attach_failed_html": "Could not attach the design automatically. Please use Download and upload the file.",
+      "preview3d_failed_html": "The 3D preview could not be loaded.",
+      "photo_failed_html": "The studio photo could not be loaded.",
+      "close_confirm_html": "Close the studio? Your design is not attached to the order yet and will be lost.",
+      "copied_html": "Copied!",
+      "mockup_attached_html": "Mockup attached — it travels with the order.",
+      "mockup_failed_html": "Could not attach — use Download instead."
     },
     "panel": {
       "price_pc": "Price / 1 pcs",
@@ -695,7 +700,7 @@
       "over_cap": "Over {{ n }} pieces goes through our wholesale process.",
       "request_quote": "Request a quote →",
       "trust": "Made in Italy · Certified organic · Design reviewed before production",
-      "discount_applied": "{{ pct }}% volume discount applied at checkout."
+      "discount_applied_html": "{{ pct }}% volume discount applied at checkout."
     },
     "consumer": {
       "resell_note": "This is the product page your customers will see when you resell it — with your brand on it.",
@@ -711,9 +716,9 @@
       "free_from": "Free from parabens, SLS/SLES, paraffins, silicones, mineral oils, PEG and synthetic dyes"
     },
     "cart": {
-      "min_order": "Minimum order is <strong>{{ min }} pieces</strong> — the smallest production batch.",
-      "cases": "This product is sold in cases of <strong>{{ mult }}</strong>.",
-      "remove_hint": "To remove an item, use the bin icon."
+      "min_order_html": "Minimum order is <strong>{{ min }} pieces</strong> — the smallest production batch.",
+      "cases_html": "This product is sold in cases of <strong>{{ mult }}</strong>.",
+      "remove_hint_html": "To remove an item, use the bin icon."
     }
   }
 }
