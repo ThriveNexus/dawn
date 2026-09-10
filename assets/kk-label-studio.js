@@ -30,7 +30,7 @@
       } catch (e) { I18N = {}; }
     }
     var s = I18N[key] || fallback;
-    if (vars) for (var k in vars) s = s.split('{' + k + '}').join(vars[k]);
+    if (vars) for (var k in vars) s = s.split('__' + k + '__').join(vars[k]).split('{' + k + '}').join(vars[k]);
     return s;
   }
 
