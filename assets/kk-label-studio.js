@@ -18,6 +18,22 @@
 (function () {
   'use strict';
 
+  /* Textele de interfață vin din dicționarul temei (locales/*.json), printr-un
+     JSON randat în blocul Liquid; fără el rămâne engleza scrisă aici. */
+  var I18N = null;
+  function T(key, fallback, vars) {
+    if (I18N === null) {
+      I18N = {};
+      try {
+        var n = document.querySelector('[data-kk-i18n]');
+        if (n) I18N = JSON.parse(n.textContent) || {};
+      } catch (e) { I18N = {}; }
+    }
+    var s = I18N[key] || fallback;
+    if (vars) for (var k in vars) s = s.split('{' + k + '}').join(vars[k]);
+    return s;
+  }
+
   var DPI = 300;
   var MM_PER_INCH = 25.4;
   var SAFE_MM = 3;          // margine în care nu se pune nimic important
@@ -195,7 +211,7 @@
     s.onload = function () { loading = false; cb(); };
     s.onerror = function () {
       loading = false;
-      alert('The design studio could not be loaded. Please upload a ready file instead.');
+      alert(T('not_loaded', 'The design studio could not be loaded. Please upload a ready file instead.'));
     };
     document.head.appendChild(s);
   }
@@ -418,10 +434,10 @@
       out.push(badge(z.x * k, (z.frontEnd - z.x) * k, 'Front'));
 
       if (z.center > 0) {
-        out.push(badge(z.frontEnd * k, z.center * k, 'Seam', ' kk-g-badge--mute'));
+        out.push(badge(z.frontEnd * k, z.center * k, T('seam', 'Seam'), ' kk-g-badge--mute'));
       }
 
-      out.push(badge(z.centerEnd * k, (z.x + z.tw - z.centerEnd) * k, 'Back &middot; locked', ' kk-g-badge--lock'));
+      out.push(badge(z.centerEnd * k, (z.x + z.tw - z.centerEnd) * k, T('back_locked', 'Back &middot; locked'), ' kk-g-badge--lock'));
     } else {
       out.push(badge(z.x * k, z.tw * k, 'Front'));
     }
@@ -473,11 +489,11 @@
          clientului. Reamintim doar când chiar există ceva sub text, altfel
          avertismentul permanent devine zgomot. */
       var busy = hasWork() || (canvas.backgroundColor && canvas.backgroundColor !== '#ffffff');
-      w.textContent = 'Make sure the legal text stays readable on your artwork.';
+      w.textContent = T('legal_readable', 'Make sure the legal text stays readable on your artwork.');
       w.hidden = !busy;
     } else {
       var a = relLum(legalColors.bg), b = relLum(legalColors.fg);
-      w.textContent = 'Low contrast — the legal text must stay readable on the panel.';
+      w.textContent = T('low_contrast', 'Low contrast — the legal text must stay readable on the panel.');
       w.hidden = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3;
     }
   }
@@ -590,8 +606,7 @@
 
     if (worst !== null && worst < 150) {
       warn.textContent =
-        'One image is about ' + Math.round(worst) + ' DPI at this size. ' +
-        'Under 150 DPI it prints soft — use a bigger file, or scale it down.';
+        T('dpi_warn', 'One image is about {dpi} DPI at this size. Under 150 DPI it prints soft — use a bigger file, or scale it down.', { dpi: Math.round(worst) });
       warn.hidden = false;
     } else {
       warn.hidden = true;
@@ -614,16 +629,16 @@
   }
 
   function layerName(o) {
-    if (o.kkLocked) return 'Legal panel';
-    if (o.type === 'image') return 'Image';
+    if (o.kkLocked) return T('layer_legal', 'Legal panel');
+    if (o.type === 'image') return T('layer_image', 'Image');
     if (o.type === 'i-text' || o.type === 'textbox') {
       var t = (o.text || '').replace(/\s+/g, ' ').trim();
-      if (!t) return 'Text';
+      if (!t) return T('layer_text', 'Text');
       return t.length > 24 ? t.slice(0, 24) + '…' : t;
     }
-    if (o.type === 'circle') return 'Circle';
-    if (o.type === 'triangle') return 'Triangle';
-    if (o.type === 'rect') return 'Rectangle';
+    if (o.type === 'circle') return T('layer_circle', 'Circle');
+    if (o.type === 'triangle') return T('layer_triangle', 'Triangle');
+    if (o.type === 'rect') return T('layer_rect', 'Rectangle');
     return o.type;
   }
 
@@ -647,14 +662,14 @@
           (locked
             ? '<span class="kk-layer-vis" aria-hidden="true">●</span>'
             : '<button type="button" class="kk-layer-vis" data-kk-lvis="' + id + '" ' +
-              'aria-label="Show or hide">' + (o.visible === false ? '◌' : '●') + '</button>') +
+              'aria-label="' + T('show_hide', 'Show or hide') + '">' + (o.visible === false ? '◌' : '●') + '</button>') +
           '<button type="button" class="kk-layer-name" data-kk-lpick="' + id + '">' +
             layerName(o) + '</button>' +
           (locked
-            ? '<span class="kk-layer-lock" title="Required by law — cannot be moved">&#128274;</span>'
-            : '<button type="button" class="kk-layer-btn" data-kk-lup="' + id + '" aria-label="Move up">&#8593;</button>' +
-              '<button type="button" class="kk-layer-btn" data-kk-ldown="' + id + '" aria-label="Move down">&#8595;</button>' +
-              '<button type="button" class="kk-layer-btn kk-layer-del" data-kk-ldel="' + id + '" aria-label="Delete">&times;</button>'
+            ? '<span class="kk-layer-lock" title="' + T('required_by_law', 'Required by law — cannot be moved') + '">&#128274;</span>'
+            : '<button type="button" class="kk-layer-btn" data-kk-lup="' + id + '" aria-label="' + T('move_up', 'Move up') + '">&#8593;</button>' +
+              '<button type="button" class="kk-layer-btn" data-kk-ldown="' + id + '" aria-label="' + T('move_down', 'Move down') + '">&#8595;</button>' +
+              '<button type="button" class="kk-layer-btn kk-layer-del" data-kk-ldel="' + id + '" aria-label="' + T('delete', 'Delete') + '">&times;</button>'
           ) +
         '</li>'
       );
@@ -766,7 +781,7 @@
 
   function addText() {
     var f = frontCentre();
-    var t = new fabric.IText('Your brand', {
+    var t = new fabric.IText(T('your_brand', 'Your brand'), {
       left: f.x,
       top: f.y,
       originX: 'center',
@@ -784,7 +799,7 @@
   function addImage(file) {
     if (!file) return;
     if (file.size > 12 * 1024 * 1024) {
-      alert('That image is larger than 12 MB. Please use a smaller file.');
+      alert(T('img_too_big', 'That image is larger than 12 MB. Please use a smaller file.'));
       return;
     }
 
@@ -1180,7 +1195,7 @@
 
   function setBusy(on) {
     els('[data-kk-studio-done], [data-kk-studio-download]').forEach(function (b) {
-      if (on) { b.kkLabel = b.textContent; b.textContent = 'Preparing files…'; b.disabled = true; }
+      if (on) { b.kkLabel = b.textContent; b.textContent = T('preparing', 'Preparing files…'); b.disabled = true; }
       else { if (b.kkLabel) b.textContent = b.kkLabel; b.disabled = false; }
     });
   }
@@ -1194,17 +1209,17 @@
     buildPack().then(function (blob) {
       var ok = attachFile(
         new File([blob], packName(), { type: 'application/zip' }),
-        'Design pack attached — print-ready PDF, editable SVG and fonts (' + conf.w + ' × ' + conf.h + ' mm).'
+        T('pack_attached', 'Design pack attached — print-ready PDF, editable SVG and fonts ({w} × {h} mm).', { w: conf.w, h: conf.h })
       );
       if (!ok) throw new Error('attach');
       close(true);
     })['catch'](function () {
       /* orice eșec → SVG-ul simplu, ca până acum; comanda nu se blochează */
       if (attachFile(fallbackFile(),
-        'Designed in the studio — vector file, ' + conf.w + ' × ' + conf.h + ' mm.')) {
+        T('svg_attached', 'Designed in the studio — vector file, {w} × {h} mm.', { w: conf.w, h: conf.h }))) {
         close(true);
       } else {
-        alert('Could not attach the design automatically. Please use Download and upload the file.');
+        alert(T('attach_failed', 'Could not attach the design automatically. Please use Download and upload the file.'));
       }
     }).then(function () { exporting = false; setBusy(false); });
   }
@@ -1493,7 +1508,7 @@
         try { Shopify.analytics.publish('design_mockup_previewed', { product: conf.name }); } catch (e) {}
       }
     })['catch'](function () {
-      alert('The 3D preview could not be loaded.');
+      alert(T('preview3d_failed', 'The 3D preview could not be loaded.'));
     });
   }
 
@@ -1860,7 +1875,7 @@
 
     if (v === 'photo') {
       loadPhoto().then(renderPhoto)['catch'](function () {
-        alert('The studio photo could not be loaded.');
+        alert(T('photo_failed', 'The studio photo could not be loaded.'));
         setMView('threed');
       });
     }
@@ -1953,7 +1968,7 @@
     var s = studio();
     if (!s) return;
     if (!force && hasWork() &&
-        !window.confirm('Close the studio? Your design is not attached to the order yet and will be lost.')) {
+        !window.confirm(T('close_confirm', 'Close the studio? Your design is not attached to the order yet and will be lost.'))) {
       return;
     }
     s.hidden = true;
@@ -2018,7 +2033,7 @@
       var ta = el('[data-kk-mock-json]');
       if (ta && navigator.clipboard) {
         navigator.clipboard.writeText(ta.value);
-        t.closest('[data-kk-mock-copy]').textContent = 'Copied!';
+        t.closest('[data-kk-mock-copy]').textContent = T('copied', 'Copied!');
       }
       return;
     }
@@ -2040,9 +2055,9 @@
           var dt = new DataTransfer();
           dt.items.add(new File([blob], slug(conf.name) + '-mockup.png', { type: 'image/png' }));
           input.files = dt.files;
-          if (note) { note.textContent = 'Mockup attached — it travels with the order.'; note.hidden = false; }
+          if (note) { note.textContent = T('mockup_attached', 'Mockup attached — it travels with the order.'); note.hidden = false; }
         } catch (e) {
-          if (note) { note.textContent = 'Could not attach — use Download instead.'; note.hidden = false; }
+          if (note) { note.textContent = T('mockup_failed', 'Could not attach — use Download instead.'); note.hidden = false; }
         }
       });
       return;
