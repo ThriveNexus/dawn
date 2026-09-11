@@ -1203,3 +1203,58 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- întrebări frecvente (secțiunea 15): acordeon nativ */
+.kk-faq {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-faq__in {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+.kk-faq__item {
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.12);
+}
+.kk-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding: 2rem 0.2rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.8rem;
+  line-height: 1.3;
+  color: rgb(var(--color-foreground));
+}
+.kk-faq__q::-webkit-details-marker {
+  display: none;
+}
+.kk-faq__q svg {
+  flex: none;
+  color: rgb(var(--color-button));
+  transition: transform 0.2s ease;
+}
+.kk-faq__item[open] .kk-faq__q svg {
+  transform: rotate(180deg);
+}
+.kk-faq__a {
+  max-width: 66rem;
+  padding: 0 0.2rem 2.2rem;
+  font-size: 1.55rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.7);
+}
+@media screen and (max-width: 749px) {
+  .kk-faq {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-faq__q {
+    font-size: 1.6rem;
+    padding: 1.6rem 0.2rem;
+  }
+}

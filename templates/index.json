@@ -469,6 +469,74 @@
         "padding_bottom": 72
       }
     },
+    "kk_faq": {
+      "type": "kk-faq",
+      "blocks": {
+        "qa_1": {
+          "type": "qa",
+          "settings": {
+            "question": "What is the minimum order?",
+            "answer": "__floor__ pieces per product. The panel on every product page enforces it and corrects the quantity for you, and the price ladder above shows what each step costs.",
+            "open": true
+          }
+        },
+        "qa_2": {
+          "type": "qa",
+          "settings": {
+            "question": "If my name is on the label, am I the one the authorities call?",
+            "answer": "Yes, and that is normal: under European cosmetics law the Responsible Person is whoever appears on the pack. What changes is how much of the work lands on you. We hold the product file and the safety assessment because we made the formula, we give you the label wording your product needs, and we can file the notification in your name if you would rather not do it yourself.",
+            "open": false
+          }
+        },
+        "qa_3": {
+          "type": "qa",
+          "settings": {
+            "question": "Who checks my design?",
+            "answer": "A person at the laboratory. We check print quality, the mandatory label information and the fit for your chosen container. If something is off, we contact you before anything is produced.",
+            "open": false
+          }
+        },
+        "qa_4": {
+          "type": "qa",
+          "settings": {
+            "question": "What happens to the artwork I upload?",
+            "answer": "It stays yours. We use it to print your labels and for nothing else, we do not show it to anyone, and we keep it on file so your reorder does not start from zero.",
+            "open": false
+          }
+        },
+        "qa_5": {
+          "type": "qa",
+          "settings": {
+            "question": "How long does a first batch take?",
+            "answer": "We confirm the production date when we confirm your design. If part of your order is already in stock, that part ships first and the rest follows, and you see both dates before you pay.",
+            "open": false
+          }
+        },
+        "qa_6": {
+          "type": "qa",
+          "settings": {
+            "question": "Can you also develop a custom formula?",
+            "answer": "Above __cap__ pieces, yes. Everything in this store is white label: ready, tested formulas with your label on them. At contract scale our R&D team can develop a formula of your own, and that route starts with a quote request rather than in the store.",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "qa_1",
+        "qa_2",
+        "qa_3",
+        "qa_4",
+        "qa_5",
+        "qa_6"
+      ],
+      "settings": {
+        "heading": "What everyone asks before a first batch.",
+        "structured_data": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -547,6 +615,7 @@
     "kk_responsibility",
     "kk_maker",
     "kk_outside",
+    "kk_faq",
     "featured_collection",
     "rich_text_UjqJXz"
   ]
