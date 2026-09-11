@@ -423,6 +423,18 @@
         "padding_bottom": 72
       }
     },
+    "kk_maker": {
+      "type": "kk-maker",
+      "settings": {
+        "heading": "Work directly with the laboratory that makes your products.",
+        "text": "<p>Kosmetikal is a <strong>cosmetics contract manufacturer</strong> of natural and organic cosmetics. We make cosmetic lines for other brands, and those lines are now available in small quantities too.</p><p>Our R&amp;D staff combines experience and creativity to ensure innovative, safe and high quality formulations, working with leading raw materials companies and <strong>Italian universities</strong>.</p><p>Because every formula is developed and produced here in Pesaro, your product's documentation comes <strong>from the source</strong>.</p>",
+        "show_placeholder": true,
+        "placeholder_text": "Laboratory photo, Pesaro",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -499,6 +511,7 @@
     "kk_ways",
     "kk_how",
     "kk_responsibility",
+    "kk_maker",
     "featured_collection",
     "rich_text_UjqJXz"
   ]
