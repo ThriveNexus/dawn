@@ -2,8 +2,9 @@
   KOSMETIKAL — Catalogul (secțiunea 6 din landing V2).
   Titlu cu numărul real de produse, text, buton „Browse all products”, apoi
   carduri pe categorii (un bloc = o colecție, maximum 6, adică două rânduri).
-  Pe card: fotografia neutră a recipientului (din tema, aceleași poze ca în
-  editorul de etichete) cu eticheta punctată „YOUR LOGO”, numele colecției,
+  Pe card: imaginea colecției (cea de pe /collections: imaginea colecției sau,
+  în lipsă, prima poză de produs), cu rezervă fotografia neutră a recipientului
+  din temă; opțional eticheta punctată „YOUR LOGO”; numele colecției,
   primele două produse din ea, numărul de formule și prețul „de la” — toate
   citite din magazin, nimic scris de mână.
 {%- endcomment -%}
@@ -46,6 +47,8 @@
           <div class="kk-catcard__media">
             {%- if block.settings.image != blank -%}
               {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', alt: kk_c.title }}
+            {%- elsif kk_c.featured_image != blank -%}
+              {{ kk_c.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: kk_c.title }}
             {%- else -%}
               <img src="{{ kk_photo | asset_img_url: '900x' }}" alt="" loading="lazy" width="900" height="1350">
             {%- endif -%}
@@ -114,7 +117,7 @@
       "type": "checkbox",
       "id": "show_chip",
       "label": "Show the dashed label chip",
-      "default": true
+      "default": false
     },
     {
       "type": "text",
@@ -158,7 +161,7 @@
         {
           "type": "select",
           "id": "container",
-          "label": "Container photo",
+          "label": "Container photo (fallback)",
           "options": [
             { "value": "bottle", "label": "Bottle" },
             { "value": "dropper", "label": "Dropper bottle" },
@@ -167,7 +170,7 @@
           ],
           "default": "bottle"
         },
-        { "type": "image_picker", "id": "image", "label": "Own photo (optional)", "info": "Replaces the container photo above." }
+        { "type": "image_picker", "id": "image", "label": "Own photo (optional)", "info": "Replaces the collection image." }
       ]
     }
   ],
