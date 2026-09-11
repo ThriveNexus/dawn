@@ -854,3 +854,72 @@
     padding: 2rem 1.8rem 2.2rem;
   }
 }
+
+/* ---------- cum vrei să începi (secțiunea 9): 3 căi */
+.kk-ways {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: #fff;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-routes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.8rem;
+}
+.kk-route {
+  display: flex;
+  flex-direction: column;
+  padding: 2.6rem 2.4rem 2.8rem;
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-route--primary {
+  background: rgba(var(--color-button), 0.08);
+  border-color: rgb(var(--color-button));
+}
+.kk-route__kicker {
+  margin: 0 0 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(var(--color-button));
+}
+.kk-route__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-route__text {
+  flex: 1;
+  margin: 0 0 1.8rem;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+.kk-route__text p {
+  margin: 0 0 1rem;
+}
+.kk-route__text a {
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.kk-route .kk-btn {
+  align-self: flex-start;
+}
+@media screen and (max-width: 989px) {
+  .kk-routes {
+    grid-template-columns: 1fr;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-ways {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+}

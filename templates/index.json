@@ -272,6 +272,56 @@
         "padding_bottom": 72
       }
     },
+    "kk_ways": {
+      "type": "kk-ways",
+      "blocks": {
+        "route_1": {
+          "type": "route",
+          "settings": {
+            "kicker": "1 sample",
+            "title": "Try the formulas first",
+            "text": "<p>Pick up to three formulas and we send them to you unbranded, so you can test them on your own clients before you commit to anything.</p>",
+            "button_label": "Ask for samples",
+            "button_link": "/pages/contact",
+            "primary": false
+          }
+        },
+        "route_2": {
+          "type": "route",
+          "settings": {
+            "kicker": "__floor__",
+            "title": "Your first branded batch",
+            "text": "<p>Choose a formula, add your label, order the smallest batch. This is the route this store was built for, and it is self service from start to finish.</p>",
+            "button_label": "Browse the catalogue",
+            "button_link": "/collections",
+            "primary": true
+          }
+        },
+        "route_3": {
+          "type": "route",
+          "settings": {
+            "kicker": "A conversation",
+            "title": "Talk to the laboratory",
+            "text": "<p>If you already know what you want to sell and in what volumes, write to <a href=\"mailto:info@kosmetikal.it\">info@kosmetikal.it</a> or call <a href=\"tel:+390721855882\">+39 0721 855882</a>. A person here answers.</p>",
+            "button_label": "Book a call",
+            "button_link": "/pages/contact",
+            "primary": false
+          }
+        }
+      },
+      "block_order": [
+        "route_1",
+        "route_2",
+        "route_3"
+      ],
+      "settings": {
+        "heading": "How small do you want to start?",
+        "text": "Three honest ways in. Pick the one that matches the risk you want to take today.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -399,6 +449,7 @@
     "kk_catalogue",
     "kk_label_editor",
     "kk_terms",
+    "kk_ways",
     "featured_collection",
     "multicolumn_E3NbqU",
     "rich_text_UjqJXz"
