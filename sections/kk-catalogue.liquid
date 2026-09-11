@@ -35,6 +35,7 @@
         {%- assign kk_names = kk_c.products | map: 'title' -%}
         {%- assign kk_first = kk_names | slice: 0, 2 | join: ', ' -%}
         {%- assign kk_min = kk_c.products | map: 'price_min' | sort | first -%}
+        {%- assign kk_price = kk_min | money -%}
         {%- case block.settings.container -%}
           {%- when 'dropper' -%}{%- assign kk_photo = 'kk-photo-dropper.jpg' -%}
           {%- when 'jar' -%}{%- assign kk_photo = 'kk-photo-jar-2.jpg' -%}
@@ -62,9 +63,9 @@
             {%- endif -%}
             <p class="kk-catcard__meta">
               {%- if kk_count == 1 -%}
-                {{ 'kk.landing.catalogue_meta_one' | t: price: kk_min | money }}
+                {{ 'kk.landing.catalogue_meta_one' | t: price: kk_price }}
               {%- else -%}
-                {{ 'kk.landing.catalogue_meta' | t: count: kk_count, price: kk_min | money }}
+                {{ 'kk.landing.catalogue_meta' | t: count: kk_count, price: kk_price }}
               {%- endif -%}
             </p>
           </div>
