@@ -368,6 +368,61 @@
         "padding_bottom": 72
       }
     },
+    "kk_responsibility": {
+      "type": "kk-responsibility",
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "law": "A named Responsible Person for the product",
+            "who": "Whoever appears on the label. Your name on the pack makes you the Responsible Person.",
+            "get": "The exact wording your label needs, checked against the container before printing."
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "law": "A product information file and a safety assessment",
+            "who": "Kosmetikal. We formulate and produce here, so the file is ours to keep and ours to give you.",
+            "get": "The documentation for your formula, from the laboratory that made it."
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "law": "Notification before the product is placed on the market",
+            "who": "You, as Responsible Person. We can file it for you, in your name, if you prefer.",
+            "get": "Either the notification filed on your behalf, or the data you need to file it yourself."
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "law": "A batch number and traceability",
+            "who": "Kosmetikal, on every batch we produce.",
+            "get": "Batch number and certificate of analysis with your delivery."
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4"
+      ],
+      "settings": {
+        "eyebrow": "Before your name goes on the jar",
+        "heading": "Who is responsible for what.",
+        "text": "When you sell a cosmetic under your own brand, European law asks for a named Responsible Person and a notification before the product reaches the market. Here is how that works in this deal, in plain words.",
+        "col_law": "What the law asks",
+        "col_who": "Who does it in this deal",
+        "col_get": "What you receive",
+        "foot": "Selling outside the European Union, or into Great Britain? The duties change. Tell us the market and we will confirm the terms for it in writing before production.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -443,6 +498,7 @@
     "kk_terms",
     "kk_ways",
     "kk_how",
+    "kk_responsibility",
     "featured_collection",
     "rich_text_UjqJXz"
   ]

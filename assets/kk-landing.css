@@ -977,3 +977,106 @@
     gap: 1.2rem;
   }
 }
+
+/* ---------- cine răspunde pentru ce (secțiunea 11) */
+.kk-resp {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: rgba(var(--color-button), 0.07);
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-resp__head {
+  max-width: 68rem;
+  margin-bottom: 3.6rem;
+}
+.kk-resp__head .kk-lede {
+  margin: 0;
+}
+.kk-resptable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  overflow: hidden;
+}
+.kk-resptable th,
+.kk-resptable td {
+  padding: 1.6rem 1.8rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-resptable th {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+  background: rgb(var(--color-background));
+}
+.kk-resptable tr:last-child td {
+  border-bottom: none;
+}
+.kk-resptable td:first-child {
+  width: 30%;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+.kk-resptable td:not(:first-child) {
+  color: rgba(var(--color-foreground), 0.75);
+}
+.kk-resp__foot {
+  max-width: 72rem;
+  margin: 1.8rem 0 0;
+  font-size: 1.35rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.65);
+}
+@media screen and (max-width: 749px) {
+  .kk-resp {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-resptable,
+  .kk-resptable tbody,
+  .kk-resptable tr,
+  .kk-resptable td {
+    display: block;
+    width: 100%;
+  }
+  .kk-resptable thead {
+    display: none;
+  }
+  .kk-resptable tr {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+  .kk-resptable tr:last-child {
+    border-bottom: none;
+  }
+  .kk-resptable td {
+    padding: 0.8rem 1.8rem;
+    border-bottom: none;
+  }
+  .kk-resptable td:first-child {
+    width: auto;
+    padding-top: 1.6rem;
+  }
+  .kk-resptable td::before {
+    content: attr(data-col);
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-body-family);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.55);
+  }
+}
