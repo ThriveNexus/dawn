@@ -1510,6 +1510,13 @@
         "info": "Ignores the minimum order quantity. Useful as a marketing claim: “start with a single piece”."
       },
       {
+        "type": "text",
+        "id": "kk_hidden_collections",
+        "label": "Hidden collections",
+        "default": "frontpage, custom-tiers, volume-pricing-standard",
+        "info": "Collection handles, comma-separated. Technical collections (used for discounts or the home page) that must not appear in the collections list or in the Products menu."
+      },
+      {
         "type": "header",
         "content": "Production"
       },

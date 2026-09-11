@@ -2,30 +2,89 @@
   KOSMETIKAL — Meniul V2 pentru previzualizare (temporar).
   Pornit din antet → „Preview: V2 menu”. Când meniul real e făcut în
   admin (Navigation), setarea se oprește și antetul citește meniul de acolo.
+  „Products” e un meniu derulant cu categoriile (ca în meniul vechi), în ordinea
+  de mai jos; colecțiile tehnice din „Hidden collections” nu apar.
   context: 'inline' (desktop) sau 'drawer' (telefon).
 {%- endcomment -%}
-{%- assign kk_items = "Products|/collections;Start small|/#start;How it works|/#how;Compliance|/pages/compliance-certifications;Request a quote|/pages/request-a-quote" | split: ";" -%}
-{%- for kk_item in kk_items -%}
-  {%- assign kk_parts = kk_item | split: "|" -%}
-  {%- assign kk_title = kk_parts[0] -%}
-  {%- assign kk_url = kk_parts[1] -%}
-  {%- if context == 'drawer' -%}
+{%- liquid
+  assign kk_cat_handles = "essential-face-rituals,face-serums,water-mist,face-creams,face-masks,snail-secretion-line,bb-cream" | split: ","
+  assign kk_hidden = settings.kk_hidden_collections | default: "" | downcase | replace: " ", "" | split: ","
+  assign kk_items = "Start small|/#start;How it works|/#how;Compliance|/pages/compliance-certifications;Request a quote|/pages/request-a-quote" | split: ";"
+  assign kk_all_label = "All products"
+  assign kk_products_label = "Products"
+-%}
+{%- if context == 'drawer' -%}
+  <li>
+    <details id="Details-menu-drawer-menu-item-kk">
+      <summary id="HeaderDrawer-kk-products" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+        {{ kk_products_label }}
+        <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+        <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+      </summary>
+      <div id="link-kk-products" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+        <div class="menu-drawer__inner-submenu">
+          <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+            <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+            {{ kk_products_label }}
+          </button>
+          <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+            <li>
+              <a href="{{ routes.all_products_collection_url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">{{ kk_all_label }}</a>
+            </li>
+            {%- for kk_h in kk_cat_handles -%}
+              {%- assign kk_c = collections[kk_h] -%}
+              {%- if kk_c == blank or kk_hidden contains kk_h -%}{%- continue -%}{%- endif -%}
+              <li>
+                <a id="HeaderDrawer-{{ kk_h }}" href="{{ kk_c.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset">{{ kk_c.title | escape }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </details>
+  </li>
+  {%- for kk_item in kk_items -%}
+    {%- assign kk_parts = kk_item | split: "|" -%}
     <li>
-      <a
-        href="{{ kk_url }}"
-        class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if forloop.last %} kk-navpill-mobile{% endif %}"
-      >
-        {{ kk_title }}
+      <a href="{{ kk_parts[1] }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+        {{ kk_parts[0] }}
       </a>
     </li>
-  {%- else -%}
+  {%- endfor -%}
+{%- else -%}
+  <li>
+    <header-menu>
+      <details id="Details-HeaderMenu-kk">
+        <summary id="HeaderMenu-kk-products" class="header__menu-item list-menu__item link focus-inset">
+          <span>{{ kk_products_label }}</span>
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </summary>
+        <ul
+          id="HeaderMenu-MenuList-kk"
+          class="header__submenu list-menu list-menu--disclosure color-{{ section.settings.menu_color_scheme }} gradient caption-large motion-reduce global-settings-popup"
+          role="list"
+          tabindex="-1"
+        >
+          <li>
+            <a href="{{ routes.all_products_collection_url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">{{ kk_all_label }}</a>
+          </li>
+          {%- for kk_h in kk_cat_handles -%}
+            {%- assign kk_c = collections[kk_h] -%}
+            {%- if kk_c == blank or kk_hidden contains kk_h -%}{%- continue -%}{%- endif -%}
+            <li>
+              <a id="HeaderMenu-{{ kk_h }}" href="{{ kk_c.url }}" class="header__menu-item list-menu__item link link--text focus-inset caption-large">{{ kk_c.title | escape }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </details>
+    </header-menu>
+  </li>
+  {%- for kk_item in kk_items -%}
+    {%- assign kk_parts = kk_item | split: "|" -%}
     <li>
-      <a
-        href="{{ kk_url }}"
-        class="header__menu-item list-menu__item link link--text focus-inset{% if forloop.last %} kk-navpill{% endif %}"
-      >
-        <span>{{ kk_title }}</span>
+      <a href="{{ kk_parts[1] }}" class="header__menu-item list-menu__item link link--text focus-inset{% if forloop.last %} kk-navpill{% endif %}">
+        <span>{{ kk_parts[0] }}</span>
       </a>
     </li>
-  {%- endif -%}
-{%- endfor -%}
+  {%- endfor -%}
+{%- endif -%}

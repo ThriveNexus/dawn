@@ -17,6 +17,8 @@
       assign collections = collections | reverse
     endif
 
+    assign kk_hidden = settings.kk_hidden_collections | default: '' | downcase | replace: ' ', '' | split: ','
+
     assign moduloResult = 28 | modulo: section.settings.columns_desktop
     assign paginate_by = 30
     if moduloResult == 0
@@ -29,6 +31,7 @@
       role="list"
     >
       {%- for collection in collections -%}
+        {%- if kk_hidden contains collection.handle -%}{%- continue -%}{%- endif -%}
         <li
           class="collection-list__item grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
           {% if settings.animations_reveal_on_scroll %}

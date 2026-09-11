@@ -130,6 +130,7 @@
     "cart_color_scheme": "scheme-1",
     "kk_moq": 12,
     "kk_case_multiple": "24",
+    "kk_hidden_collections": "frontpage, custom-tiers, volume-pricing-standard",
     "kk_label_w": 100,
     "kk_label_h": 70,
     "kk_label_back": 40,
