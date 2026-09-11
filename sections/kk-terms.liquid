@@ -36,7 +36,7 @@
       assign kk_min = kk_casemin
     endif
     assign kk_scale = m.price_tiers.value | default: settings.kk_price_tiers | default: ''
-    assign kk_retail_x = settings.kk_retail_multiplier | default: 3.5
+    assign kk_retail_x = settings.kk_retail_multiplier | default: 3.5 | times: 1.0
 
     comment
       Scara „cantitate = reducere%”, o treaptă pe linie: rotunjită la bax, tăiată
@@ -46,6 +46,8 @@
     endcomment
     assign kk_qs = '' | split: ','
     assign kk_offs = '' | split: ','
+    assign kk_lastq = -1
+    assign kk_lastoff = 0
     assign kk_lines = kk_scale | strip | newline_to_br | split: '<br />'
     for kk_line in kk_lines
       assign kk_parts = kk_line | strip | split: '='
@@ -68,21 +70,24 @@
       if kk_q < kk_min or kk_q > kk_cap
         continue
       endif
-      assign kk_last = kk_qs.size | minus: 1
-      if kk_last >= 0 and kk_qs[kk_last] == kk_q
-        if kk_off > kk_offs[kk_last]
-          assign kk_offs = kk_offs | slice: 0, kk_last | concat: kk_off_arr
-          assign kk_off_arr = kk_off | times: 1.0 | split: '|'
+      assign kk_off_arr = kk_off | split: '|'
+      if kk_q == kk_lastq
+        if kk_off > kk_lastoff
+          assign kk_n = kk_offs.size | minus: 1
+          assign kk_offs = kk_offs | slice: 0, kk_n
           assign kk_offs = kk_offs | concat: kk_off_arr
+          assign kk_lastoff = kk_off
         endif
         continue
       endif
       assign kk_q_arr = kk_q | split: '|'
-      assign kk_off_arr = kk_off | split: '|'
       assign kk_qs = kk_qs | concat: kk_q_arr
       assign kk_offs = kk_offs | concat: kk_off_arr
+      assign kk_lastq = kk_q
+      assign kk_lastoff = kk_off
     endfor
-    if kk_qs.size == 0 or kk_qs[0] != kk_min
+    assign kk_firstq = kk_qs[0] | plus: 0
+    if kk_qs.size == 0 or kk_firstq != kk_min
       assign kk_q_arr = kk_min | split: '|'
       assign kk_off_arr = '0' | split: '|'
       assign kk_qs = kk_q_arr | concat: kk_qs
@@ -92,7 +97,7 @@
     assign kk_first_off = kk_offs[0] | times: 1.0
     assign kk_first_disc = kk_base | times: kk_first_off | divided_by: 100.0 | floor
     assign kk_first_cost = kk_base | minus: kk_first_disc
-    assign kk_suggested = kk_base | times: kk_retail_x | divided_by: 10000.0 | round | times: 100
+    assign kk_suggested = kk_base | times: kk_retail_x | divided_by: 100.0 | round | times: 100
     assign kk_price_str = kk_first_cost | money
     assign kk_calc_text = section.settings.calc_text | replace: '__product__', kk_p.title | replace: '__price__', kk_price_str | replace: '__min__', kk_min
   -%}
@@ -166,7 +171,7 @@
           <label class="kk-calc__label" for="kk-home-retail">{{ 'kk.landing.calc_retail' | t }}</label>
           <div class="kk-calc__field">
             <span aria-hidden="true">€</span>
-            <input id="kk-home-retail" type="text" inputmode="decimal" autocomplete="off" data-kk-home-retail value="{{ kk_suggested | divided_by: 100.0 | append: '' | replace: '.', ',' }}">
+            <input id="kk-home-retail" type="text" inputmode="decimal" autocomplete="off" data-kk-home-retail value="{{ kk_suggested | money_without_currency }}">
           </div>
           <div class="kk-calc__out" aria-live="polite">
             <div class="kk-calc__row"><span>{{ 'kk.landing.calc_cost' | t }}</span><b>{{ kk_first_cost | money }}</b></div>
