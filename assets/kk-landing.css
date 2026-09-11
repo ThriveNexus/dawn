@@ -923,3 +923,57 @@
     padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
   }
 }
+
+/* ---------- cum decurge o comandă (secțiunea 10): 4 pași */
+.kk-how {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.8rem;
+}
+.kk-step {
+  position: relative;
+  padding: 2.6rem 2.4rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-step__num {
+  margin: 0 0 1.2rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+  color: rgb(var(--color-button));
+}
+.kk-step__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.85rem;
+  line-height: 1.2;
+}
+.kk-step__text {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+@media screen and (max-width: 989px) {
+  .kk-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-how {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-steps {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}

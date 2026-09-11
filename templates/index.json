@@ -322,6 +322,52 @@
         "padding_bottom": 72
       }
     },
+    "kk_how": {
+      "type": "kk-how",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Choose a formula",
+            "text": "__count__ ready formulas in the VISO face line. Pick the products that fit your clients and your price point."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Add your design",
+            "text": "Upload your label directly on the product page, at the Add design step. Your brand, your artwork."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "We review it",
+            "text": "A chemist at the laboratory checks your label and your order before anything goes to production. Every design is reviewed and confirmed."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "title": "Produced and shipped",
+            "text": "Your batch is produced in Pesaro and shipped to you, ready to sell under your name."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4"
+      ],
+      "settings": {
+        "heading": "From our lab to your shelf, in four steps.",
+        "text": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -348,60 +394,6 @@
         "columns_mobile": "2",
         "swipe_on_mobile": false,
         "padding_top": 44,
-        "padding_bottom": 36
-      }
-    },
-    "multicolumn_E3NbqU": {
-      "type": "multicolumn",
-      "blocks": {
-        "column_Vq44AF": {
-          "type": "column",
-          "settings": {
-            "title": "1. Choose your product",
-            "text": "<p>28 formulas from the Kosmetikal VISO faceline.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_eFJb3f": {
-          "type": "column",
-          "settings": {
-            "title": "2. Add your design",
-            "text": "<p>Upload your logo or label.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_cTGNYn": {
-          "type": "column",
-          "settings": {
-            "title": "3. Receive your batch",
-            "text": "<p>Produced in Italy. From 10 pieces.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column_Vq44AF",
-        "column_eFJb3f",
-        "column_cTGNYn"
-      ],
-      "name": "t:sections.multicolumn.presets.name",
-      "settings": {
-        "title": "How it works",
-        "heading_size": "h1",
-        "image_width": "full",
-        "image_ratio": "adapt",
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 3,
-        "column_alignment": "left",
-        "background_style": "primary",
-        "color_scheme": "scheme-1",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
         "padding_bottom": 36
       }
     },
@@ -450,8 +442,8 @@
     "kk_label_editor",
     "kk_terms",
     "kk_ways",
+    "kk_how",
     "featured_collection",
-    "multicolumn_E3NbqU",
     "rich_text_UjqJXz"
   ]
 }
