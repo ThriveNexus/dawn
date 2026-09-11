@@ -149,6 +149,72 @@
         "padding_bottom": 72
       }
     },
+    "kk_catalogue": {
+      "type": "kk-catalogue",
+      "blocks": {
+        "cat_1": {
+          "type": "category",
+          "settings": {
+            "collection": "essential-face-rituals",
+            "container": "bottle"
+          }
+        },
+        "cat_2": {
+          "type": "category",
+          "settings": {
+            "collection": "face-serums",
+            "container": "dropper"
+          }
+        },
+        "cat_3": {
+          "type": "category",
+          "settings": {
+            "collection": "face-creams",
+            "container": "jar"
+          }
+        },
+        "cat_4": {
+          "type": "category",
+          "settings": {
+            "collection": "face-masks",
+            "container": "tube"
+          }
+        },
+        "cat_5": {
+          "type": "category",
+          "settings": {
+            "collection": "water-mist",
+            "container": "bottle"
+          }
+        },
+        "cat_6": {
+          "type": "category",
+          "settings": {
+            "collection": "bb-cream",
+            "container": "tube"
+          }
+        }
+      },
+      "block_order": [
+        "cat_1",
+        "cat_2",
+        "cat_3",
+        "cat_4",
+        "cat_5",
+        "cat_6"
+      ],
+      "settings": {
+        "heading": "__count__ formulas, ready for your label.",
+        "text": "Face care produced in our own laboratory in Pesaro. Every product page carries its full INCI, its certifications and its batch sizes.",
+        "button_label": "Browse all products",
+        "button_link": "/collections/all",
+        "show_chip": true,
+        "chip_text": "YOUR LOGO",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -232,75 +298,6 @@
         "padding_bottom": 36
       }
     },
-    "collection_list_akzVhh": {
-      "type": "collection-list",
-      "blocks": {
-        "featured_collection_kxJ699": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "bb-cream"
-          }
-        },
-        "featured_collection_WLrqar": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "face-masks"
-          }
-        },
-        "featured_collection_g9q4dC": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "essential-face-rituals"
-          }
-        },
-        "featured_collection_kdnF8f": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "face-creams"
-          }
-        },
-        "featured_collection_EqiaAN": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "face-serums"
-          }
-        },
-        "featured_collection_N9Mjp7": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "snail-secretion-line"
-          }
-        },
-        "featured_collection_AEQ4tR": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "water-mist"
-          }
-        }
-      },
-      "block_order": [
-        "featured_collection_kxJ699",
-        "featured_collection_WLrqar",
-        "featured_collection_g9q4dC",
-        "featured_collection_kdnF8f",
-        "featured_collection_EqiaAN",
-        "featured_collection_N9Mjp7",
-        "featured_collection_AEQ4tR"
-      ],
-      "name": "t:sections.collection-list.presets.name",
-      "settings": {
-        "title": "",
-        "heading_size": "h1",
-        "image_ratio": "square",
-        "columns_desktop": 3,
-        "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
     "rich_text_UjqJXz": {
       "type": "rich-text",
       "blocks": {
@@ -342,9 +339,9 @@
     "kk_hero",
     "kk_credentials",
     "kk_buyers",
+    "kk_catalogue",
     "featured_collection",
     "multicolumn_E3NbqU",
-    "collection_list_akzVhh",
     "rich_text_UjqJXz"
   ]
 }

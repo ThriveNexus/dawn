@@ -367,3 +367,107 @@
     margin-bottom: 2.6rem;
   }
 }
+
+/* ---------- catalogul (secțiunea 6): 6 carduri pe categorii, 3 × 2 */
+.kk-catalogue {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-section-head__cta {
+  margin: 2.2rem 0 0;
+}
+.kk-catalogue__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.kk-catcard {
+  display: block;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.kk-catcard:hover {
+  border-color: rgb(var(--color-button));
+  transform: translateY(-2px);
+}
+.kk-catcard__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: #ededeb;
+  overflow: hidden;
+}
+.kk-catcard__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.kk-catcard__chip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.7rem 1.3rem;
+  border: 1.5px dashed rgba(60, 55, 45, 0.45);
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #5d564a;
+  white-space: nowrap;
+}
+.kk-catcard__body {
+  padding: 1.8rem 2.2rem 2.2rem;
+}
+.kk-catcard__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-catcard__desc {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+.kk-catcard__meta {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: rgb(var(--color-button));
+}
+@media screen and (max-width: 989px) {
+  .kk-catalogue__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-catalogue {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-catalogue__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .kk-catcard__body {
+    padding: 1.2rem 1.4rem 1.6rem;
+  }
+  .kk-catcard__title {
+    font-size: 1.6rem;
+  }
+  .kk-catcard__desc {
+    display: none;
+  }
+}

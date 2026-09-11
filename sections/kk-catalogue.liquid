@@ -1,0 +1,176 @@
+{%- comment -%}
+  KOSMETIKAL — Catalogul (secțiunea 6 din landing V2).
+  Titlu cu numărul real de produse, text, buton „Browse all products”, apoi
+  carduri pe categorii (un bloc = o colecție, maximum 6, adică două rânduri).
+  Pe card: fotografia neutră a recipientului (din tema, aceleași poze ca în
+  editorul de etichete) cu eticheta punctată „YOUR LOGO”, numele colecției,
+  primele două produse din ea, numărul de formule și prețul „de la” — toate
+  citite din magazin, nimic scris de mână.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- assign kk_total = collections.all.products_count -%}
+{%- assign kk_heading = section.settings.heading | replace: '__count__', kk_total -%}
+
+<div class="kk-catalogue color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    <div class="kk-section-head">
+      {%- if kk_heading != blank -%}
+        <h2 class="kk-h2">{{ kk_heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="kk-lede">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <p class="kk-section-head__cta">
+          <a class="kk-btn kk-btn--ghost" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label | escape }}</a>
+        </p>
+      {%- endif -%}
+    </div>
+
+    <div class="kk-catalogue__grid">
+      {%- for block in section.blocks -%}
+        {%- assign kk_c = block.settings.collection -%}
+        {%- if kk_c == blank -%}{%- continue -%}{%- endif -%}
+        {%- assign kk_count = kk_c.products_count -%}
+        {%- assign kk_names = kk_c.products | map: 'title' -%}
+        {%- assign kk_first = kk_names | slice: 0, 2 | join: ', ' -%}
+        {%- assign kk_min = kk_c.products | map: 'price_min' | sort | first -%}
+        {%- case block.settings.container -%}
+          {%- when 'dropper' -%}{%- assign kk_photo = 'kk-photo-dropper.jpg' -%}
+          {%- when 'jar' -%}{%- assign kk_photo = 'kk-photo-jar-2.jpg' -%}
+          {%- when 'tube' -%}{%- assign kk_photo = 'kk-photo-tube-2.jpg' -%}
+          {%- else -%}{%- assign kk_photo = 'kk-photo-bottle.jpg' -%}
+        {%- endcase -%}
+        <a class="kk-catcard" href="{{ kk_c.url }}" {{ block.shopify_attributes }}>
+          <div class="kk-catcard__media">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', alt: kk_c.title }}
+            {%- else -%}
+              <img src="{{ kk_photo | asset_img_url: '900x' }}" alt="" loading="lazy" width="900" height="1350">
+            {%- endif -%}
+            {%- if section.settings.show_chip and section.settings.chip_text != blank -%}
+              <span class="kk-catcard__chip" aria-hidden="true">{{ section.settings.chip_text | escape }}</span>
+            {%- endif -%}
+          </div>
+          <div class="kk-catcard__body">
+            <p class="kk-catcard__title">{{ kk_c.title | escape }}</p>
+            {%- if kk_first != blank -%}
+              <p class="kk-catcard__desc">
+                {{- kk_first | escape -}}
+                {%- if kk_count > 2 %} {{ 'kk.landing.and_more' | t }}{% endif -%}.
+              </p>
+            {%- endif -%}
+            <p class="kk-catcard__meta">
+              {%- if kk_count == 1 -%}
+                {{ 'kk.landing.catalogue_meta_one' | t: price: kk_min | money }}
+              {%- else -%}
+                {{ 'kk.landing.catalogue_meta' | t: count: kk_count, price: kk_min | money }}
+              {%- endif -%}
+            </p>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Catalogue",
+  "tag": "section",
+  "class": "kk-catalogue-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "info": "__count__ is replaced by the real number of products in the store.",
+      "default": "__count__ formulas, ready for your label."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "Face care produced in our own laboratory in Pesaro. Every product page carries its full INCI, its certifications and its batch sizes."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button",
+      "default": "Browse all products"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "info": "Empty = all products."
+    },
+    {
+      "type": "header",
+      "content": "Label chip on the photos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_chip",
+      "label": "Show the dashed label chip",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "chip_text",
+      "label": "Chip text",
+      "default": "YOUR LOGO"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        {
+          "type": "select",
+          "id": "container",
+          "label": "Container photo",
+          "options": [
+            { "value": "bottle", "label": "Bottle" },
+            { "value": "dropper", "label": "Dropper bottle" },
+            { "value": "jar", "label": "Jar" },
+            { "value": "tube", "label": "Tube" }
+          ],
+          "default": "bottle"
+        },
+        { "type": "image_picker", "id": "image", "label": "Own photo (optional)", "info": "Replaces the container photo above." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Kosmetikal · Catalogue" }]
+}
+{% endschema %}

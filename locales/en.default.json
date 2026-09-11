@@ -721,7 +721,10 @@
       "remove_hint_html": "To remove an item, use the bin icon."
     },
     "landing": {
-      "from_pieces": "From {{ n }} pieces"
+      "from_pieces": "From {{ n }} pieces",
+      "catalogue_meta": "{{ count }} formulas · from {{ price }}",
+      "catalogue_meta_one": "1 formula · {{ price }}",
+      "and_more": "and more"
     }
   }
 }

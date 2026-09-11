@@ -721,7 +721,10 @@
       "remove_hint_html": "Um einen Artikel zu entfernen, nutzen Sie das Papierkorb-Symbol."
     },
     "landing": {
-      "from_pieces": "Ab {{ n }} Stück"
+      "from_pieces": "Ab {{ n }} Stück",
+      "catalogue_meta": "{{ count }} Formeln · ab {{ price }}",
+      "catalogue_meta_one": "1 Formel · {{ price }}",
+      "and_more": "und mehr"
     }
   }
 }

@@ -733,7 +733,10 @@
       "remove_hint_html": "Pour retirer un article, utilisez l'icône de la corbeille."
     },
     "landing": {
-      "from_pieces": "À partir de {{ n }} pièces"
+      "from_pieces": "À partir de {{ n }} pièces",
+      "catalogue_meta": "{{ count }} formules · à partir de {{ price }}",
+      "catalogue_meta_one": "1 formule · {{ price }}",
+      "and_more": "et plus"
     }
   }
 }

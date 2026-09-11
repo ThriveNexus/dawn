@@ -733,7 +733,10 @@
       "remove_hint_html": "Per rimuovere un articolo usa l'icona del cestino."
     },
     "landing": {
-      "from_pieces": "Da {{ n }} pezzi"
+      "from_pieces": "Da {{ n }} pezzi",
+      "catalogue_meta": "{{ count }} formule · da {{ price }}",
+      "catalogue_meta_one": "1 formula · {{ price }}",
+      "and_more": "e altri"
     }
   }
 }

@@ -733,7 +733,10 @@
       "remove_hint_html": "Para quitar un artículo, usa el icono de la papelera."
     },
     "landing": {
-      "from_pieces": "Desde {{ n }} unidades"
+      "from_pieces": "Desde {{ n }} unidades",
+      "catalogue_meta": "{{ count }} fórmulas · desde {{ price }}",
+      "catalogue_meta_one": "1 fórmula · {{ price }}",
+      "and_more": "y más"
     }
   }
 }
