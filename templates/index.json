@@ -215,6 +215,24 @@
         "padding_bottom": 72
       }
     },
+    "kk_label_editor": {
+      "type": "kk-label-editor",
+      "settings": {
+        "eyebrow": "Your label, on our containers",
+        "heading": "You design it in the browser, on the real container.",
+        "text": "<p>On every product page there is a label editor loaded with the exact dieline of that product: the printable area, the safe margins, the wrap of the container. You place your artwork on it and you see the finished product before you order.</p><p>The mandatory information a cosmetic label has to carry is already positioned for you, so the part that is easy to get wrong is the part you cannot get wrong.</p>",
+        "note": "You can also send us your artwork and we place it for you. Either way, nothing goes to print before you have seen it and approved it.",
+        "stage_label": "In the editor",
+        "show_chip": true,
+        "chip_text": "YOUR LABEL",
+        "chip_x": 34,
+        "chip_y": 50,
+        "chip_rotate": -25,
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -340,6 +358,7 @@
     "kk_credentials",
     "kk_buyers",
     "kk_catalogue",
+    "kk_label_editor",
     "featured_collection",
     "multicolumn_E3NbqU",
     "rich_text_UjqJXz"
