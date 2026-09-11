@@ -1,0 +1,111 @@
+{%- comment -%}
+  KOSMETIKAL — „Cine cumpără de aici” (secțiunea 5 din landing V2).
+  Titlu, un rând de text, apoi carduri (un bloc = un tip de client), pe o grilă
+  de 3 coloane pe desktop, 2 pe tabletă, 1 pe telefon. Cardurile nu sunt linkuri
+  deocamdată; când vor exista cataloage pe tip de client, fiecare bloc primește
+  un link din editorul de temă și cardul devine clickabil.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+
+<div class="kk-buyers color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="kk-section-head">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <p class="kk-lede">{{ section.settings.text | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="kk-buyers__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.title == blank -%}{%- continue -%}{%- endif -%}
+        {%- if block.settings.link != blank -%}
+          <a class="kk-chipcard kk-chipcard--link" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+        {%- else -%}
+          <div class="kk-chipcard" {{ block.shopify_attributes }}>
+        {%- endif -%}
+          <p class="kk-chipcard__title">{{ block.settings.title | escape }}</p>
+          {%- if block.settings.text != blank -%}
+            <p class="kk-chipcard__text">{{ block.settings.text | escape }}</p>
+          {%- endif -%}
+        {%- if block.settings.link != blank -%}</a>{%- else -%}</div>{%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Who orders here",
+  "tag": "section",
+  "class": "kk-buyers-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "You already have the clients. Now you just need a line of your own."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "Pick the door closest to your business and see the formulas that fit it."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "buyer",
+      "name": "Buyer type",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Salons" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Your treatments, taken home under your name." },
+        { "type": "url", "id": "link", "label": "Link (optional)", "info": "Leave empty: the card is plain text, not clickable." }
+      ]
+    }
+  ],
+  "max_blocks": 9,
+  "presets": [
+    {
+      "name": "Kosmetikal · Who orders here",
+      "blocks": [
+        { "type": "buyer", "settings": { "title": "Salons", "text": "Your treatments, taken home under your name." } },
+        { "type": "buyer", "settings": { "title": "Spas", "text": "A retail line your guests remember you by." } },
+        { "type": "buyer", "settings": { "title": "Pharmacies", "text": "Formulas tested on sensitive skin, with the file behind them." } },
+        { "type": "buyer", "settings": { "title": "Creators", "text": "Your own product, made in Italy, ready in weeks." } },
+        { "type": "buyer", "settings": { "title": "E-commerce", "text": "A line you can restock in small runs instead of pallets." } },
+        { "type": "buyer", "settings": { "title": "Importers and distributors", "text": "A private line for your territory, produced to your volumes." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

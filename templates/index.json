@@ -81,6 +81,74 @@
         "color_scheme": "scheme-1"
       }
     },
+    "kk_buyers": {
+      "type": "kk-buyers",
+      "blocks": {
+        "buyer_1": {
+          "type": "buyer",
+          "settings": {
+            "title": "Salons",
+            "text": "Your treatments, taken home under your name.",
+            "link": ""
+          }
+        },
+        "buyer_2": {
+          "type": "buyer",
+          "settings": {
+            "title": "Spas",
+            "text": "A retail line your guests remember you by.",
+            "link": ""
+          }
+        },
+        "buyer_3": {
+          "type": "buyer",
+          "settings": {
+            "title": "Pharmacies",
+            "text": "Formulas tested on sensitive skin, with the file behind them.",
+            "link": ""
+          }
+        },
+        "buyer_4": {
+          "type": "buyer",
+          "settings": {
+            "title": "Creators",
+            "text": "Your own product, made in Italy, ready in weeks.",
+            "link": ""
+          }
+        },
+        "buyer_5": {
+          "type": "buyer",
+          "settings": {
+            "title": "E-commerce",
+            "text": "A line you can restock in small runs instead of pallets.",
+            "link": ""
+          }
+        },
+        "buyer_6": {
+          "type": "buyer",
+          "settings": {
+            "title": "Importers and distributors",
+            "text": "A private line for your territory, produced to your volumes.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "buyer_1",
+        "buyer_2",
+        "buyer_3",
+        "buyer_4",
+        "buyer_5",
+        "buyer_6"
+      ],
+      "settings": {
+        "heading": "You already have the clients. Now you just need a line of your own.",
+        "text": "Pick the door closest to your business and see the formulas that fit it.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -233,37 +301,6 @@
         "padding_bottom": 36
       }
     },
-    "rich_text_4hm9cf": {
-      "type": "rich-text",
-      "blocks": {
-        "heading_yYAicJ": {
-          "type": "heading",
-          "settings": {
-            "heading": "Who buys from us",
-            "heading_size": "h1"
-          }
-        },
-        "text_GMn83M": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Salons & spas · Pharmacies · Beauty creators · Retail & e-commerce · Hotels</p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading_yYAicJ",
-        "text_GMn83M"
-      ],
-      "name": "t:sections.rich-text.presets.name",
-      "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 52
-      }
-    },
     "rich_text_UjqJXz": {
       "type": "rich-text",
       "blocks": {
@@ -304,10 +341,10 @@
   "order": [
     "kk_hero",
     "kk_credentials",
+    "kk_buyers",
     "featured_collection",
     "multicolumn_E3NbqU",
     "collection_list_akzVhh",
-    "rich_text_4hm9cf",
     "rich_text_UjqJXz"
   ]
 }

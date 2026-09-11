@@ -287,3 +287,83 @@
     text-align: center;
   }
 }
+
+/* ---------- titluri de secțiune comune (V2: centrate, serif) */
+.kk-section-head {
+  text-align: center;
+  max-width: 76rem;
+  margin: 0 auto 3.8rem;
+}
+.kk-h2 {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: clamp(2.7rem, 3.2vw, 3.8rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.kk-lede {
+  margin: 0 auto;
+  max-width: 56rem;
+  font-size: 1.7rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* ---------- cine cumpără de aici (secțiunea 5): 3 × 2 carduri */
+.kk-buyers {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-buyers__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.kk-chipcard {
+  display: block;
+  padding: 2.2rem 2.4rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+.kk-chipcard--link {
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.kk-chipcard--link:hover {
+  border-color: rgb(var(--color-button));
+  transform: translateY(-2px);
+}
+.kk-chipcard__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-chipcard__text {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+@media screen and (max-width: 989px) {
+  .kk-buyers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-buyers {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-buyers__grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .kk-section-head {
+    margin-bottom: 2.6rem;
+  }
+}
