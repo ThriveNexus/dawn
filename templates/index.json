@@ -537,69 +537,18 @@
         "padding_bottom": 72
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
-      "disabled": true,
+    "kk_final": {
+      "type": "kk-final-cta",
       "settings": {
-        "collection": "all",
-        "products_to_show": 8,
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "columns_desktop": 4,
-        "enable_desktop_slider": false,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
+        "heading": "Try it before you brand it.",
+        "text": "Test the formulas on your own clients, then produce your first batch of __floor__ with your label on it.",
+        "button_label": "Browse the catalogue",
+        "button_link": "/collections",
+        "button2_label": "See how to start",
+        "button2_link": "/#start",
         "color_scheme": "scheme-1",
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 44,
-        "padding_bottom": 36
-      }
-    },
-    "rich_text_UjqJXz": {
-      "type": "rich-text",
-      "blocks": {
-        "heading_gNXdaE": {
-          "type": "heading",
-          "settings": {
-            "heading": "Start your brand today",
-            "heading_size": "h1"
-          }
-        },
-        "button_Yxz9Jm": {
-          "type": "button",
-          "settings": {
-            "button_label": "Browse the catalogue",
-            "button_link": "shopify://collections",
-            "button_style_secondary": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading_gNXdaE",
-        "button_Yxz9Jm"
-      ],
-      "name": "t:sections.rich-text.presets.name",
-      "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "scheme-2",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 52
+        "padding_top": 80,
+        "padding_bottom": 80
       }
     }
   },
@@ -616,7 +565,6 @@
     "kk_maker",
     "kk_outside",
     "kk_faq",
-    "featured_collection",
-    "rich_text_UjqJXz"
+    "kk_final"
   ]
 }
