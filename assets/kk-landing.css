@@ -472,7 +472,7 @@
   }
 }
 
-/* ---------- eticheta ta, pe recipientele noastre (secțiunea 7) */
+/* ---------- eticheta ta, pe recipientele noastre (secțiunea 7): recipientele desenate din V2 */
 .kk-labeled {
   padding-top: var(--kk-pt, 72px);
   padding-bottom: var(--kk-pb, 72px);
@@ -482,7 +482,7 @@
 }
 .kk-labeled__grid {
   display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
+  grid-template-columns: 0.9fr 1.1fr;
   gap: 5.6rem;
   align-items: center;
 }
@@ -509,46 +509,106 @@
 }
 .kk-labeled__stage {
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3.4rem;
+  height: 40rem;
+  padding: 0 2.4rem 4.4rem;
+  background: linear-gradient(180deg, #f5f0e6 0%, #ece5d6 100%);
   border: 1px solid rgba(var(--color-foreground), 0.12);
   border-radius: 1.6rem;
-  overflow: hidden;
-  background: #efe9dd;
-  aspect-ratio: 5 / 4;
-}
-.kk-labeled__stage img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
 }
 .kk-labeled__watermark {
   position: absolute;
   top: 1.4rem;
   right: 1.6rem;
-  z-index: 2;
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(60, 55, 45, 0.55);
+  color: #a49d8b;
 }
-.kk-labeled__chip {
-  position: absolute;
-  z-index: 2;
-  padding: 1rem 1.6rem;
-  border: 1.5px dashed rgba(60, 55, 45, 0.5);
+.kk-vessel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.kk-vessel::after {
+  content: "";
+  display: block;
+  width: 9.6rem;
+  height: 1.2rem;
+  margin-top: 1rem;
+  background: radial-gradient(ellipse at center, rgba(43, 43, 38, 0.18), rgba(43, 43, 38, 0) 70%);
+}
+.kk-vessel__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kk-brandmark {
+  display: block;
+  width: 82%;
+  padding: 0.7rem 0.5rem;
+  border: 1px solid #ded6c4;
   border-radius: 0.3rem;
-  background: rgba(255, 255, 255, 0.78);
+  background: #fff;
   font-family: var(--font-heading-family);
   font-weight: 600;
-  font-size: 1.25rem;
-  line-height: 1.3;
-  letter-spacing: 0.16em;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  letter-spacing: 0.12em;
   text-align: center;
-  text-transform: uppercase;
   color: #5d564a;
-  white-space: nowrap;
+  word-break: break-word;
+}
+.kk-vessel--serum .kk-vessel__cap {
+  width: 3rem;
+  height: 2rem;
+  background: #3d4433;
+  border-radius: 0.6rem 0.6rem 0.2rem 0.2rem;
+}
+.kk-vessel--serum .kk-vessel__body {
+  width: 7.8rem;
+  height: 16rem;
+  background: linear-gradient(155deg, #f6ecd9 15%, #e8d7b8 65%, #ddcaa4);
+  border: 1px solid #d3c4a3;
+  border-radius: 1.2rem 1.2rem 1.6rem 1.6rem;
+  box-shadow: inset 11px 0 16px -9px rgba(255, 255, 255, 0.9);
+}
+.kk-vessel--jar .kk-vessel__lid {
+  width: 11.2rem;
+  height: 2.4rem;
+  margin-bottom: 0.3rem;
+  background: linear-gradient(180deg, #525b45, #3c4434);
+  border-radius: 0.7rem 0.7rem 0.3rem 0.3rem;
+}
+.kk-vessel--jar .kk-vessel__body {
+  width: 11.8rem;
+  height: 9.2rem;
+  background: linear-gradient(155deg, #ffffff, #eae3d4);
+  border: 1px solid #dcd4c2;
+  border-radius: 0.9rem 0.9rem 1.8rem 1.8rem;
+}
+.kk-vessel--pump .kk-vessel__spout {
+  width: 3.8rem;
+  height: 1.1rem;
+  background: #3d4433;
+  border-radius: 0.4rem;
+  transform: translateX(-1.1rem);
+}
+.kk-vessel--pump .kk-vessel__neck {
+  width: 1.4rem;
+  height: 1.7rem;
+  background: #3d4433;
+}
+.kk-vessel--pump .kk-vessel__body {
+  width: 8rem;
+  height: 14.8rem;
+  background: linear-gradient(155deg, #ffffff, #e9e2d2);
+  border: 1px solid #dcd4c2;
+  border-radius: 1rem 1rem 1.4rem 1.4rem;
 }
 @media screen and (max-width: 989px) {
   .kk-labeled__grid {
@@ -556,7 +616,9 @@
     gap: 3.2rem;
   }
   .kk-labeled__stage {
-    aspect-ratio: 4 / 3;
+    height: 32rem;
+    gap: 2rem;
+    padding: 0 1.4rem 3.4rem;
   }
 }
 @media screen and (max-width: 749px) {
@@ -564,7 +626,22 @@
     padding-top: calc(var(--kk-pt, 72px) * 0.75);
     padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
   }
-  .kk-labeled__stage {
-    aspect-ratio: 1 / 1;
+  .kk-vessel::after {
+    width: 6.4rem;
+  }
+  .kk-vessel--jar .kk-vessel__lid {
+    width: 8.6rem;
+  }
+  .kk-vessel--jar .kk-vessel__body {
+    width: 9.2rem;
+    height: 7.4rem;
+  }
+  .kk-vessel--serum .kk-vessel__body {
+    width: 6.2rem;
+    height: 12.6rem;
+  }
+  .kk-vessel--pump .kk-vessel__body {
+    width: 6.4rem;
+    height: 11.8rem;
   }
 }

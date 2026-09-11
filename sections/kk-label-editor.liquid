@@ -1,9 +1,9 @@
 {%- comment -%}
   KOSMETIKAL — „Eticheta ta, pe recipientele noastre” (secțiunea 7 din landing V2).
   Doar descriptivă, fără simulare (decizia lui Claudio): spune că editorul de
-  etichete există pe pagina produsului și ce face. Stânga text, dreapta o
-  fotografie cu un recipient fără etichetă, cu eticheta punctată „YOUR LABEL”
-  așezată pe el (poziția se reglează din editor, în procente).
+  etichete există pe pagina produsului și ce face. Stânga text, dreapta cele
+  trei recipiente desenate în CSS din V2 (pipetă, borcan, flacon cu pompă),
+  fiecare cu eticheta „YOUR LABEL”. Fără fotografie, până se decide una.
 {%- endcomment -%}
 {{ 'kk-landing.css' | asset_url | stylesheet_tag }}
 
@@ -23,22 +23,24 @@
         <p class="kk-labeled__note">{{ section.settings.note | escape }}</p>
       {%- endif -%}
     </div>
-    <div class="kk-labeled__stage">
+    <div class="kk-labeled__stage" aria-hidden="true">
       {%- if section.settings.stage_label != blank -%}
         <span class="kk-labeled__watermark">{{ section.settings.stage_label | escape }}</span>
       {%- endif -%}
-      {%- if section.settings.image != blank -%}
-        {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: '' }}
-      {%- else -%}
-        <img src="{{ 'kk-landing-label-tube.jpg' | asset_img_url: '1400x' }}" alt="" loading="lazy" width="1200" height="1599">
-      {%- endif -%}
-      {%- if section.settings.show_chip and section.settings.chip_text != blank -%}
-        <span
-          class="kk-labeled__chip"
-          style="left: {{ section.settings.chip_x }}%; top: {{ section.settings.chip_y }}%; transform: translate(-50%, -50%) rotate({{ section.settings.chip_rotate }}deg);"
-          aria-hidden="true"
-        >{{ section.settings.chip_text | escape | newline_to_br }}</span>
-      {%- endif -%}
+      {%- assign kk_mark = section.settings.chip_text | escape -%}
+      <div class="kk-vessel kk-vessel--serum">
+        <span class="kk-vessel__cap"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark | replace: ' ', '<br>' }}</span></span>
+      </div>
+      <div class="kk-vessel kk-vessel--jar">
+        <span class="kk-vessel__lid"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark }}</span></span>
+      </div>
+      <div class="kk-vessel kk-vessel--pump">
+        <span class="kk-vessel__spout"></span>
+        <span class="kk-vessel__neck"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark | replace: ' ', '<br>' }}</span></span>
+      </div>
     </div>
   </div>
 </div>
@@ -75,13 +77,7 @@
     },
     {
       "type": "header",
-      "content": "Photo"
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Photo (optional)",
-      "info": "Empty = the tube photo from the theme."
+      "content": "Drawn containers"
     },
     {
       "type": "text",
@@ -90,46 +86,10 @@
       "default": "In the editor"
     },
     {
-      "type": "checkbox",
-      "id": "show_chip",
-      "label": "Show the dashed label chip on the photo",
-      "default": true
-    },
-    {
       "type": "text",
       "id": "chip_text",
-      "label": "Chip text",
+      "label": "Label text on the containers",
       "default": "YOUR LABEL"
-    },
-    {
-      "type": "range",
-      "id": "chip_x",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
-      "label": "Chip position, left to right",
-      "default": 34
-    },
-    {
-      "type": "range",
-      "id": "chip_y",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
-      "label": "Chip position, top to bottom",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "chip_rotate",
-      "min": -45,
-      "max": 45,
-      "step": 1,
-      "unit": "°",
-      "label": "Chip rotation",
-      "default": -25
     },
     {
       "type": "color_scheme",
