@@ -786,15 +786,27 @@
   border-color: rgb(var(--color-button));
   background: #fff;
 }
-.kk-calc__field input {
+.kk-calc__field input,
+.kk-calc__field input:focus,
+.kk-calc__field input:focus-visible {
   flex: 1;
   min-width: 0;
+  height: auto;
+  margin: 0;
   padding: 1.2rem 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-appearance: none;
+  appearance: none;
   font: inherit;
+  line-height: 1.4;
   color: rgb(var(--color-foreground));
-  outline: none;
+}
+.kk-calc__field:focus-within {
+  box-shadow: 0 0 0 3px rgba(var(--color-button), 0.15);
 }
 .kk-calc__out {
   margin-top: 2rem;
