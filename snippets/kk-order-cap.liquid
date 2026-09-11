@@ -1,0 +1,28 @@
+{%- comment -%}
+  KOSMETIKAL — Pragul de ofertă al magazinului, calculat din produse.
+
+  Scoate (ca text) cea mai mare cantitate care se poate comanda în magazin fără
+  ofertă: pentru fiecare produs, plafonul lui (custom.max_qty, cu rezerva din
+  setările temei „Quote request threshold”), apoi maximul dintre produse. Peste
+  acest număr se trece sigur la condiții de contract, pe orice produs.
+  Perechea snippet-ului kk-order-floor.
+
+  Folosire:  {%- capture kk_cap -%}{%- render 'kk-order-cap' -%}{%- endcapture -%}
+             {%- assign kk_cap = kk_cap | strip | plus: 0 -%}
+
+  Limită: Liquid parcurge cel mult 50 de produse dintr-o colecție fără paginare.
+{%- endcomment -%}
+{%- liquid
+  assign kk_cap = 0
+  for kk_p in collections.all.products
+    assign kk_c = kk_p.metafields.custom.max_qty.value | default: settings.kk_cap | default: 500
+    assign kk_c = kk_c | plus: 0
+    if kk_c > kk_cap
+      assign kk_cap = kk_c
+    endif
+  endfor
+  if kk_cap == 0
+    assign kk_cap = settings.kk_cap | default: 500 | plus: 0
+  endif
+  echo kk_cap
+-%}

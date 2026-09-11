@@ -1,0 +1,109 @@
+{%- comment -%}
+  KOSMETIKAL — „Dacă magazinul nu ți se potrivește” (secțiunea 14 din landing V2).
+  Două uși: peste plafonul de ofertă → condiții de contract (Request a quote);
+  sub minim sau ceva ce nu e în catalog → Contact. Numerele vin din produse:
+  __cap__ = cel mai mare plafon de ofertă (snippet kk-order-cap),
+  __floor__ = cea mai mică cantitate care se poate comanda (kk-order-floor).
+  Ține ancora #outside (linkul „See below” din tabelul de prețuri).
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- capture kk_floor -%}{%- render 'kk-order-floor' -%}{%- endcapture -%}
+{%- assign kk_floor = kk_floor | strip | plus: 0 -%}
+{%- capture kk_cap -%}{%- render 'kk-order-cap' -%}{%- endcapture -%}
+{%- assign kk_cap = kk_cap | strip | plus: 0 -%}
+
+<div id="outside" class="kk-outside color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="kk-section-head">
+        {%- if section.settings.heading != blank -%}<h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="kk-lede">{{ section.settings.text | escape }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="kk-doors">
+      {%- for block in section.blocks -%}
+        <div class="kk-door" {{ block.shopify_attributes }}>
+          {%- if block.settings.title != blank -%}
+            <h3 class="kk-door__title">{{ block.settings.title | replace: '__cap__', kk_cap | replace: '__floor__', kk_floor | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="kk-door__text">{{ block.settings.text | replace: '__cap__', kk_cap | replace: '__floor__', kk_floor | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.button_label != blank -%}
+            <a class="kk-btn kk-btn--ghost" href="{{ block.settings.button_link | default: '/pages/contact' }}">{{ block.settings.button_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Other cases",
+  "tag": "section",
+  "class": "kk-outside-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "If this store is not the right shape for you."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "Both doors lead to the same people. Neither one is a form that disappears."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "door",
+      "name": "Door",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "info": "__cap__ = the quote threshold, __floor__ = the order minimum, both computed from the products.", "default": "More than __cap__ pieces" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "At that scale we move to our classic contract terms: dedicated pricing, planned production runs, and a formula developed for you by our R&D team." },
+        { "type": "text", "id": "button_label", "label": "Button", "default": "Request a quote" },
+        { "type": "url", "id": "button_link", "label": "Button link", "info": "Empty = the Contact page." }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Kosmetikal · Other cases",
+      "blocks": [
+        { "type": "door", "settings": { "title": "More than __cap__ pieces", "text": "At that scale we move to our classic contract terms: dedicated pricing, planned production runs, and a formula developed for you by our R&D team.", "button_label": "Request a quote" } },
+        { "type": "door", "settings": { "title": "Fewer than __floor__, or something we do not list", "text": "If you want to test a single unit, or you are looking for a format or a formula that is not in the catalogue, tell us what you have in mind. We answer either way, including when the answer is no.", "button_label": "Tell us what you need" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

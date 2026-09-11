@@ -435,6 +435,40 @@
         "padding_bottom": 72
       }
     },
+    "kk_outside": {
+      "type": "kk-outside",
+      "blocks": {
+        "door_1": {
+          "type": "door",
+          "settings": {
+            "title": "More than __cap__ pieces",
+            "text": "At that scale we move to our classic contract terms: dedicated pricing, planned production runs, and a formula developed for you by our R&D team.",
+            "button_label": "Request a quote",
+            "button_link": "/pages/request-a-quote"
+          }
+        },
+        "door_2": {
+          "type": "door",
+          "settings": {
+            "title": "Fewer than __floor__, or something we do not list",
+            "text": "If you want to test a single unit, or you are looking for a format or a formula that is not in the catalogue, tell us what you have in mind. We answer either way, including when the answer is no.",
+            "button_label": "Tell us what you need",
+            "button_link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": [
+        "door_1",
+        "door_2"
+      ],
+      "settings": {
+        "heading": "If this store is not the right shape for you.",
+        "text": "Both doors lead to the same people. Neither one is a form that disappears.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -512,6 +546,7 @@
     "kk_how",
     "kk_responsibility",
     "kk_maker",
+    "kk_outside",
     "featured_collection",
     "rich_text_UjqJXz"
   ]
