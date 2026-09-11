@@ -1312,3 +1312,119 @@
     padding-bottom: calc(var(--kk-pb, 80px) * 0.75);
   }
 }
+
+/* ---------- subsolul (secțiunea 17): fundal închis, trei coloane, identitate juridică */
+.kk-footer {
+  background: var(--kk-footer-bg, #2b2b26);
+  color: var(--kk-footer-ink, #efe9dd);
+  padding: 6.4rem 0 3.6rem;
+}
+.kk-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+.kk-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.kk-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 4rem;
+  align-items: start;
+}
+.kk-footer__heading {
+  margin: 0 0 1.8rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.kk-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.kk-footer__links li {
+  margin-bottom: 1.1rem;
+  font-size: 1.5rem;
+}
+.kk-footer__wordmark {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.kk-footer__subline {
+  margin: 0.4rem 0 1.6rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+.kk-footer__tagline {
+  margin: 0 0 1.2rem;
+  font-size: 1.4rem;
+  opacity: 0.85;
+}
+.kk-footer__certs {
+  margin: 0 0 1.2rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  opacity: 0.62;
+}
+.kk-footer__trust {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-size: 1.35rem;
+  opacity: 0.9;
+}
+.kk-footer__trust svg {
+  flex: none;
+  color: #a3b58a;
+}
+.kk-footer__bottom {
+  margin-top: 4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid rgba(239, 233, 221, 0.14);
+}
+.kk-footer__legal {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  opacity: 0.6;
+}
+.kk-footer__legal p {
+  margin: 0;
+}
+.kk-footer__policies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.8rem;
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  font-size: 1.15rem;
+  opacity: 0.55;
+}
+@media screen and (max-width: 989px) {
+  .kk-footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kk-footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-footer {
+    padding: 4.4rem 0 2.8rem;
+  }
+  .kk-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2.8rem;
+  }
+}
