@@ -1,0 +1,330 @@
+{%- comment -%}
+  KOSMETIKAL — „Cantități, prețuri și termen” (secțiunea 8 din landing V2).
+  Un produs ales din editorul de temă dă toate cifrele: prețul de bază, minimul,
+  multiplul de bax, plafonul de ofertă și scara de reduceri — aceleași câmpuri
+  și aceeași aritmetică ca la calculatorul de pe pagina de produs
+  (metacâmp de produs → setare globală de temă → valoare de rezervă).
+  Tabelul: o linie pe treaptă (cantitate, preț unitar, total), apoi „peste
+  plafon → ofertă”. Coloana „Ready in” e ascunsă până există termene.
+  Calculatorul: omul scrie prețul de raft, noi facem aritmetica marjei.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- assign kk_p = section.settings.product -%}
+
+{%- if kk_p != blank -%}
+  {%- liquid
+    assign m = kk_p.metafields.custom
+    assign kk_base = kk_p.selected_or_first_available_variant.price | default: kk_p.price
+    assign kk_moq = m.moq.value | default: settings.kk_moq | default: 10
+    assign kk_moq = kk_moq | plus: 0
+    assign kk_cap = m.max_qty.value | default: settings.kk_cap | default: 500
+    assign kk_cap = kk_cap | plus: 0
+    assign kk_mult = m.case_multiple.value | default: settings.kk_case_multiple | default: 1
+    assign kk_mult = kk_mult | plus: 0
+    if kk_mult < 1
+      assign kk_mult = 1
+    endif
+    assign kk_cases = kk_moq | divided_by: kk_mult
+    assign kk_exact = kk_cases | times: kk_mult
+    if kk_exact < kk_moq
+      assign kk_cases = kk_cases | plus: 1
+    endif
+    assign kk_casemin = kk_cases | times: kk_mult
+    if settings.kk_allow_single
+      assign kk_min = 1
+    else
+      assign kk_min = kk_casemin
+    endif
+    assign kk_scale = m.price_tiers.value | default: settings.kk_price_tiers | default: ''
+    assign kk_retail_x = settings.kk_retail_multiplier | default: 3.5
+
+    comment
+      Scara „cantitate = reducere%”, o treaptă pe linie: rotunjită la bax, tăiată
+      la [minim, plafon]; două trepte căzute pe aceeași cantitate păstrează
+      reducerea mai mare. Prima linie e mereu minimul (fără reducere dacă scara
+      nu îl acoperă). Reducerea se trunchiază pe bucată, ca la Shopify.
+    endcomment
+    assign kk_qs = '' | split: ','
+    assign kk_offs = '' | split: ','
+    assign kk_lines = kk_scale | strip | newline_to_br | split: '<br />'
+    for kk_line in kk_lines
+      assign kk_parts = kk_line | strip | split: '='
+      if kk_parts.size < 2
+        continue
+      endif
+      assign kk_q = kk_parts[0] | strip | plus: 0
+      assign kk_off = kk_parts[1] | strip | replace: ',', '.' | times: 1.0
+      if kk_q <= 0
+        continue
+      endif
+      if kk_mult > 1
+        assign kk_qc = kk_q | divided_by: kk_mult
+        assign kk_qe = kk_qc | times: kk_mult
+        if kk_qe < kk_q
+          assign kk_qc = kk_qc | plus: 1
+        endif
+        assign kk_q = kk_qc | times: kk_mult
+      endif
+      if kk_q < kk_min or kk_q > kk_cap
+        continue
+      endif
+      assign kk_last = kk_qs.size | minus: 1
+      if kk_last >= 0 and kk_qs[kk_last] == kk_q
+        if kk_off > kk_offs[kk_last]
+          assign kk_offs = kk_offs | slice: 0, kk_last | concat: kk_off_arr
+          assign kk_off_arr = kk_off | times: 1.0 | split: '|'
+          assign kk_offs = kk_offs | concat: kk_off_arr
+        endif
+        continue
+      endif
+      assign kk_q_arr = kk_q | split: '|'
+      assign kk_off_arr = kk_off | split: '|'
+      assign kk_qs = kk_qs | concat: kk_q_arr
+      assign kk_offs = kk_offs | concat: kk_off_arr
+    endfor
+    if kk_qs.size == 0 or kk_qs[0] != kk_min
+      assign kk_q_arr = kk_min | split: '|'
+      assign kk_off_arr = '0' | split: '|'
+      assign kk_qs = kk_q_arr | concat: kk_qs
+      assign kk_offs = kk_off_arr | concat: kk_offs
+    endif
+
+    assign kk_first_off = kk_offs[0] | times: 1.0
+    assign kk_first_disc = kk_base | times: kk_first_off | divided_by: 100.0 | floor
+    assign kk_first_cost = kk_base | minus: kk_first_disc
+    assign kk_suggested = kk_base | times: kk_retail_x | divided_by: 10000.0 | round | times: 100
+    assign kk_price_str = kk_first_cost | money
+    assign kk_calc_text = section.settings.calc_text | replace: '__product__', kk_p.title | replace: '__price__', kk_price_str | replace: '__min__', kk_min
+  -%}
+
+  <div class="kk-terms color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+    <div class="page-width">
+      <div class="kk-terms__head">
+        {%- if section.settings.eyebrow != blank -%}<p class="kk-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="kk-lede">{{ section.settings.text | escape }}</p>{%- endif -%}
+      </div>
+
+      <div class="kk-terms__grid">
+        <div>
+          <div class="kk-ladder-scroll">
+            <table class="kk-ladder">
+              {%- if section.settings.caption != blank -%}
+                <caption>{{ section.settings.caption | replace: '__product__', kk_p.title | escape }}</caption>
+              {%- endif -%}
+              <thead>
+                <tr>
+                  <th>{{ 'kk.landing.terms_qty' | t }}</th>
+                  <th>{{ 'kk.landing.terms_unit' | t }}</th>
+                  <th>{{ 'kk.landing.terms_total' | t }}</th>
+                  {%- if section.settings.show_lead -%}<th>{{ 'kk.landing.terms_lead' | t }}</th>{%- endif -%}
+                </tr>
+              </thead>
+              <tbody>
+                {%- for kk_q in kk_qs -%}
+                  {%- liquid
+                    assign kk_i = forloop.index0
+                    assign kk_off = kk_offs[kk_i] | times: 1.0
+                    assign kk_disc = kk_base | times: kk_off | divided_by: 100.0 | floor
+                    assign kk_cost = kk_base | minus: kk_disc
+                    assign kk_qn = kk_q | plus: 0
+                    assign kk_total = kk_cost | times: kk_qn
+                  -%}
+                  <tr{% if forloop.first %} class="is-min"{% endif %}>
+                    <td class="kk-ladder__q">{{ kk_qn }}</td>
+                    <td>{{ kk_cost | money }}{% if kk_off > 0 %} <span class="kk-ladder__off">−{{ kk_off | round }}%</span>{% endif %}</td>
+                    <td>{{ kk_total | money }}</td>
+                    {%- if section.settings.show_lead -%}<td>{{ m.lead_time.value | default: settings.kk_lead_time | escape }}</td>{%- endif -%}
+                  </tr>
+                {%- endfor -%}
+                <tr class="kk-ladder__over">
+                  <td class="kk-ladder__q">{{ 'kk.landing.terms_over' | t: n: kk_cap }}</td>
+                  <td colspan="{% if section.settings.show_lead %}3{% else %}2{% endif %}">
+                    {{ 'kk.landing.terms_contract' | t }}
+                    <a href="{{ section.settings.quote_link | default: '/pages/request-a-quote' }}">{{ 'kk.landing.terms_quote' | t }}</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          {%- if section.blocks.size > 0 -%}
+            <ul class="kk-terms__notes">
+              {%- for block in section.blocks -%}
+                {%- if block.settings.text == blank -%}{%- continue -%}{%- endif -%}
+                <li {{ block.shopify_attributes }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>
+                  <span>{{ block.settings.text | escape }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+
+        <div class="kk-calc" data-kk-home-calc data-cost="{{ kk_first_cost }}" data-suggested="{{ kk_suggested }}">
+          {%- if section.settings.calc_title != blank -%}<h3 class="kk-calc__title">{{ section.settings.calc_title | escape }}</h3>{%- endif -%}
+          {%- if kk_calc_text != blank -%}<p class="kk-calc__text">{{ kk_calc_text | escape }}</p>{%- endif -%}
+          <label class="kk-calc__label" for="kk-home-retail">{{ 'kk.landing.calc_retail' | t }}</label>
+          <div class="kk-calc__field">
+            <span aria-hidden="true">€</span>
+            <input id="kk-home-retail" type="text" inputmode="decimal" autocomplete="off" data-kk-home-retail value="{{ kk_suggested | divided_by: 100.0 | append: '' | replace: '.', ',' }}">
+          </div>
+          <div class="kk-calc__out" aria-live="polite">
+            <div class="kk-calc__row"><span>{{ 'kk.landing.calc_cost' | t }}</span><b>{{ kk_first_cost | money }}</b></div>
+            <div class="kk-calc__row"><span>{{ 'kk.landing.calc_margin_unit' | t }}</span><b data-kk-home-margin>…</b></div>
+            <div class="kk-calc__row"><span>{{ 'kk.landing.calc_margin' | t }}</span><b data-kk-home-pct>…</b></div>
+          </div>
+          {%- if section.settings.calc_foot != blank -%}<p class="kk-calc__foot">{{ section.settings.calc_foot | escape }}</p>{%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Marja o calculează cumpărătorul: el scrie prețul de raft, noi scădem costul
+       de la minimul comenzii. Nu publicăm niciodată o marjă calculată în numele lui. */
+    (function () {
+      var box = document.querySelector('[data-kk-home-calc]');
+      if (!box) return;
+      var cost = parseInt(box.dataset.cost, 10) || 0;
+      var input = box.querySelector('[data-kk-home-retail]');
+      var outM = box.querySelector('[data-kk-home-margin]');
+      var outP = box.querySelector('[data-kk-home-pct]');
+      function money(c) { return '€' + (c / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+      function paint() {
+        var n = parseFloat(String(input.value).replace(/[^\d,.]/g, '').replace(',', '.'));
+        if (!isFinite(n) || n <= 0) { outM.textContent = '—'; outP.textContent = '—'; return; }
+        var retail = Math.round(n * 100);
+        var margin = retail - cost;
+        outM.textContent = money(margin);
+        outP.textContent = Math.round(margin / retail * 100) + '%';
+      }
+      input.addEventListener('input', paint);
+      paint();
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width"><p class="kk-lede">Pick a product in the section settings: its price, minimum, case multiple and discount scale fill the table.</p></div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Kosmetikal · Terms",
+  "tag": "section",
+  "class": "kk-terms-section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Example product",
+      "info": "Its price, minimum order, case multiple, quote threshold and volume discount scale fill the table and the calculator, exactly as on its product page."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above the title",
+      "default": "Quantities, prices and lead time"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "How the quantities work."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "An example, so you can see the shape of it before you open a product. The exact price and lead time belong to each formula and are on its own product page."
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Table caption",
+      "info": "__product__ is replaced by the product name.",
+      "default": "Example ladder for __product__, starting at the minimum order. Real prices are on each product page."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_lead",
+      "label": "Show the “Ready in” column",
+      "info": "Uses the product's lead time field, or the theme default. Off until real lead times exist.",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "quote_link",
+      "label": "Link for orders above the threshold",
+      "info": "Empty = the Request a quote page."
+    },
+    {
+      "type": "header",
+      "content": "Margin calculator"
+    },
+    {
+      "type": "text",
+      "id": "calc_title",
+      "label": "Title",
+      "default": "What you make on it"
+    },
+    {
+      "type": "textarea",
+      "id": "calc_text",
+      "label": "Text",
+      "info": "__product__, __price__ and __min__ are replaced by the product name, its unit price and the minimum order.",
+      "default": "Type the price you plan to sell at. We show your margin on __product__ at the minimum order of __min__ pieces, __price__ per unit. Your own formula and quantity change the number."
+    },
+    {
+      "type": "text",
+      "id": "calc_foot",
+      "label": "Small note",
+      "default": "Your number, our arithmetic. Shipping, label printing and your own selling costs are not in it."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "note",
+      "name": "Note under the table",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Prices are per unit, before VAT." }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Kosmetikal · Terms",
+      "blocks": [
+        { "type": "note", "settings": { "text": "Prices are per unit, before VAT. EU business buyers with a valid VAT number are invoiced under reverse charge." } },
+        { "type": "note", "settings": { "text": "Shipping and label printing are quoted separately and shown before you pay." } },
+        { "type": "note", "settings": { "text": "If part of your order is in stock, that part ships first and the rest follows. Both dates are shown before you pay." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

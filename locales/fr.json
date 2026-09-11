@@ -736,7 +736,18 @@
       "from_pieces": "À partir de {{ n }} pièces",
       "catalogue_meta": "{{ count }} formules · à partir de {{ price }}",
       "catalogue_meta_one": "1 formule · {{ price }}",
-      "and_more": "et plus"
+      "and_more": "et plus",
+      "terms_qty": "Quantité",
+      "terms_unit": "Prix unitaire",
+      "terms_total": "Votre total",
+      "terms_lead": "Prêt en",
+      "terms_over": "Plus de {{ n }}",
+      "terms_contract": "Conditions contractuelles, devis par projet.",
+      "terms_quote": "Demander un devis",
+      "calc_retail": "Votre prix de vente, par unité",
+      "calc_cost": "Votre coût par unité",
+      "calc_margin_unit": "Votre marge par unité",
+      "calc_margin": "Votre marge"
     }
   }
 }

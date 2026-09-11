@@ -736,7 +736,18 @@
       "from_pieces": "Da {{ n }} pezzi",
       "catalogue_meta": "{{ count }} formule · da {{ price }}",
       "catalogue_meta_one": "1 formula · {{ price }}",
-      "and_more": "e altri"
+      "and_more": "e altri",
+      "terms_qty": "Quantità",
+      "terms_unit": "Prezzo unitario",
+      "terms_total": "Il tuo totale",
+      "terms_lead": "Pronto in",
+      "terms_over": "Oltre {{ n }}",
+      "terms_contract": "Condizioni contrattuali, preventivo per progetto.",
+      "terms_quote": "Richiedi un preventivo",
+      "calc_retail": "Il tuo prezzo al pubblico, per unità",
+      "calc_cost": "Il tuo costo per unità",
+      "calc_margin_unit": "Il tuo margine per unità",
+      "calc_margin": "Il tuo margine"
     }
   }
 }

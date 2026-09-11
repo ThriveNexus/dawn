@@ -724,7 +724,18 @@
       "from_pieces": "From {{ n }} pieces",
       "catalogue_meta": "{{ count }} formulas · from {{ price }}",
       "catalogue_meta_one": "1 formula · {{ price }}",
-      "and_more": "and more"
+      "and_more": "and more",
+      "terms_qty": "Quantity",
+      "terms_unit": "Unit price",
+      "terms_total": "Your total",
+      "terms_lead": "Ready in",
+      "terms_over": "Over {{ n }}",
+      "terms_contract": "Contract terms, quoted per project.",
+      "terms_quote": "Request a quote",
+      "calc_retail": "Your retail price, per unit",
+      "calc_cost": "Your cost per unit",
+      "calc_margin_unit": "Your margin per unit",
+      "calc_margin": "Your margin"
     }
   }
 }

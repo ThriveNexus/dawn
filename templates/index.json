@@ -229,6 +229,49 @@
         "padding_bottom": 72
       }
     },
+    "kk_terms": {
+      "type": "kk-terms",
+      "blocks": {
+        "note_1": {
+          "type": "note",
+          "settings": {
+            "text": "Prices are per unit, before VAT. EU business buyers with a valid VAT number are invoiced under reverse charge."
+          }
+        },
+        "note_2": {
+          "type": "note",
+          "settings": {
+            "text": "Shipping and label printing are quoted separately and shown before you pay."
+          }
+        },
+        "note_3": {
+          "type": "note",
+          "settings": {
+            "text": "If part of your order is in stock, that part ships first and the rest follows. Both dates are shown before you pay."
+          }
+        }
+      },
+      "block_order": [
+        "note_1",
+        "note_2",
+        "note_3"
+      ],
+      "settings": {
+        "product": "lip-balm-antipollution",
+        "eyebrow": "Quantities, prices and lead time",
+        "heading": "How the quantities work.",
+        "text": "An example, so you can see the shape of it before you open a product. The exact price and lead time belong to each formula and are on its own product page.",
+        "caption": "Example ladder for __product__, starting at the minimum order. Real prices are on each product page.",
+        "show_lead": false,
+        "quote_link": "/pages/request-a-quote",
+        "calc_title": "What you make on it",
+        "calc_text": "Type the price you plan to sell at. We show your margin on __product__ at the minimum order of __min__ pieces, __price__ per unit. Your own formula and quantity change the number.",
+        "calc_foot": "Your number, our arithmetic. Shipping, label printing and your own selling costs are not in it.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "disabled": true,
@@ -355,6 +398,7 @@
     "kk_buyers",
     "kk_catalogue",
     "kk_label_editor",
+    "kk_terms",
     "featured_collection",
     "multicolumn_E3NbqU",
     "rich_text_UjqJXz"

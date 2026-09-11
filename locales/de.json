@@ -724,7 +724,18 @@
       "from_pieces": "Ab {{ n }} Stück",
       "catalogue_meta": "{{ count }} Formeln · ab {{ price }}",
       "catalogue_meta_one": "1 Formel · {{ price }}",
-      "and_more": "und mehr"
+      "and_more": "und mehr",
+      "terms_qty": "Menge",
+      "terms_unit": "Stückpreis",
+      "terms_total": "Ihre Summe",
+      "terms_lead": "Fertig in",
+      "terms_over": "Über {{ n }}",
+      "terms_contract": "Vertragskonditionen, Angebot pro Projekt.",
+      "terms_quote": "Angebot anfragen",
+      "calc_retail": "Ihr Verkaufspreis pro Stück",
+      "calc_cost": "Ihre Kosten pro Stück",
+      "calc_margin_unit": "Ihre Marge pro Stück",
+      "calc_margin": "Ihre Marge"
     }
   }
 }
