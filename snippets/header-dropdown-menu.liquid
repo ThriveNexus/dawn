@@ -7,7 +7,11 @@
 
 <nav class="header__inline-menu">
   <ul class="list-menu list-menu--inline" role="list">
+    {%- if section.settings.kk_menu_v2 -%}
+      {%- render 'kk-header-fallback-menu', context: 'inline' -%}
+    {%- endif -%}
     {%- for link in section.settings.menu.links -%}
+      {%- if section.settings.kk_menu_v2 -%}{%- break -%}{%- endif -%}
       <li>
         {%- if link.links != blank -%}
           <header-menu>

@@ -719,6 +719,9 @@
       "min_order_html": "Minimum order is <strong>{{ min }} pieces</strong> — the smallest production batch.",
       "cases_html": "This product is sold in cases of <strong>{{ mult }}</strong>.",
       "remove_hint_html": "To remove an item, use the bin icon."
+    },
+    "landing": {
+      "from_pieces": "From {{ n }} pieces"
     }
   }
 }

@@ -731,6 +731,9 @@
       "min_order_html": "La commande minimale est de <strong>{{ min }} pièces</strong> : le plus petit lot de production.",
       "cases_html": "Ce produit est vendu par cartons de <strong>{{ mult }}</strong>.",
       "remove_hint_html": "Pour retirer un article, utilisez l'icône de la corbeille."
+    },
+    "landing": {
+      "from_pieces": "À partir de {{ n }} pièces"
     }
   }
 }

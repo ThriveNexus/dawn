@@ -1,0 +1,227 @@
+/* KOSMETIKAL — stiluri pentru pagina principală V2 (bara de anunț, antet, hero).
+   Culorile și fonturile vin din schema temei (variabilele Dawn), formele din V2. */
+
+/* ---------- bara de anunț */
+.kk-notice {
+  text-align: center;
+  padding: 0.9rem 1.5rem;
+}
+.kk-notice__text {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.kk-notice__sep {
+  margin: 0 0.6em;
+  opacity: 0.6;
+}
+
+/* ---------- antet: marca ca în V2 (wordmark + oraș), „Request a quote” ca pastilă */
+.header__heading-link .h2 {
+  display: block;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.1rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.header__heading-link .h2::after {
+  content: "Pesaro · Italy";
+  display: block;
+  font-family: var(--font-body-family);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 0.35rem;
+}
+.header__inline-menu .kk-navpill,
+.header__inline-menu li:last-child > a.header__menu-item {
+  border: 1px solid rgb(var(--color-button));
+  border-radius: 999px;
+  padding: 0.8rem 1.8rem;
+  margin-left: 0.8rem;
+  text-decoration: none;
+}
+.header__inline-menu .kk-navpill:hover,
+.header__inline-menu li:last-child > a.header__menu-item:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+.header__inline-menu .kk-navpill span,
+.header__inline-menu li:last-child > a.header__menu-item span {
+  text-decoration: none !important;
+}
+
+/* ---------- hero */
+.kk-hero {
+  position: relative;
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background-image: linear-gradient(90deg, rgba(var(--color-foreground), 0) 0%, rgba(var(--color-foreground), 0.05) 100%);
+}
+.kk-hero--photo {
+  background-image: var(--kk-hero-img);
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+.kk-hero--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-background), 0.94) 0%,
+    rgba(var(--color-background), 0.82) 32%,
+    rgba(var(--color-background), 0.28) 56%,
+    rgba(var(--color-background), 0) 72%
+  );
+}
+.kk-hero__in {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: clamp(42rem, 58vh, 56rem);
+}
+.kk-hero__copy {
+  max-width: 60rem;
+}
+.kk-eyebrow {
+  margin: 0 0 1.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--color-button));
+}
+.kk-hero__title {
+  margin: 0 0 2rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: clamp(3.6rem, 4.8vw, 5.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+.kk-hero__sub {
+  max-width: 48rem;
+  margin-bottom: 2.4rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.72);
+}
+.kk-hero__sub p {
+  margin: 0;
+}
+.kk-hero__floor {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin: 0 0 2.6rem;
+  padding: 0.9rem 2rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 999px;
+}
+.kk-hero__floor b {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.2rem;
+  color: rgb(var(--color-foreground));
+}
+.kk-hero__floor span {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-bottom: 2.2rem;
+}
+.kk-hero__trust {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-size: 1.35rem;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-hero__trust svg {
+  flex: none;
+  color: rgb(var(--color-button));
+}
+
+/* ---------- butoane în formă de pastilă, culorile schemei */
+.kk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 1.4rem 2.8rem;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.kk-btn:hover {
+  transform: translateY(-1px);
+}
+.kk-btn--solid {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+.kk-btn--solid:hover {
+  background: rgba(var(--color-button), 0.88);
+}
+.kk-btn--ghost {
+  border-color: rgb(var(--color-button));
+  color: rgb(var(--color-button));
+  background: transparent;
+}
+.kk-btn--ghost:hover {
+  background: rgba(var(--color-button), 0.08);
+}
+.kk-btn--inert {
+  cursor: default;
+}
+.kk-btn--inert:hover {
+  transform: none;
+  background: transparent;
+}
+
+@media screen and (max-width: 749px) {
+  .kk-hero--photo {
+    background-image: none;
+  }
+  .kk-hero--photo::before {
+    display: none;
+  }
+  .kk-hero__in {
+    min-height: 0;
+  }
+  .kk-hero {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-hero__floor {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    border-radius: 2rem;
+  }
+  .kk-notice__text {
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+  }
+}

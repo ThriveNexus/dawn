@@ -731,6 +731,9 @@
       "min_order_html": "L'ordine minimo è di <strong>{{ min }} pezzi</strong>: il lotto di produzione più piccolo.",
       "cases_html": "Questo prodotto è venduto in confezioni da <strong>{{ mult }}</strong>.",
       "remove_hint_html": "Per rimuovere un articolo usa l'icona del cestino."
+    },
+    "landing": {
+      "from_pieces": "Da {{ n }} pezzi"
     }
   }
 }

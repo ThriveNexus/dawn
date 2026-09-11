@@ -1,0 +1,31 @@
+{%- comment -%}
+  KOSMETIKAL — Meniul V2 pentru previzualizare (temporar).
+  Pornit din antet → „Preview: V2 menu”. Când meniul real e făcut în
+  admin (Navigation), setarea se oprește și antetul citește meniul de acolo.
+  context: 'inline' (desktop) sau 'drawer' (telefon).
+{%- endcomment -%}
+{%- assign kk_items = "Products|/collections;Start small|/#start;How it works|/#how;Compliance|/pages/compliance-certifications;Request a quote|/pages/request-a-quote" | split: ";" -%}
+{%- for kk_item in kk_items -%}
+  {%- assign kk_parts = kk_item | split: "|" -%}
+  {%- assign kk_title = kk_parts[0] -%}
+  {%- assign kk_url = kk_parts[1] -%}
+  {%- if context == 'drawer' -%}
+    <li>
+      <a
+        href="{{ kk_url }}"
+        class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if forloop.last %} kk-navpill-mobile{% endif %}"
+      >
+        {{ kk_title }}
+      </a>
+    </li>
+  {%- else -%}
+    <li>
+      <a
+        href="{{ kk_url }}"
+        class="header__menu-item list-menu__item link link--text focus-inset{% if forloop.last %} kk-navpill{% endif %}"
+      >
+        <span>{{ kk_title }}</span>
+      </a>
+    </li>
+  {%- endif -%}
+{%- endfor -%}

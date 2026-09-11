@@ -731,6 +731,9 @@
       "min_order_html": "El pedido mínimo es de <strong>{{ min }} unidades</strong>: el lote de producción más pequeño.",
       "cases_html": "Este producto se vende en cajas de <strong>{{ mult }}</strong>.",
       "remove_hint_html": "Para quitar un artículo, usa el icono de la papelera."
+    },
+    "landing": {
+      "from_pieces": "Desde {{ n }} unidades"
     }
   }
 }

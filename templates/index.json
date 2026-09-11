@@ -9,44 +9,23 @@
  */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "button"
-      ],
-      "disabled": true,
+    "kk_hero": {
+      "type": "kk-hero",
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "image_behavior": "none",
-        "desktop_content_position": "bottom-center",
-        "desktop_content_alignment": "center",
-        "show_text_box": false,
-        "color_scheme": "scheme-3",
-        "stack_images_on_mobile": false,
-        "mobile_content_alignment": "center",
-        "show_text_below": false
+        "eyebrow": "Cosmetics contract manufacturer · Pesaro, Italy",
+        "heading": "Your brand, from our laboratory in Italy.",
+        "text": "<p>Formulas developed and produced in our own laboratory, with ICEA and AIAB certified organic lines among them. Choose a ready formula, add your label, order a small batch.</p>",
+        "show_floor": true,
+        "floor_suffix": "per product, with your own label on them",
+        "button_label": "Browse the catalogue",
+        "button_link": "/collections",
+        "button2_label": "See it with your name on it",
+        "button2_link": "",
+        "show_trust": true,
+        "trust_text": "Every design is reviewed and confirmed before production.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
     "featured_collection": {
@@ -76,58 +55,6 @@
         "swipe_on_mobile": false,
         "padding_top": 44,
         "padding_bottom": 36
-      }
-    },
-    "rich_text_TQGWNt": {
-      "type": "rich-text",
-      "blocks": {
-        "caption_kzjWry": {
-          "type": "caption",
-          "settings": {
-            "caption": "KOSMETIKAL · PESARO, ITALY",
-            "text_style": "caption-with-letter-spacing",
-            "text_size": "medium"
-          }
-        },
-        "heading_pq3hLg": {
-          "type": "heading",
-          "settings": {
-            "heading": "Your brand. Made in Italy.",
-            "heading_size": "h1"
-          }
-        },
-        "text_yjTzWr": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Certified organic skincare, manufactured in Italy. Order from 10 pieces — with your own label.</p>"
-          }
-        },
-        "button_j86y4A": {
-          "type": "button",
-          "settings": {
-            "button_label": "Browse the catalogue",
-            "button_link": "shopify://collections",
-            "button_style_secondary": false,
-            "button_label_2": "Over 500 pieces? Talk to us",
-            "button_link_2": "shopify://pages/contact",
-            "button_style_secondary_2": true
-          }
-        }
-      },
-      "block_order": [
-        "caption_kzjWry",
-        "heading_pq3hLg",
-        "text_yjTzWr",
-        "button_j86y4A"
-      ],
-      "name": "t:sections.rich-text.presets.name",
-      "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 56,
-        "padding_bottom": 60
       }
     },
     "multicolumn_XcNbmj": {
@@ -376,9 +303,8 @@
     }
   },
   "order": [
-    "image_banner",
+    "kk_hero",
     "featured_collection",
-    "rich_text_TQGWNt",
     "multicolumn_XcNbmj",
     "multicolumn_E3NbqU",
     "collection_list_akzVhh",

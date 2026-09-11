@@ -11,28 +11,12 @@
   "name": "t:sections.header.name",
   "type": "header",
   "sections": {
-    "announcement-bar": {
-      "type": "announcement-bar",
-      "blocks": {
-        "announcement-bar-0": {
-          "type": "announcement",
-          "settings": {
-            "text": "Made in Italy · Certified organic · From 10 pieces",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "announcement-bar-0"
-      ],
+    "kk_notice": {
+      "type": "kk-notice-bar",
       "settings": {
-        "auto_rotate": false,
-        "change_slides_speed": 5,
-        "color_scheme": "scheme-1",
-        "show_line_separator": true,
-        "show_social": false,
-        "enable_country_selector": false,
-        "enable_language_selector": false
+        "text": "White label skincare · Made in Italy",
+        "show_floor": true,
+        "color_scheme": "scheme-2"
       }
     },
     "header": {
@@ -51,12 +35,13 @@
         "enable_customer_avatar": true,
         "margin_bottom": 0,
         "padding_top": 20,
-        "padding_bottom": 20
+        "padding_bottom": 20,
+        "kk_menu_v2": true
       }
     }
   },
   "order": [
-    "announcement-bar",
+    "kk_notice",
     "header"
   ]
 }
