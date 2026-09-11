@@ -225,3 +225,65 @@
     letter-spacing: 0.1em;
   }
 }
+
+/* ---------- panglica de credibilitate (secțiunea 4) */
+.kk-ribbon {
+  background: #fff;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  padding: 2.2rem 0;
+}
+.kk-ribbon__in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.4rem 2.6rem;
+}
+.kk-ribbon__label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+}
+.kk-lozenge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  border-radius: 999px;
+  background: rgb(var(--color-background));
+  white-space: nowrap;
+}
+.kk-lozenge b {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.45rem;
+  color: rgb(var(--color-foreground));
+}
+.kk-lozenge span {
+  font-size: 1.25rem;
+  color: rgba(var(--color-foreground), 0.62);
+}
+.kk-ribbon__more {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: rgb(var(--color-button));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+@media screen and (max-width: 749px) {
+  .kk-ribbon__in {
+    gap: 1rem 1.2rem;
+  }
+  .kk-ribbon__label {
+    width: 100%;
+    text-align: center;
+  }
+  .kk-ribbon__more {
+    width: 100%;
+    text-align: center;
+  }
+}
