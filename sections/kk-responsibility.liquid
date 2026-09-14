@@ -1,0 +1,132 @@
+{%- comment -%}
+  KOSMETIKAL — „Cine răspunde pentru ce” (secțiunea 11 din landing V2).
+  Text scurt + tabel cu trei coloane fixe (ce cere legea · cine face asta în
+  această relație · ce primești), un rând = un bloc. Pe telefon tabelul devine
+  blocuri, cu numele coloanei deasupra fiecărei celule. Ține ancora
+  #responsibility. Referințele la articolele de lege NU sunt afișate (slotul
+  reg-verify din V2 e ascuns până vine verificarea juridică).
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+
+<div id="responsibility" class="kk-resp color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    <div class="kk-resp__head">
+      {%- if section.settings.eyebrow != blank -%}<p class="kk-eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<p class="kk-lede">{{ section.settings.text | escape }}</p>{%- endif -%}
+    </div>
+    {%- if section.blocks.size > 0 -%}
+      <table class="kk-resptable">
+        <thead>
+          <tr>
+            <th>{{ section.settings.col_law | escape }}</th>
+            <th>{{ section.settings.col_who | escape }}</th>
+            <th>{{ section.settings.col_get | escape }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <td data-col="{{ section.settings.col_law | escape }}">{{ block.settings.law | escape }}</td>
+              <td data-col="{{ section.settings.col_who | escape }}">{{ block.settings.who | escape }}</td>
+              <td data-col="{{ section.settings.col_get | escape }}">{{ block.settings.get | escape }}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- endif -%}
+    {%- if section.settings.foot != blank -%}
+      <p class="kk-resp__foot">{{ section.settings.foot | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Liability",
+  "tag": "section",
+  "class": "kk-resp-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above the title",
+      "default": "Before your name goes on the jar"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "Who is responsible for what."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "When you sell a cosmetic under your own brand, European law asks for a named Responsible Person and a notification before the product reaches the market. Here is how that works in this deal, in plain words."
+    },
+    {
+      "type": "header",
+      "content": "Column titles"
+    },
+    { "type": "text", "id": "col_law", "label": "Column 1", "default": "What the law asks" },
+    { "type": "text", "id": "col_who", "label": "Column 2", "default": "Who does it in this deal" },
+    { "type": "text", "id": "col_get", "label": "Column 3", "default": "What you receive" },
+    {
+      "type": "textarea",
+      "id": "foot",
+      "label": "Note under the table",
+      "default": "Selling outside the European Union, or into Great Britain? The duties change. Tell us the market and we will confirm the terms for it in writing before production."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "law", "label": "What the law asks", "default": "A named Responsible Person for the product" },
+        { "type": "textarea", "id": "who", "label": "Who does it in this deal", "default": "Whoever appears on the label. Your name on the pack makes you the Responsible Person." },
+        { "type": "textarea", "id": "get", "label": "What you receive", "default": "The exact wording your label needs, checked against the container before printing." }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Kosmetikal · Liability",
+      "blocks": [
+        { "type": "row", "settings": { "law": "A named Responsible Person for the product", "who": "Whoever appears on the label. Your name on the pack makes you the Responsible Person.", "get": "The exact wording your label needs, checked against the container before printing." } },
+        { "type": "row", "settings": { "law": "A product information file and a safety assessment", "who": "Kosmetikal. We formulate and produce here, so the file is ours to keep and ours to give you.", "get": "The documentation for your formula, from the laboratory that made it." } },
+        { "type": "row", "settings": { "law": "Notification before the product is placed on the market", "who": "You, as Responsible Person. We can file it for you, in your name, if you prefer.", "get": "Either the notification filed on your behalf, or the data you need to file it yourself." } },
+        { "type": "row", "settings": { "law": "A batch number and traceability", "who": "Kosmetikal, on every batch we produce.", "get": "Batch number and certificate of analysis with your delivery." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

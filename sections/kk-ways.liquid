@@ -1,0 +1,112 @@
+{%- comment -%}
+  KOSMETIKAL — „Cum vrei să începi” (secțiunea 9 din landing V2).
+  Trei carduri (blocuri): mostre, primul lot cu etichetă, discuție cu laboratorul.
+  Ține ancora #start („Start small” din meniu). Eticheta mică a cardului poate
+  conține __floor__, înlocuit cu „From N pieces”, N calculat din produse.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- capture kk_floor -%}{%- render 'kk-order-floor' -%}{%- endcapture -%}
+{%- assign kk_floor = kk_floor | strip | plus: 0 -%}
+{%- assign kk_floor_text = 'kk.landing.from_pieces' | t: n: kk_floor -%}
+
+<div id="start" class="kk-ways color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="kk-section-head">
+        {%- if section.settings.heading != blank -%}<h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="kk-lede">{{ section.settings.text | escape }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="kk-routes">
+      {%- for block in section.blocks -%}
+        <div class="kk-route{% if block.settings.primary %} kk-route--primary{% endif %}" {{ block.shopify_attributes }}>
+          {%- if block.settings.kicker != blank -%}
+            <p class="kk-route__kicker">{{ block.settings.kicker | replace: '__floor__', kk_floor_text | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="kk-route__title">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <div class="kk-route__text rte">{{ block.settings.text }}</div>
+          {%- endif -%}
+          {%- if block.settings.button_label != blank -%}
+            <a class="kk-btn {% if block.settings.primary %}kk-btn--solid{% else %}kk-btn--ghost{% endif %}" href="{{ block.settings.button_link | default: '/pages/contact' }}">{{ block.settings.button_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Start",
+  "tag": "section",
+  "class": "kk-ways-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "How small do you want to start?"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title",
+      "default": "Three honest ways in. Pick the one that matches the risk you want to take today."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "route",
+      "name": "Way to start",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Small label", "info": "__floor__ becomes “From N pieces”, N computed from the products.", "default": "1 sample" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Try the formulas first" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Pick up to three formulas and we send them to you unbranded, so you can test them on your own clients before you commit to anything.</p>" },
+        { "type": "text", "id": "button_label", "label": "Button", "default": "Ask for samples" },
+        { "type": "url", "id": "button_link", "label": "Button link", "info": "Empty = the Contact page." },
+        { "type": "checkbox", "id": "primary", "label": "Highlight this card", "default": false }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Kosmetikal · Start",
+      "blocks": [
+        { "type": "route", "settings": { "kicker": "1 sample", "title": "Try the formulas first", "text": "<p>Pick up to three formulas and we send them to you unbranded, so you can test them on your own clients before you commit to anything.</p>", "button_label": "Ask for samples", "primary": false } },
+        { "type": "route", "settings": { "kicker": "__floor__", "title": "Your first branded batch", "text": "<p>Choose a formula, add your label, order the smallest batch. This is the route this store was built for, and it is self service from start to finish.</p>", "button_label": "Browse the catalogue", "primary": true } },
+        { "type": "route", "settings": { "kicker": "A conversation", "title": "Talk to the laboratory", "text": "<p>If you already know what you want to sell and in what volumes, write to <a href=\"mailto:info@kosmetikal.it\">info@kosmetikal.it</a> or call <a href=\"tel:+390721855882\">+39 0721 855882</a>. A person here answers.</p>", "button_label": "Book a call", "primary": false } }
+      ]
+    }
+  ]
+}
+{% endschema %}

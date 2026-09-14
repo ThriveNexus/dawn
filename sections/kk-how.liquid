@@ -1,0 +1,101 @@
+{%- comment -%}
+  KOSMETIKAL — „Cum decurge o comandă” (secțiunea 10 din landing V2).
+  Patru pași (blocuri), pe o grilă de 4 / 2 / 1 coloane. Ține ancora #how
+  („How it works” din meniu). Textul unui pas poate conține __count__,
+  înlocuit cu numărul real de produse din magazin.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- assign kk_total = collections.all.products_count -%}
+
+<div id="how" class="kk-how color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="kk-section-head">
+        {%- if section.settings.heading != blank -%}<h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="kk-lede">{{ section.settings.text | escape }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="kk-steps">
+      {%- for block in section.blocks -%}
+        <div class="kk-step" {{ block.shopify_attributes }}>
+          <p class="kk-step__num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+          {%- if block.settings.title != blank -%}
+            <h3 class="kk-step__title">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="kk-step__text">{{ block.settings.text | replace: '__count__', kk_total | escape }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · How it works",
+  "tag": "section",
+  "class": "kk-how-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "From our lab to your shelf, in four steps."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the title"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Choose a formula" },
+        { "type": "textarea", "id": "text", "label": "Text", "info": "__count__ is replaced by the real number of products.", "default": "__count__ ready formulas in the VISO face line. Pick the products that fit your clients and your price point." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Kosmetikal · How it works",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Choose a formula", "text": "__count__ ready formulas in the VISO face line. Pick the products that fit your clients and your price point." } },
+        { "type": "step", "settings": { "title": "Add your design", "text": "Upload your label directly on the product page, at the Add design step. Your brand, your artwork." } },
+        { "type": "step", "settings": { "title": "We review it", "text": "A chemist at the laboratory checks your label and your order before anything goes to production. Every design is reviewed and confirmed." } },
+        { "type": "step", "settings": { "title": "Produced and shipped", "text": "Your batch is produced in Pesaro and shipped to you, ready to sell under your name." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1430 @@
+/* KOSMETIKAL — stiluri pentru pagina principală V2 (bara de anunț, antet, hero).
+   Culorile și fonturile vin din schema temei (variabilele Dawn), formele din V2. */
+
+/* ---------- bara de anunț */
+.kk-notice {
+  text-align: center;
+  padding: 0.9rem 1.5rem;
+}
+.kk-notice__text {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.kk-notice__sep {
+  margin: 0 0.6em;
+  opacity: 0.6;
+}
+
+/* ---------- antet: marca ca în V2 (wordmark + oraș), „Request a quote” ca pastilă */
+.header__heading-link .h2 {
+  display: block;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.1rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.header__heading-link .h2::after {
+  content: "Pesaro · Italy";
+  display: block;
+  font-family: var(--font-body-family);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 0.35rem;
+}
+.header__inline-menu .kk-navpill,
+.header__inline-menu > .list-menu--inline > li:last-child > a.header__menu-item {
+  border: 1px solid rgb(var(--color-button));
+  border-radius: 999px;
+  padding: 0.8rem 1.8rem;
+  margin-left: 0.8rem;
+  text-decoration: none;
+}
+.header__inline-menu .kk-navpill:hover,
+.header__inline-menu > .list-menu--inline > li:last-child > a.header__menu-item:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+.header__inline-menu .kk-navpill span,
+.header__inline-menu > .list-menu--inline > li:last-child > a.header__menu-item span {
+  text-decoration: none !important;
+}
+
+/* ---------- hero */
+.kk-hero {
+  position: relative;
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background-image: linear-gradient(90deg, rgba(var(--color-foreground), 0) 0%, rgba(var(--color-foreground), 0.05) 100%);
+}
+.kk-hero--photo {
+  background-image: var(--kk-hero-img);
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+.kk-hero--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-background), 0.94) 0%,
+    rgba(var(--color-background), 0.82) 32%,
+    rgba(var(--color-background), 0.28) 56%,
+    rgba(var(--color-background), 0) 72%
+  );
+}
+.kk-hero__in {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: clamp(42rem, 58vh, 56rem);
+}
+.kk-hero__copy {
+  max-width: 60rem;
+}
+.kk-eyebrow {
+  margin: 0 0 1.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--color-button));
+}
+.kk-hero__title {
+  margin: 0 0 2rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: clamp(3.6rem, 4.8vw, 5.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+.kk-hero__sub {
+  max-width: 48rem;
+  margin-bottom: 2.4rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.72);
+}
+.kk-hero__sub p {
+  margin: 0;
+}
+.kk-hero__floor {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin: 0 0 2.6rem;
+  padding: 0.9rem 2rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 999px;
+}
+.kk-hero__floor b {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.2rem;
+  color: rgb(var(--color-foreground));
+}
+.kk-hero__floor span {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-bottom: 2.2rem;
+}
+.kk-hero__trust {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-size: 1.35rem;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-hero__trust svg {
+  flex: none;
+  color: rgb(var(--color-button));
+}
+
+/* ---------- butoane în formă de pastilă, culorile schemei */
+.kk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 1.4rem 2.8rem;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.kk-btn:hover {
+  transform: translateY(-1px);
+}
+.kk-btn--solid {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+.kk-btn--solid:hover {
+  background: rgba(var(--color-button), 0.88);
+}
+.kk-btn--ghost {
+  border-color: rgb(var(--color-button));
+  color: rgb(var(--color-button));
+  background: transparent;
+}
+.kk-btn--ghost:hover {
+  background: rgba(var(--color-button), 0.08);
+}
+.kk-btn--inert {
+  cursor: default;
+}
+.kk-btn--inert:hover {
+  transform: none;
+  background: transparent;
+}
+
+@media screen and (max-width: 749px) {
+  .kk-hero--photo {
+    background-image: none;
+  }
+  .kk-hero--photo::before {
+    display: none;
+  }
+  .kk-hero__in {
+    min-height: 0;
+  }
+  .kk-hero {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-hero__floor {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    border-radius: 2rem;
+  }
+  .kk-notice__text {
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ---------- panglica de credibilitate (secțiunea 4) */
+.kk-ribbon {
+  background: #fff;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  padding: 2.2rem 0;
+}
+.kk-ribbon__in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.4rem 2.6rem;
+}
+.kk-ribbon__label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+}
+.kk-lozenge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  border-radius: 999px;
+  background: rgb(var(--color-background));
+  white-space: nowrap;
+}
+.kk-lozenge b {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.45rem;
+  color: rgb(var(--color-foreground));
+}
+.kk-lozenge span {
+  font-size: 1.25rem;
+  color: rgba(var(--color-foreground), 0.62);
+}
+.kk-ribbon__more {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: rgb(var(--color-button));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+@media screen and (max-width: 749px) {
+  .kk-ribbon__in {
+    gap: 1rem 1.2rem;
+  }
+  .kk-ribbon__label {
+    width: 100%;
+    text-align: center;
+  }
+  .kk-ribbon__more {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ---------- titluri de secțiune comune (V2: centrate, serif) */
+.kk-section-head {
+  text-align: center;
+  max-width: 76rem;
+  margin: 0 auto 3.8rem;
+}
+.kk-h2 {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: clamp(2.7rem, 3.2vw, 3.8rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.kk-lede {
+  margin: 0 auto;
+  max-width: 56rem;
+  font-size: 1.7rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* ---------- cine cumpără de aici (secțiunea 5): 3 × 2 carduri */
+.kk-buyers {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-buyers__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.kk-chipcard {
+  display: block;
+  padding: 2.2rem 2.4rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+.kk-chipcard--link {
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.kk-chipcard--link:hover {
+  border-color: rgb(var(--color-button));
+  transform: translateY(-2px);
+}
+.kk-chipcard__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-chipcard__text {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+@media screen and (max-width: 989px) {
+  .kk-buyers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-buyers {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-buyers__grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .kk-section-head {
+    margin-bottom: 2.6rem;
+  }
+}
+
+/* ---------- catalogul (secțiunea 6): 6 carduri pe categorii, 3 × 2 */
+.kk-catalogue {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-section-head__cta {
+  margin: 2.2rem 0 0;
+}
+.kk-catalogue__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.kk-catcard {
+  display: block;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.kk-catcard:hover {
+  border-color: rgb(var(--color-button));
+  transform: translateY(-2px);
+}
+.kk-catcard__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #ededeb;
+  overflow: hidden;
+}
+.kk-catcard__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.kk-catcard__chip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.7rem 1.3rem;
+  border: 1.5px dashed rgba(60, 55, 45, 0.45);
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #5d564a;
+  white-space: nowrap;
+}
+.kk-catcard__body {
+  padding: 1.8rem 2.2rem 2.2rem;
+}
+.kk-catcard__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-catcard__desc {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+.kk-catcard__meta {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: rgb(var(--color-button));
+}
+@media screen and (max-width: 989px) {
+  .kk-catalogue__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-catalogue {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-catalogue__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .kk-catcard__body {
+    padding: 1.2rem 1.4rem 1.6rem;
+  }
+  .kk-catcard__title {
+    font-size: 1.6rem;
+  }
+  .kk-catcard__desc {
+    display: none;
+  }
+}
+
+/* ---------- eticheta ta, pe recipientele noastre (secțiunea 7): recipientele desenate din V2 */
+.kk-labeled {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: #fff;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-labeled__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 5.6rem;
+  align-items: center;
+}
+.kk-labeled__grid > * {
+  min-width: 0;
+}
+.kk-labeled__copy .kk-h2 {
+  margin-bottom: 1.8rem;
+}
+.kk-labeled__text {
+  font-size: 1.65rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.72);
+}
+.kk-labeled__text p {
+  margin: 0 0 1.8rem;
+}
+.kk-labeled__note {
+  margin: 0;
+  max-width: 42rem;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.6);
+}
+.kk-labeled__stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3.4rem;
+  height: 40rem;
+  padding: 0 2.4rem 4.4rem;
+  background: linear-gradient(180deg, #f5f0e6 0%, #ece5d6 100%);
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-labeled__watermark {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a49d8b;
+}
+.kk-vessel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.kk-vessel::after {
+  content: "";
+  display: block;
+  width: 9.6rem;
+  height: 1.2rem;
+  margin-top: 1rem;
+  background: radial-gradient(ellipse at center, rgba(43, 43, 38, 0.18), rgba(43, 43, 38, 0) 70%);
+}
+.kk-vessel__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kk-brandmark {
+  display: block;
+  width: 82%;
+  padding: 0.7rem 0.5rem;
+  border: 1px solid #ded6c4;
+  border-radius: 0.3rem;
+  background: #fff;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  letter-spacing: 0.12em;
+  text-align: center;
+  color: #5d564a;
+  word-break: break-word;
+}
+.kk-vessel--serum .kk-vessel__cap {
+  width: 3rem;
+  height: 2rem;
+  background: #3d4433;
+  border-radius: 0.6rem 0.6rem 0.2rem 0.2rem;
+}
+.kk-vessel--serum .kk-vessel__body {
+  width: 7.8rem;
+  height: 16rem;
+  background: linear-gradient(155deg, #f6ecd9 15%, #e8d7b8 65%, #ddcaa4);
+  border: 1px solid #d3c4a3;
+  border-radius: 1.2rem 1.2rem 1.6rem 1.6rem;
+  box-shadow: inset 11px 0 16px -9px rgba(255, 255, 255, 0.9);
+}
+.kk-vessel--jar .kk-vessel__lid {
+  width: 11.2rem;
+  height: 2.4rem;
+  margin-bottom: 0.3rem;
+  background: linear-gradient(180deg, #525b45, #3c4434);
+  border-radius: 0.7rem 0.7rem 0.3rem 0.3rem;
+}
+.kk-vessel--jar .kk-vessel__body {
+  width: 11.8rem;
+  height: 9.2rem;
+  background: linear-gradient(155deg, #ffffff, #eae3d4);
+  border: 1px solid #dcd4c2;
+  border-radius: 0.9rem 0.9rem 1.8rem 1.8rem;
+}
+.kk-vessel--pump .kk-vessel__spout {
+  width: 3.8rem;
+  height: 1.1rem;
+  background: #3d4433;
+  border-radius: 0.4rem;
+  transform: translateX(-1.1rem);
+}
+.kk-vessel--pump .kk-vessel__neck {
+  width: 1.4rem;
+  height: 1.7rem;
+  background: #3d4433;
+}
+.kk-vessel--pump .kk-vessel__body {
+  width: 8rem;
+  height: 14.8rem;
+  background: linear-gradient(155deg, #ffffff, #e9e2d2);
+  border: 1px solid #dcd4c2;
+  border-radius: 1rem 1rem 1.4rem 1.4rem;
+}
+@media screen and (max-width: 989px) {
+  .kk-labeled__grid {
+    grid-template-columns: 1fr;
+    gap: 3.2rem;
+  }
+  .kk-labeled__stage {
+    height: 32rem;
+    gap: 2rem;
+    padding: 0 1.4rem 3.4rem;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-labeled {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-vessel::after {
+    width: 6.4rem;
+  }
+  .kk-vessel--jar .kk-vessel__lid {
+    width: 8.6rem;
+  }
+  .kk-vessel--jar .kk-vessel__body {
+    width: 9.2rem;
+    height: 7.4rem;
+  }
+  .kk-vessel--serum .kk-vessel__body {
+    width: 6.2rem;
+    height: 12.6rem;
+  }
+  .kk-vessel--pump .kk-vessel__body {
+    width: 6.4rem;
+    height: 11.8rem;
+  }
+}
+
+/* ---------- cantități, prețuri și termen (secțiunea 8) */
+.kk-terms {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-terms__head {
+  max-width: 68rem;
+  margin-bottom: 3.6rem;
+}
+.kk-terms__head .kk-lede {
+  margin: 0;
+}
+.kk-terms__grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 4.8rem;
+  align-items: start;
+}
+.kk-terms__grid > * {
+  min-width: 0;
+}
+.kk-ladder-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 1.4rem;
+}
+.kk-ladder {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  overflow: hidden;
+}
+.kk-ladder caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0 0 1rem;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: rgba(var(--color-foreground), 0.6);
+}
+.kk-ladder th,
+.kk-ladder td {
+  padding: 1.4rem 1.6rem;
+  text-align: left;
+  font-size: 1.45rem;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-ladder th {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+  background: rgb(var(--color-background));
+}
+.kk-ladder tr:last-child td {
+  border-bottom: none;
+}
+.kk-ladder__q {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.7rem;
+}
+.kk-ladder .is-min td {
+  background: rgba(var(--color-button), 0.08);
+}
+.kk-ladder__off {
+  margin-left: 0.6rem;
+  font-size: 1.2rem;
+  color: rgb(var(--color-button));
+  font-weight: 600;
+}
+.kk-ladder__over td a {
+  color: rgb(var(--color-button));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  margin-left: 0.4rem;
+}
+.kk-terms__notes {
+  list-style: none;
+  margin: 1.8rem 0 0;
+  padding: 0;
+  font-size: 1.35rem;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-terms__notes li {
+  display: flex;
+  gap: 0.9rem;
+  margin-bottom: 0.7rem;
+}
+.kk-terms__notes svg {
+  flex: none;
+  margin-top: 0.4rem;
+  color: rgb(var(--color-button));
+}
+.kk-calc {
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+  padding: 2.6rem 2.6rem 2.8rem;
+}
+.kk-calc__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+}
+.kk-calc__text {
+  margin: 0 0 1.8rem;
+  font-size: 1.35rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.65);
+}
+.kk-calc__label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+}
+.kk-calc__field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1.6rem;
+  border: 1.5px solid rgba(var(--color-foreground), 0.15);
+  border-radius: 1rem;
+  background: rgb(var(--color-background));
+  font-size: 1.6rem;
+}
+.kk-calc__field:focus-within {
+  border-color: rgb(var(--color-button));
+  background: #fff;
+}
+.kk-calc__field input,
+.kk-calc__field input:focus,
+.kk-calc__field input:focus-visible {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 1.2rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+  line-height: 1.4;
+  color: rgb(var(--color-foreground));
+}
+.kk-calc__field:focus-within {
+  box-shadow: 0 0 0 3px rgba(var(--color-button), 0.15);
+}
+.kk-calc__out {
+  margin-top: 2rem;
+  padding-top: 1.8rem;
+  border-top: 1px dashed rgba(var(--color-foreground), 0.2);
+}
+.kk-calc__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.4rem;
+  padding: 0.5rem 0;
+  font-size: 1.45rem;
+}
+.kk-calc__row b {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.kk-calc__foot {
+  margin: 1.4rem 0 0;
+  font-size: 1.25rem;
+  color: rgba(var(--color-foreground), 0.6);
+}
+@media screen and (max-width: 989px) {
+  .kk-terms__grid {
+    grid-template-columns: 1fr;
+    gap: 3.4rem;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-terms {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-ladder {
+    min-width: 34rem;
+  }
+  .kk-ladder th,
+  .kk-ladder td {
+    padding: 1.1rem 1.2rem;
+    font-size: 1.35rem;
+  }
+  .kk-calc {
+    padding: 2rem 1.8rem 2.2rem;
+  }
+}
+
+/* ---------- cum vrei să începi (secțiunea 9): 3 căi */
+.kk-ways {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: #fff;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-routes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.8rem;
+}
+.kk-route {
+  display: flex;
+  flex-direction: column;
+  padding: 2.6rem 2.4rem 2.8rem;
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-route--primary {
+  background: rgba(var(--color-button), 0.08);
+  border-color: rgb(var(--color-button));
+}
+.kk-route__kicker {
+  margin: 0 0 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(var(--color-button));
+}
+.kk-route__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-route__text {
+  flex: 1;
+  margin: 0 0 1.8rem;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+.kk-route__text p {
+  margin: 0 0 1rem;
+}
+.kk-route__text a {
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.kk-route .kk-btn {
+  align-self: flex-start;
+}
+@media screen and (max-width: 989px) {
+  .kk-routes {
+    grid-template-columns: 1fr;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-ways {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+}
+
+/* ---------- cum decurge o comandă (secțiunea 10): 4 pași */
+.kk-how {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.8rem;
+}
+.kk-step {
+  position: relative;
+  padding: 2.6rem 2.4rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-step__num {
+  margin: 0 0 1.2rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+  color: rgb(var(--color-button));
+}
+.kk-step__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.85rem;
+  line-height: 1.2;
+}
+.kk-step__text {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+@media screen and (max-width: 989px) {
+  .kk-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-how {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-steps {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}
+
+/* ---------- cine răspunde pentru ce (secțiunea 11) */
+.kk-resp {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: rgba(var(--color-button), 0.07);
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-resp__head {
+  max-width: 68rem;
+  margin-bottom: 3.6rem;
+}
+.kk-resp__head .kk-lede {
+  margin: 0;
+}
+.kk-resptable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.4rem;
+  overflow: hidden;
+}
+.kk-resptable th,
+.kk-resptable td {
+  padding: 1.6rem 1.8rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-resptable th {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.6);
+  background: rgb(var(--color-background));
+}
+.kk-resptable tr:last-child td {
+  border-bottom: none;
+}
+.kk-resptable td:first-child {
+  width: 30%;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+.kk-resptable td:not(:first-child) {
+  color: rgba(var(--color-foreground), 0.75);
+}
+.kk-resp__foot {
+  max-width: 72rem;
+  margin: 1.8rem 0 0;
+  font-size: 1.35rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.65);
+}
+@media screen and (max-width: 749px) {
+  .kk-resp {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-resptable,
+  .kk-resptable tbody,
+  .kk-resptable tr,
+  .kk-resptable td {
+    display: block;
+    width: 100%;
+  }
+  .kk-resptable thead {
+    display: none;
+  }
+  .kk-resptable tr {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+  .kk-resptable tr:last-child {
+    border-bottom: none;
+  }
+  .kk-resptable td {
+    padding: 0.8rem 1.8rem;
+    border-bottom: none;
+  }
+  .kk-resptable td:first-child {
+    width: auto;
+    padding-top: 1.6rem;
+  }
+  .kk-resptable td::before {
+    content: attr(data-col);
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-body-family);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.55);
+  }
+}
+
+/* ---------- despre laborator (secțiunea 13) */
+.kk-maker {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-maker__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 5.6rem;
+  align-items: center;
+}
+.kk-maker__grid > * {
+  min-width: 0;
+}
+.kk-maker__copy .kk-h2 {
+  margin-bottom: 1.8rem;
+}
+.kk-maker__text {
+  font-size: 1.65rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.72);
+}
+.kk-maker__text p {
+  margin: 0 0 1.6rem;
+}
+.kk-maker__text p:last-child {
+  margin-bottom: 0;
+}
+.kk-maker__text strong {
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+.kk-maker__frame {
+  margin: 0;
+  border-radius: 1.6rem;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #efe9dd;
+}
+.kk-maker__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kk-maker__frame--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  background: repeating-linear-gradient(135deg, rgba(var(--color-foreground), 0.035) 0 1.2rem, transparent 1.2rem 2.4rem), #f5f0e6;
+  border: 1.5px dashed rgba(var(--color-foreground), 0.28);
+  color: rgba(var(--color-foreground), 0.45);
+  font-size: 1.25rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+@media screen and (max-width: 989px) {
+  .kk-maker__grid {
+    grid-template-columns: 1fr;
+    gap: 3.2rem;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-maker {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-maker__frame--empty {
+    display: none;
+  }
+}
+
+/* ---------- dacă magazinul nu ți se potrivește (secțiunea 14): două uși */
+.kk-outside {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+  background: #f6ede1;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.8rem;
+  max-width: 96rem;
+  margin: 0 auto;
+}
+.kk-door {
+  display: flex;
+  flex-direction: column;
+  padding: 2.6rem 2.4rem 2.8rem;
+  background: #fff;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 1.6rem;
+}
+.kk-door__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.kk-door__text {
+  flex: 1;
+  margin: 0 0 1.8rem;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.68);
+}
+.kk-door .kk-btn {
+  align-self: flex-start;
+}
+@media screen and (max-width: 749px) {
+  .kk-outside {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-doors {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- întrebări frecvente (secțiunea 15): acordeon nativ */
+.kk-faq {
+  padding-top: var(--kk-pt, 72px);
+  padding-bottom: var(--kk-pb, 72px);
+}
+.kk-faq__in {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+.kk-faq__item {
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.12);
+}
+.kk-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding: 2rem 0.2rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.8rem;
+  line-height: 1.3;
+  color: rgb(var(--color-foreground));
+}
+.kk-faq__q::-webkit-details-marker {
+  display: none;
+}
+.kk-faq__q svg {
+  flex: none;
+  color: rgb(var(--color-button));
+  transition: transform 0.2s ease;
+}
+.kk-faq__item[open] .kk-faq__q svg {
+  transform: rotate(180deg);
+}
+.kk-faq__a {
+  max-width: 66rem;
+  padding: 0 0.2rem 2.2rem;
+  font-size: 1.55rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.7);
+}
+@media screen and (max-width: 749px) {
+  .kk-faq {
+    padding-top: calc(var(--kk-pt, 72px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 72px) * 0.75);
+  }
+  .kk-faq__q {
+    font-size: 1.6rem;
+    padding: 1.6rem 0.2rem;
+  }
+}
+
+/* ---------- închiderea (secțiunea 16) */
+.kk-final {
+  padding-top: var(--kk-pt, 80px);
+  padding-bottom: var(--kk-pb, 80px);
+  background: rgba(var(--color-button), 0.07);
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+.kk-final__in {
+  text-align: center;
+  max-width: 72rem;
+}
+.kk-final__title {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: clamp(2.8rem, 3.6vw, 4.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.kk-final__text {
+  margin: 0 auto 2.8rem;
+  max-width: 56rem;
+  font-size: 1.7rem;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+.kk-final__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.4rem;
+}
+.kk-btn--light {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+.kk-btn--light:hover {
+  background: rgba(var(--color-button), 0.88);
+}
+.kk-btn--outline-light {
+  border-color: rgba(var(--color-foreground), 0.6);
+  color: rgb(var(--color-foreground));
+  background: transparent;
+}
+.kk-btn--outline-light:hover {
+  background: rgba(var(--color-foreground), 0.1);
+}
+@media screen and (max-width: 749px) {
+  .kk-final {
+    padding-top: calc(var(--kk-pt, 80px) * 0.75);
+    padding-bottom: calc(var(--kk-pb, 80px) * 0.75);
+  }
+}
+
+/* ---------- subsolul (secțiunea 17): fundal închis, trei coloane, identitate juridică */
+.kk-footer {
+  background: var(--kk-footer-bg, #2b2b26);
+  color: var(--kk-footer-ink, #efe9dd);
+  padding: 6.4rem 0 3.6rem;
+}
+.kk-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+.kk-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.kk-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 4rem;
+  align-items: start;
+}
+.kk-footer__heading {
+  margin: 0 0 1.8rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.kk-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.kk-footer__links li {
+  margin-bottom: 1.1rem;
+  font-size: 1.5rem;
+}
+.kk-footer__wordmark {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 1.9rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.kk-footer__subline {
+  margin: 0.4rem 0 1.6rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+.kk-footer__tagline {
+  margin: 0 0 1.2rem;
+  font-size: 1.4rem;
+  opacity: 0.85;
+}
+.kk-footer__certs {
+  margin: 0 0 1.2rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  opacity: 0.62;
+}
+.kk-footer__trust {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-size: 1.35rem;
+  opacity: 0.9;
+}
+.kk-footer__trust svg {
+  flex: none;
+  color: #a3b58a;
+}
+.kk-footer__bottom {
+  margin-top: 4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid rgba(239, 233, 221, 0.14);
+}
+.kk-footer__legal {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  opacity: 0.6;
+}
+.kk-footer__legal p {
+  margin: 0;
+}
+.kk-footer__policies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.8rem;
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  font-size: 1.15rem;
+  opacity: 0.55;
+}
+@media screen and (max-width: 989px) {
+  .kk-footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kk-footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+@media screen and (max-width: 749px) {
+  .kk-footer {
+    padding: 4.4rem 0 2.8rem;
+  }
+  .kk-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2.8rem;
+  }
+}

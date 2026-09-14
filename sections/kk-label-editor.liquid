@@ -1,0 +1,123 @@
+{%- comment -%}
+  KOSMETIKAL — „Eticheta ta, pe recipientele noastre” (secțiunea 7 din landing V2).
+  Doar descriptivă, fără simulare (decizia lui Claudio): spune că editorul de
+  etichete există pe pagina produsului și ce face. Stânga text, dreapta cele
+  trei recipiente desenate în CSS din V2 (pipetă, borcan, flacon cu pompă),
+  fiecare cu eticheta „YOUR LABEL”. Fără fotografie, până se decide una.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+
+<div id="try" class="kk-labeled color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width kk-labeled__grid">
+    <div class="kk-labeled__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="kk-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="kk-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="kk-labeled__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.note != blank -%}
+        <p class="kk-labeled__note">{{ section.settings.note | escape }}</p>
+      {%- endif -%}
+    </div>
+    <div class="kk-labeled__stage" aria-hidden="true">
+      {%- if section.settings.stage_label != blank -%}
+        <span class="kk-labeled__watermark">{{ section.settings.stage_label | escape }}</span>
+      {%- endif -%}
+      {%- assign kk_mark = section.settings.chip_text | escape -%}
+      <div class="kk-vessel kk-vessel--serum">
+        <span class="kk-vessel__cap"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark | replace: ' ', '<br>' }}</span></span>
+      </div>
+      <div class="kk-vessel kk-vessel--jar">
+        <span class="kk-vessel__lid"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark }}</span></span>
+      </div>
+      <div class="kk-vessel kk-vessel--pump">
+        <span class="kk-vessel__spout"></span>
+        <span class="kk-vessel__neck"></span>
+        <span class="kk-vessel__body"><span class="kk-brandmark">{{ kk_mark | replace: ' ', '<br>' }}</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Label editor",
+  "tag": "section",
+  "class": "kk-labeled-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above the title",
+      "default": "Your label, on our containers"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "You design it in the browser, on the real container."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>On every product page there is a label editor loaded with the exact dieline of that product: the printable area, the safe margins, the wrap of the container. You place your artwork on it and you see the finished product before you order.</p><p>The mandatory information a cosmetic label has to carry is already positioned for you, so the part that is easy to get wrong is the part you cannot get wrong.</p>"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Small note",
+      "default": "You can also send us your artwork and we place it for you. Either way, nothing goes to print before you have seen it and approved it."
+    },
+    {
+      "type": "header",
+      "content": "Drawn containers"
+    },
+    {
+      "type": "text",
+      "id": "stage_label",
+      "label": "Corner label",
+      "default": "In the editor"
+    },
+    {
+      "type": "text",
+      "id": "chip_text",
+      "label": "Label text on the containers",
+      "default": "YOUR LABEL"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "presets": [{ "name": "Kosmetikal · Label editor" }]
+}
+{% endschema %}

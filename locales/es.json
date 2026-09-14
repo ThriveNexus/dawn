@@ -731,6 +731,23 @@
       "min_order_html": "El pedido mínimo es de <strong>{{ min }} unidades</strong>: el lote de producción más pequeño.",
       "cases_html": "Este producto se vende en cajas de <strong>{{ mult }}</strong>.",
       "remove_hint_html": "Para quitar un artículo, usa el icono de la papelera."
+    },
+    "landing": {
+      "from_pieces": "Desde {{ n }} unidades",
+      "catalogue_meta": "{{ count }} fórmulas · desde {{ price }}",
+      "catalogue_meta_one": "1 fórmula · {{ price }}",
+      "and_more": "y más",
+      "terms_qty": "Cantidad",
+      "terms_unit": "Precio unitario",
+      "terms_total": "Tu total",
+      "terms_lead": "Listo en",
+      "terms_over": "Más de {{ n }}",
+      "terms_contract": "Condiciones de contrato, presupuesto por proyecto.",
+      "terms_quote": "Solicitar presupuesto",
+      "calc_retail": "Tu precio de venta, por unidad",
+      "calc_cost": "Tu coste por unidad",
+      "calc_margin_unit": "Tu margen por unidad",
+      "calc_margin": "Tu margen"
     }
   }
 }

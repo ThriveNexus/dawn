@@ -719,6 +719,23 @@
       "min_order_html": "Minimum order is <strong>{{ min }} pieces</strong> — the smallest production batch.",
       "cases_html": "This product is sold in cases of <strong>{{ mult }}</strong>.",
       "remove_hint_html": "To remove an item, use the bin icon."
+    },
+    "landing": {
+      "from_pieces": "From {{ n }} pieces",
+      "catalogue_meta": "{{ count }} formulas · from {{ price }}",
+      "catalogue_meta_one": "1 formula · {{ price }}",
+      "and_more": "and more",
+      "terms_qty": "Quantity",
+      "terms_unit": "Unit price",
+      "terms_total": "Your total",
+      "terms_lead": "Ready in",
+      "terms_over": "Over {{ n }}",
+      "terms_contract": "Contract terms, quoted per project.",
+      "terms_quote": "Request a quote",
+      "calc_retail": "Your retail price, per unit",
+      "calc_cost": "Your cost per unit",
+      "calc_margin_unit": "Your margin per unit",
+      "calc_margin": "Your margin"
     }
   }
 }

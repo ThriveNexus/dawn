@@ -1,0 +1,59 @@
+{%- comment -%}
+  KOSMETIKAL — Pragul minim de comandă al magazinului, calculat din produse.
+
+  Scoate (ca text) cea mai mică cantitate care se poate comanda efectiv la un
+  produs: pentru fiecare produs, cel mai mic multiplu de bax care atinge minimul
+  de comandă (aceeași regulă ca în panoul B2B de pe pagina de produs), apoi
+  minimul dintre produse. Câmpurile vin de pe produs (custom.moq,
+  custom.case_multiple), cu rezerva din setările temei. Nimic nu se scrie de mână.
+
+  Folosire:  {%- capture kk_floor -%}{%- render 'kk-order-floor' -%}{%- endcapture -%}
+             {%- assign kk_floor = kk_floor | strip | plus: 0 -%}
+
+  Limită: Liquid parcurge cel mult 50 de produse dintr-o colecție fără paginare.
+  Peste 50 de produse, numărul trebuie ținut într-un metacâmp de magazin
+  actualizat de aplicație (webhook products/update).
+{%- endcomment -%}
+{%- liquid
+  assign kk_floor = 0
+  if settings.kk_allow_single
+    assign kk_floor = 1
+  else
+    for kk_p in collections.all.products
+      assign kk_m = kk_p.metafields.custom
+      assign kk_moq = kk_m.moq.value | default: settings.kk_moq | default: 10
+      assign kk_moq = kk_moq | plus: 0
+      assign kk_mult = kk_m.case_multiple.value | default: settings.kk_case_multiple | default: 1
+      assign kk_mult = kk_mult | plus: 0
+      if kk_mult < 1
+        assign kk_mult = 1
+      endif
+      assign kk_cases = kk_moq | divided_by: kk_mult
+      assign kk_exact = kk_cases | times: kk_mult
+      if kk_exact < kk_moq
+        assign kk_cases = kk_cases | plus: 1
+      endif
+      assign kk_casemin = kk_cases | times: kk_mult
+      if kk_floor == 0 or kk_casemin < kk_floor
+        assign kk_floor = kk_casemin
+      endif
+    endfor
+    if kk_floor == 0
+      comment
+        niciun produs publicat: cădem pe regula din setările temei
+      endcomment
+      assign kk_moq = settings.kk_moq | default: 10 | plus: 0
+      assign kk_mult = settings.kk_case_multiple | default: 1 | plus: 0
+      if kk_mult < 1
+        assign kk_mult = 1
+      endif
+      assign kk_cases = kk_moq | divided_by: kk_mult
+      assign kk_exact = kk_cases | times: kk_mult
+      if kk_exact < kk_moq
+        assign kk_cases = kk_cases | plus: 1
+      endif
+      assign kk_floor = kk_cases | times: kk_mult
+    endif
+  endif
+  echo kk_floor
+-%}

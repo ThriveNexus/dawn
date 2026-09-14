@@ -1,0 +1,51 @@
+{%- comment -%}
+  KOSMETIKAL — Bara de anunț (secțiunea 1 din landing V2).
+  Textul din stânga e setare; „From N pieces” se calculează din produse
+  (snippet kk-order-floor) și nu se scrie niciodată de mână.
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+{%- capture kk_floor -%}{%- render 'kk-order-floor' -%}{%- endcapture -%}
+{%- assign kk_floor = kk_floor | strip | plus: 0 -%}
+
+<div class="kk-notice color-{{ section.settings.color_scheme }} gradient" role="region" aria-label="{{ 'sections.announcements.announcement_bar' | t }}">
+  <p class="kk-notice__text">
+    {%- if section.settings.text != blank -%}
+      <span>{{ section.settings.text | escape }}</span>
+    {%- endif -%}
+    {%- if section.settings.show_floor -%}
+      {%- if section.settings.text != blank %}<span class="kk-notice__sep" aria-hidden="true">·</span>{% endif -%}
+      <span>{{ 'kk.landing.from_pieces' | t: n: kk_floor }}</span>
+    {%- endif -%}
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Notice bar",
+  "tag": "section",
+  "class": "kk-notice-section",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "White label skincare · Made in Italy"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_floor",
+      "label": "Append the order minimum (“From N pieces”)",
+      "info": "N is computed from the products: the smallest quantity that can actually be ordered. Not typed by hand.",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-2"
+    }
+  ],
+  "presets": [{ "name": "Kosmetikal · Notice bar" }]
+}
+{% endschema %}

@@ -731,6 +731,23 @@
       "min_order_html": "La commande minimale est de <strong>{{ min }} pièces</strong> : le plus petit lot de production.",
       "cases_html": "Ce produit est vendu par cartons de <strong>{{ mult }}</strong>.",
       "remove_hint_html": "Pour retirer un article, utilisez l'icône de la corbeille."
+    },
+    "landing": {
+      "from_pieces": "À partir de {{ n }} pièces",
+      "catalogue_meta": "{{ count }} formules · à partir de {{ price }}",
+      "catalogue_meta_one": "1 formule · {{ price }}",
+      "and_more": "et plus",
+      "terms_qty": "Quantité",
+      "terms_unit": "Prix unitaire",
+      "terms_total": "Votre total",
+      "terms_lead": "Prêt en",
+      "terms_over": "Plus de {{ n }}",
+      "terms_contract": "Conditions contractuelles, devis par projet.",
+      "terms_quote": "Demander un devis",
+      "calc_retail": "Votre prix de vente, par unité",
+      "calc_cost": "Votre coût par unité",
+      "calc_margin_unit": "Votre marge par unité",
+      "calc_margin": "Votre marge"
     }
   }
 }

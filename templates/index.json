@@ -9,380 +9,562 @@
  */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "kk_hero": {
+      "type": "kk-hero",
+      "settings": {
+        "eyebrow": "Cosmetics contract manufacturer · Pesaro, Italy",
+        "heading": "Your brand, from our laboratory in Italy.",
+        "text": "<p>Formulas developed and produced in our own laboratory, with ICEA and AIAB certified organic lines among them. Choose a ready formula, add your label, order a small batch.</p>",
+        "show_floor": true,
+        "floor_suffix": "per product, with your own label on them",
+        "button_label": "Browse the catalogue",
+        "button_link": "/collections",
+        "button2_label": "See it with your name on it",
+        "button2_link": "",
+        "show_trust": true,
+        "trust_text": "Every design is reviewed and confirmed before production.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_credentials": {
+      "type": "kk-credentials",
       "blocks": {
-        "heading": {
-          "type": "heading",
+        "cert_1": {
+          "type": "cert",
           "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
+            "name": "ISO 9001",
+            "issuer": "RINA"
           }
         },
-        "button": {
-          "type": "buttons",
+        "cert_2": {
+          "type": "cert",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "name": "ISO 22716 GMP",
+            "issuer": "RINA"
+          }
+        },
+        "cert_3": {
+          "type": "cert",
+          "settings": {
+            "name": "ICEA",
+            "issuer": "COSMOS Organic"
+          }
+        },
+        "cert_4": {
+          "type": "cert",
+          "settings": {
+            "name": "ICEA",
+            "issuer": "Vegan"
+          }
+        },
+        "cert_5": {
+          "type": "cert",
+          "settings": {
+            "name": "AIAB",
+            "issuer": "Bio Eco Cosmesi"
           }
         }
       },
       "block_order": [
-        "heading",
-        "button"
+        "cert_1",
+        "cert_2",
+        "cert_3",
+        "cert_4",
+        "cert_5"
       ],
-      "disabled": true,
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "image_behavior": "none",
-        "desktop_content_position": "bottom-center",
-        "desktop_content_alignment": "center",
-        "show_text_box": false,
-        "color_scheme": "scheme-3",
-        "stack_images_on_mobile": false,
-        "mobile_content_alignment": "center",
-        "show_text_below": false
+        "label": "Audited and certified",
+        "link_label": "Certificate numbers and documents",
+        "link_url": "/pages/compliance-certifications",
+        "color_scheme": "scheme-1"
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
-      "disabled": true,
-      "settings": {
-        "collection": "all",
-        "products_to_show": 8,
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "columns_desktop": 4,
-        "enable_desktop_slider": false,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "color_scheme": "scheme-1",
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 44,
-        "padding_bottom": 36
-      }
-    },
-    "rich_text_TQGWNt": {
-      "type": "rich-text",
+    "kk_buyers": {
+      "type": "kk-buyers",
       "blocks": {
-        "caption_kzjWry": {
-          "type": "caption",
+        "buyer_1": {
+          "type": "buyer",
           "settings": {
-            "caption": "KOSMETIKAL · PESARO, ITALY",
-            "text_style": "caption-with-letter-spacing",
-            "text_size": "medium"
+            "title": "Salons",
+            "text": "Your treatments, taken home under your name.",
+            "link": ""
           }
         },
-        "heading_pq3hLg": {
-          "type": "heading",
+        "buyer_2": {
+          "type": "buyer",
           "settings": {
-            "heading": "Your brand. Made in Italy.",
-            "heading_size": "h1"
+            "title": "Spas",
+            "text": "A retail line your guests remember you by.",
+            "link": ""
           }
         },
-        "text_yjTzWr": {
-          "type": "text",
+        "buyer_3": {
+          "type": "buyer",
           "settings": {
-            "text": "<p>Certified organic skincare, manufactured in Italy. Order from 10 pieces — with your own label.</p>"
+            "title": "Pharmacies",
+            "text": "Formulas tested on sensitive skin, with the file behind them.",
+            "link": ""
           }
         },
-        "button_j86y4A": {
-          "type": "button",
+        "buyer_4": {
+          "type": "buyer",
           "settings": {
+            "title": "Creators",
+            "text": "Your own product, made in Italy, ready in weeks.",
+            "link": ""
+          }
+        },
+        "buyer_5": {
+          "type": "buyer",
+          "settings": {
+            "title": "E-commerce",
+            "text": "A line you can restock in small runs instead of pallets.",
+            "link": ""
+          }
+        },
+        "buyer_6": {
+          "type": "buyer",
+          "settings": {
+            "title": "Importers and distributors",
+            "text": "A private line for your territory, produced to your volumes.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "buyer_1",
+        "buyer_2",
+        "buyer_3",
+        "buyer_4",
+        "buyer_5",
+        "buyer_6"
+      ],
+      "settings": {
+        "heading": "You already have the clients. Now you just need a line of your own.",
+        "text": "Pick the door closest to your business and see the formulas that fit it.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_catalogue": {
+      "type": "kk-catalogue",
+      "blocks": {
+        "cat_1": {
+          "type": "category",
+          "settings": {
+            "collection": "essential-face-rituals",
+            "container": "bottle"
+          }
+        },
+        "cat_2": {
+          "type": "category",
+          "settings": {
+            "collection": "face-serums",
+            "container": "dropper"
+          }
+        },
+        "cat_3": {
+          "type": "category",
+          "settings": {
+            "collection": "face-creams",
+            "container": "jar"
+          }
+        },
+        "cat_4": {
+          "type": "category",
+          "settings": {
+            "collection": "face-masks",
+            "container": "tube"
+          }
+        },
+        "cat_5": {
+          "type": "category",
+          "settings": {
+            "collection": "water-mist",
+            "container": "bottle"
+          }
+        },
+        "cat_6": {
+          "type": "category",
+          "settings": {
+            "collection": "bb-cream",
+            "container": "tube"
+          }
+        }
+      },
+      "block_order": [
+        "cat_1",
+        "cat_2",
+        "cat_3",
+        "cat_4",
+        "cat_5",
+        "cat_6"
+      ],
+      "settings": {
+        "heading": "__count__ formulas, ready for your label.",
+        "text": "Face care produced in our own laboratory in Pesaro. Every product page carries its full INCI, its certifications and its batch sizes.",
+        "button_label": "Browse all products",
+        "button_link": "/collections",
+        "show_chip": false,
+        "chip_text": "YOUR LOGO",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_label_editor": {
+      "type": "kk-label-editor",
+      "settings": {
+        "eyebrow": "Your label, on our containers",
+        "heading": "You design it in the browser, on the real container.",
+        "text": "<p>On every product page there is a label editor loaded with the exact dieline of that product: the printable area, the safe margins, the wrap of the container. You place your artwork on it and you see the finished product before you order.</p><p>The mandatory information a cosmetic label has to carry is already positioned for you, so the part that is easy to get wrong is the part you cannot get wrong.</p>",
+        "note": "You can also send us your artwork and we place it for you. Either way, nothing goes to print before you have seen it and approved it.",
+        "stage_label": "In the editor",
+        "chip_text": "YOUR LABEL",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_terms": {
+      "type": "kk-terms",
+      "blocks": {
+        "note_1": {
+          "type": "note",
+          "settings": {
+            "text": "Prices are per unit, before VAT. EU business buyers with a valid VAT number are invoiced under reverse charge."
+          }
+        },
+        "note_2": {
+          "type": "note",
+          "settings": {
+            "text": "Shipping and label printing are quoted separately and shown before you pay."
+          }
+        },
+        "note_3": {
+          "type": "note",
+          "settings": {
+            "text": "If part of your order is in stock, that part ships first and the rest follows. Both dates are shown before you pay."
+          }
+        }
+      },
+      "block_order": [
+        "note_1",
+        "note_2",
+        "note_3"
+      ],
+      "settings": {
+        "product": "lip-balm-antipollution",
+        "eyebrow": "Quantities, prices and lead time",
+        "heading": "How the quantities work.",
+        "text": "An example, so you can see the shape of it before you open a product. The exact price and lead time belong to each formula and are on its own product page.",
+        "caption": "Example ladder for __product__, starting at the minimum order. Real prices are on each product page.",
+        "show_lead": false,
+        "quote_link": "/pages/request-a-quote",
+        "calc_title": "What you make on it",
+        "calc_text": "Type the price you plan to sell at. We show your margin on __product__ at the minimum order of __min__ pieces, __price__ per unit. Your own formula and quantity change the number.",
+        "calc_foot": "Your number, our arithmetic. Shipping, label printing and your own selling costs are not in it.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_ways": {
+      "type": "kk-ways",
+      "blocks": {
+        "route_1": {
+          "type": "route",
+          "settings": {
+            "kicker": "1 sample",
+            "title": "Try the formulas first",
+            "text": "<p>Pick up to three formulas and we send them to you unbranded, so you can test them on your own clients before you commit to anything.</p>",
+            "button_label": "Ask for samples",
+            "button_link": "/pages/contact",
+            "primary": false
+          }
+        },
+        "route_2": {
+          "type": "route",
+          "settings": {
+            "kicker": "__floor__",
+            "title": "Your first branded batch",
+            "text": "<p>Choose a formula, add your label, order the smallest batch. This is the route this store was built for, and it is self service from start to finish.</p>",
             "button_label": "Browse the catalogue",
-            "button_link": "shopify://collections",
-            "button_style_secondary": false,
-            "button_label_2": "Over 500 pieces? Talk to us",
-            "button_link_2": "shopify://pages/contact",
-            "button_style_secondary_2": true
+            "button_link": "/collections",
+            "primary": true
+          }
+        },
+        "route_3": {
+          "type": "route",
+          "settings": {
+            "kicker": "A conversation",
+            "title": "Talk to the laboratory",
+            "text": "<p>If you already know what you want to sell and in what volumes, write to <a href=\"mailto:info@kosmetikal.it\">info@kosmetikal.it</a> or call <a href=\"tel:+390721855882\">+39 0721 855882</a>. A person here answers.</p>",
+            "button_label": "Book a call",
+            "button_link": "/pages/contact",
+            "primary": false
           }
         }
       },
       "block_order": [
-        "caption_kzjWry",
-        "heading_pq3hLg",
-        "text_yjTzWr",
-        "button_j86y4A"
+        "route_1",
+        "route_2",
+        "route_3"
       ],
-      "name": "t:sections.rich-text.presets.name",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
+        "heading": "How small do you want to start?",
+        "text": "Three honest ways in. Pick the one that matches the risk you want to take today.",
         "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 56,
-        "padding_bottom": 60
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
-    "multicolumn_XcNbmj": {
-      "type": "multicolumn",
+    "kk_how": {
+      "type": "kk-how",
       "blocks": {
-        "column_j46CEx": {
-          "type": "column",
+        "step_1": {
+          "type": "step",
           "settings": {
-            "title": "From 10 pieces",
-            "text": "<p>No minimums in the thousands. Start small, scale when you sell.</p>",
-            "link_label": "",
-            "link": ""
+            "title": "Choose a formula",
+            "text": "__count__ ready formulas in the VISO face line. Pick the products that fit your clients and your price point."
           }
         },
-        "column_zCKxkT": {
-          "type": "column",
+        "step_2": {
+          "type": "step",
           "settings": {
-            "title": "Your label, our formulas",
-            "text": "<p>Upload your design. We manufacture, you sell.</p>",
-            "link_label": "",
-            "link": ""
+            "title": "Add your design",
+            "text": "Upload your label directly on the product page, at the Add design step. Your brand, your artwork."
           }
         },
-        "column_r4Pt9g": {
-          "type": "column",
+        "step_3": {
+          "type": "step",
           "settings": {
-            "title": "Certified and compliant",
-            "text": "<p>ISO 9001 · ISO 22716 · ICEA Biocosmesi · AIAB.</p>",
-            "link_label": "",
-            "link": ""
+            "title": "We review it",
+            "text": "A chemist at the laboratory checks your label and your order before anything goes to production. Every design is reviewed and confirmed."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "title": "Produced and shipped",
+            "text": "Your batch is produced in Pesaro and shipped to you, ready to sell under your name."
           }
         }
       },
       "block_order": [
-        "column_j46CEx",
-        "column_zCKxkT",
-        "column_r4Pt9g"
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4"
       ],
-      "name": "t:sections.multicolumn.presets.name",
       "settings": {
-        "title": "",
-        "heading_size": "h1",
-        "image_width": "full",
-        "image_ratio": "adapt",
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 3,
-        "column_alignment": "left",
-        "background_style": "primary",
-        "color_scheme": "scheme-2",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "multicolumn_E3NbqU": {
-      "type": "multicolumn",
-      "blocks": {
-        "column_Vq44AF": {
-          "type": "column",
-          "settings": {
-            "title": "1. Choose your product",
-            "text": "<p>28 formulas from the Kosmetikal VISO faceline.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_eFJb3f": {
-          "type": "column",
-          "settings": {
-            "title": "2. Add your design",
-            "text": "<p>Upload your logo or label.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_cTGNYn": {
-          "type": "column",
-          "settings": {
-            "title": "3. Receive your batch",
-            "text": "<p>Produced in Italy. From 10 pieces.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column_Vq44AF",
-        "column_eFJb3f",
-        "column_cTGNYn"
-      ],
-      "name": "t:sections.multicolumn.presets.name",
-      "settings": {
-        "title": "How it works",
-        "heading_size": "h1",
-        "image_width": "full",
-        "image_ratio": "adapt",
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 3,
-        "column_alignment": "left",
-        "background_style": "primary",
+        "heading": "From our lab to your shelf, in four steps.",
+        "text": "",
         "color_scheme": "scheme-1",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
-    "collection_list_akzVhh": {
-      "type": "collection-list",
+    "kk_responsibility": {
+      "type": "kk-responsibility",
       "blocks": {
-        "featured_collection_kxJ699": {
-          "type": "featured_collection",
+        "row_1": {
+          "type": "row",
           "settings": {
-            "collection": "bb-cream"
+            "law": "A named Responsible Person for the product",
+            "who": "Whoever appears on the label. Your name on the pack makes you the Responsible Person.",
+            "get": "The exact wording your label needs, checked against the container before printing."
           }
         },
-        "featured_collection_WLrqar": {
-          "type": "featured_collection",
+        "row_2": {
+          "type": "row",
           "settings": {
-            "collection": "face-masks"
+            "law": "A product information file and a safety assessment",
+            "who": "Kosmetikal. We formulate and produce here, so the file is ours to keep and ours to give you.",
+            "get": "The documentation for your formula, from the laboratory that made it."
           }
         },
-        "featured_collection_g9q4dC": {
-          "type": "featured_collection",
+        "row_3": {
+          "type": "row",
           "settings": {
-            "collection": "essential-face-rituals"
+            "law": "Notification before the product is placed on the market",
+            "who": "You, as Responsible Person. We can file it for you, in your name, if you prefer.",
+            "get": "Either the notification filed on your behalf, or the data you need to file it yourself."
           }
         },
-        "featured_collection_kdnF8f": {
-          "type": "featured_collection",
+        "row_4": {
+          "type": "row",
           "settings": {
-            "collection": "face-creams"
-          }
-        },
-        "featured_collection_EqiaAN": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "face-serums"
-          }
-        },
-        "featured_collection_N9Mjp7": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "snail-secretion-line"
-          }
-        },
-        "featured_collection_AEQ4tR": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "water-mist"
+            "law": "A batch number and traceability",
+            "who": "Kosmetikal, on every batch we produce.",
+            "get": "Batch number and certificate of analysis with your delivery."
           }
         }
       },
       "block_order": [
-        "featured_collection_kxJ699",
-        "featured_collection_WLrqar",
-        "featured_collection_g9q4dC",
-        "featured_collection_kdnF8f",
-        "featured_collection_EqiaAN",
-        "featured_collection_N9Mjp7",
-        "featured_collection_AEQ4tR"
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4"
       ],
-      "name": "t:sections.collection-list.presets.name",
       "settings": {
-        "title": "",
-        "heading_size": "h1",
-        "image_ratio": "square",
-        "columns_desktop": 3,
+        "eyebrow": "Before your name goes on the jar",
+        "heading": "Who is responsible for what.",
+        "text": "When you sell a cosmetic under your own brand, European law asks for a named Responsible Person and a notification before the product reaches the market. Here is how that works in this deal, in plain words.",
+        "col_law": "What the law asks",
+        "col_who": "Who does it in this deal",
+        "col_get": "What you receive",
+        "foot": "Selling outside the European Union, or into Great Britain? The duties change. Tell us the market and we will confirm the terms for it in writing before production.",
         "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
-    "rich_text_4hm9cf": {
-      "type": "rich-text",
+    "kk_maker": {
+      "type": "kk-maker",
+      "settings": {
+        "heading": "Work directly with the laboratory that makes your products.",
+        "text": "<p>Kosmetikal is a <strong>cosmetics contract manufacturer</strong> of natural and organic cosmetics. We have been making cosmetic lines for other brands for more than fifteen years, and those lines are now available in small quantities too.</p><p>Our R&amp;D staff combines experience and creativity to ensure innovative, safe and high quality formulations, working with leading raw materials companies and <strong>Italian universities</strong>.</p><p>Because every formula is developed and produced here in Pesaro, your product's documentation comes <strong>from the source</strong>.</p>",
+        "show_placeholder": true,
+        "placeholder_text": "Laboratory photo, Pesaro",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_outside": {
+      "type": "kk-outside",
       "blocks": {
-        "heading_yYAicJ": {
-          "type": "heading",
+        "door_1": {
+          "type": "door",
           "settings": {
-            "heading": "Who buys from us",
-            "heading_size": "h1"
+            "title": "More than __cap__ pieces",
+            "text": "At that scale we move to our classic contract terms: dedicated pricing, planned production runs, and a formula developed for you by our R&D team.",
+            "button_label": "Request a quote",
+            "button_link": "/pages/request-a-quote"
           }
         },
-        "text_GMn83M": {
-          "type": "text",
+        "door_2": {
+          "type": "door",
           "settings": {
-            "text": "<p>Salons & spas · Pharmacies · Beauty creators · Retail & e-commerce · Hotels</p>"
+            "title": "Fewer than __floor__, or something we do not list",
+            "text": "If you want to test a single unit, or you are looking for a format or a formula that is not in the catalogue, tell us what you have in mind. We answer either way, including when the answer is no.",
+            "button_label": "Tell us what you need",
+            "button_link": "/pages/contact"
           }
         }
       },
       "block_order": [
-        "heading_yYAicJ",
-        "text_GMn83M"
+        "door_1",
+        "door_2"
       ],
-      "name": "t:sections.rich-text.presets.name",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 52
+        "heading": "If this store is not the right shape for you.",
+        "text": "Both doors lead to the same people. Neither one is a form that disappears.",
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
-    "rich_text_UjqJXz": {
-      "type": "rich-text",
+    "kk_faq": {
+      "type": "kk-faq",
       "blocks": {
-        "heading_gNXdaE": {
-          "type": "heading",
+        "qa_1": {
+          "type": "qa",
           "settings": {
-            "heading": "Start your brand today",
-            "heading_size": "h1"
+            "question": "What is the minimum order?",
+            "answer": "__floor__ pieces per product. The panel on every product page enforces it and corrects the quantity for you, and the price ladder above shows what each step costs.",
+            "open": true
           }
         },
-        "button_Yxz9Jm": {
-          "type": "button",
+        "qa_2": {
+          "type": "qa",
           "settings": {
-            "button_label": "Browse the catalogue",
-            "button_link": "shopify://collections",
-            "button_style_secondary": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "question": "If my name is on the label, am I the one the authorities call?",
+            "answer": "Yes, and that is normal: under European cosmetics law the Responsible Person is whoever appears on the pack. What changes is how much of the work lands on you. We hold the product file and the safety assessment because we made the formula, we give you the label wording your product needs, and we can file the notification in your name if you would rather not do it yourself.",
+            "open": false
+          }
+        },
+        "qa_3": {
+          "type": "qa",
+          "settings": {
+            "question": "Who checks my design?",
+            "answer": "A person at the laboratory. We check print quality, the mandatory label information and the fit for your chosen container. If something is off, we contact you before anything is produced.",
+            "open": false
+          }
+        },
+        "qa_4": {
+          "type": "qa",
+          "settings": {
+            "question": "What happens to the artwork I upload?",
+            "answer": "It stays yours. We use it to print your labels and for nothing else, we do not show it to anyone, and we keep it on file so your reorder does not start from zero.",
+            "open": false
+          }
+        },
+        "qa_5": {
+          "type": "qa",
+          "settings": {
+            "question": "How long does a first batch take?",
+            "answer": "We confirm the production date when we confirm your design. If part of your order is already in stock, that part ships first and the rest follows, and you see both dates before you pay.",
+            "open": false
+          }
+        },
+        "qa_6": {
+          "type": "qa",
+          "settings": {
+            "question": "Can you also develop a custom formula?",
+            "answer": "Above __cap__ pieces, yes. Everything in this store is white label: ready, tested formulas with your label on them. At contract scale our R&D team can develop a formula of your own, and that route starts with a quote request rather than in the store.",
+            "open": false
           }
         }
       },
       "block_order": [
-        "heading_gNXdaE",
-        "button_Yxz9Jm"
+        "qa_1",
+        "qa_2",
+        "qa_3",
+        "qa_4",
+        "qa_5",
+        "qa_6"
       ],
-      "name": "t:sections.rich-text.presets.name",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "scheme-2",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 52
+        "heading": "What everyone asks before a first batch.",
+        "structured_data": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "kk_final": {
+      "type": "kk-final-cta",
+      "settings": {
+        "heading": "Try it before you brand it.",
+        "text": "Test the formulas on your own clients, then produce your first batch of __floor__ with your label on it.",
+        "button_label": "Browse the catalogue",
+        "button_link": "/collections",
+        "button2_label": "See how to start",
+        "button2_link": "/#start",
+        "color_scheme": "scheme-1",
+        "padding_top": 80,
+        "padding_bottom": 80
       }
     }
   },
   "order": [
-    "image_banner",
-    "featured_collection",
-    "rich_text_TQGWNt",
-    "multicolumn_XcNbmj",
-    "multicolumn_E3NbqU",
-    "collection_list_akzVhh",
-    "rich_text_4hm9cf",
-    "rich_text_UjqJXz"
+    "kk_hero",
+    "kk_credentials",
+    "kk_buyers",
+    "kk_catalogue",
+    "kk_label_editor",
+    "kk_terms",
+    "kk_ways",
+    "kk_how",
+    "kk_responsibility",
+    "kk_maker",
+    "kk_outside",
+    "kk_faq",
+    "kk_final"
   ]
 }

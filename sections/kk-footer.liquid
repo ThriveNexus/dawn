@@ -1,0 +1,129 @@
+{%- comment -%}
+  KOSMETIKAL — Subsolul (secțiunea 17 din landing V2).
+  Fundal închis, trei coloane: două liste de linkuri (blocuri) și marca
+  (wordmark + oraș, tagline, certificări, rândul cu verificarea), apoi o linie
+  și identitatea juridică. O listă de linkuri citește un meniu din Navigation;
+  dacă nu e ales niciun meniu, folosește lista scrisă în bloc („Text|/link”,
+  o linie pe rând), editabilă fără programator. Linkurile de politici rămân
+  într-un rând discret (opțional).
+{%- endcomment -%}
+{{ 'kk-landing.css' | asset_url | stylesheet_tag }}
+
+<footer class="kk-footer" style="--kk-footer-bg: {{ section.settings.bg | default: '#2b2b26' }}; --kk-footer-ink: {{ section.settings.ink | default: '#efe9dd' }};">
+  <div class="page-width">
+    <div class="kk-footer__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'links' -%}
+          <nav class="kk-footer__col" aria-label="{{ block.settings.heading | escape }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.heading != blank -%}
+              <p class="kk-footer__heading">{{ block.settings.heading | escape }}</p>
+            {%- endif -%}
+            <ul class="kk-footer__links" role="list">
+              {%- if block.settings.menu != blank -%}
+                {%- for link in block.settings.menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {%- endfor -%}
+              {%- else -%}
+                {%- assign kk_lines = block.settings.fallback | strip | newline_to_br | split: '<br />' -%}
+                {%- for kk_line in kk_lines -%}
+                  {%- assign kk_parts = kk_line | strip | split: '|' -%}
+                  {%- if kk_parts.size < 2 -%}{%- continue -%}{%- endif -%}
+                  <li><a href="{{ kk_parts[1] | strip }}">{{ kk_parts[0] | strip | escape }}</a></li>
+                {%- endfor -%}
+              {%- endif -%}
+            </ul>
+          </nav>
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="kk-footer__brand">
+        {%- if section.settings.wordmark != blank -%}
+          <p class="kk-footer__wordmark">{{ section.settings.wordmark | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.subline != blank -%}
+          <p class="kk-footer__subline">{{ section.settings.subline | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.tagline != blank -%}
+          <p class="kk-footer__tagline">{{ section.settings.tagline | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.certs != blank -%}
+          <p class="kk-footer__certs">{{ section.settings.certs | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.trust != blank -%}
+          <p class="kk-footer__trust">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>{{ section.settings.trust | escape }}</span>
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="kk-footer__bottom">
+      {%- if section.settings.legal != blank -%}
+        <div class="kk-footer__legal rte">{{ section.settings.legal }}</div>
+      {%- endif -%}
+      {%- if section.settings.show_policies -%}
+        {%- assign kk_has_policy = false -%}
+        {%- for policy in shop.policies -%}{%- if policy != blank -%}{%- assign kk_has_policy = true -%}{%- endif -%}{%- endfor -%}
+        {%- if kk_has_policy -%}
+          <ul class="kk-footer__policies" role="list">
+            {%- for policy in shop.policies -%}
+              {%- if policy != blank -%}
+                <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Kosmetikal · Footer",
+  "tag": "div",
+  "class": "kk-footer-section",
+  "enabled_on": { "groups": ["footer"] },
+  "settings": [
+    { "type": "header", "content": "Brand column" },
+    { "type": "text", "id": "wordmark", "label": "Wordmark", "default": "KOSMETIKAL" },
+    { "type": "text", "id": "subline", "label": "Line under the wordmark", "default": "Pesaro · Italy" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Natural and organic cosmetics, made in Pesaro, Italy." },
+    { "type": "text", "id": "certs", "label": "Certifications line", "default": "ISO 9001 and ISO 22716 GMP certified by RINA · ICEA and AIAB certified product lines" },
+    { "type": "text", "id": "trust", "label": "Trust line", "default": "Every design is reviewed and confirmed before production." },
+    { "type": "header", "content": "Bottom" },
+    {
+      "type": "richtext",
+      "id": "legal",
+      "label": "Legal identity",
+      "default": "<p>Kosmetikal S.r.l. · Via Antonio Casali 30, Borgo Santa Maria, 61122 Pesaro (PU), Italy<br>P.IVA and C.F. IT 02129480410 · Registro Imprese di Pesaro Urbino n. 02129480410 · REA PU 156473 · Share capital € 10.000,00 fully paid up<br>Tel +39 0721 855882 · info@kosmetikal.it</p>"
+    },
+    { "type": "checkbox", "id": "show_policies", "label": "Show the policy links (privacy, terms…)", "default": true },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#2b2b26" },
+    { "type": "color", "id": "ink", "label": "Text", "default": "#efe9dd" }
+  ],
+  "blocks": [
+    {
+      "type": "links",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Company" },
+        { "type": "link_list", "id": "menu", "label": "Menu (from Navigation)", "info": "Optional. When empty, the list below is used." },
+        { "type": "textarea", "id": "fallback", "label": "Links, one per line: Text|/link", "default": "About Kosmetikal|/pages/about-kosmetikal\nCertifications and documents|/pages/compliance-certifications\nContact|/pages/contact" }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Kosmetikal · Footer",
+      "blocks": [
+        { "type": "links", "settings": { "heading": "Company", "fallback": "About Kosmetikal|/pages/about-kosmetikal\nCertifications and documents|/pages/compliance-certifications\nContact|/pages/contact" } },
+        { "type": "links", "settings": { "heading": "Ordering", "fallback": "How to start|/#start\nHow an order runs|/#how\nWho is responsible for what|/#responsibility\nRequest a quote|/pages/request-a-quote" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
