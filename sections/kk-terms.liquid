@@ -99,7 +99,14 @@
     assign kk_first_cost = kk_base | minus: kk_first_disc
     assign kk_suggested = kk_base | times: kk_retail_x | divided_by: 100.0 | round | times: 100
     assign kk_price_str = kk_first_cost | money
-    assign kk_calc_text = section.settings.calc_text | replace: '__product__', kk_p.title | replace: '__price__', kk_price_str | replace: '__min__', kk_min
+    assign kk_title_esc = kk_p.title | escape
+    capture kk_qty_html
+      echo '<span data-kk-home-qty>' | append: kk_min | append: '</span>'
+    endcapture
+    capture kk_price_html
+      echo '<span data-kk-home-price>' | append: kk_price_str | append: '</span>'
+    endcapture
+    assign kk_calc_text = section.settings.calc_text | escape | replace: '__product__', kk_title_esc | replace: '__price__', kk_price_html | replace: '__min__', kk_qty_html
   -%}
 
   <div class="kk-terms color-{{ section.settings.color_scheme }} gradient" style="--kk-pt: {{ section.settings.padding_top }}px; --kk-pb: {{ section.settings.padding_bottom }}px;">
@@ -135,7 +142,7 @@
                     assign kk_qn = kk_q | plus: 0
                     assign kk_total = kk_cost | times: kk_qn
                   -%}
-                  <tr{% if forloop.first %} class="is-min"{% endif %}>
+                  <tr class="kk-ladder__row{% if forloop.first %} is-on{% endif %}" data-q="{{ kk_qn }}" data-cost="{{ kk_cost }}" tabindex="0" role="button" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
                     <td class="kk-ladder__q">{{ kk_qn }}</td>
                     <td>{{ kk_cost | money }}{% if kk_off > 0 %} <span class="kk-ladder__off">−{{ kk_off | round }}%</span>{% endif %}</td>
                     <td>{{ kk_total | money }}</td>
@@ -152,6 +159,7 @@
               </tbody>
             </table>
           </div>
+          <p class="kk-ladder__hint">{{ 'kk.landing.terms_tap' | t }}</p>
           {%- if section.blocks.size > 0 -%}
             <ul class="kk-terms__notes">
               {%- for block in section.blocks -%}
@@ -167,14 +175,14 @@
 
         <div class="kk-calc" data-kk-home-calc data-cost="{{ kk_first_cost }}" data-suggested="{{ kk_suggested }}">
           {%- if section.settings.calc_title != blank -%}<h3 class="kk-calc__title">{{ section.settings.calc_title | escape }}</h3>{%- endif -%}
-          {%- if kk_calc_text != blank -%}<p class="kk-calc__text">{{ kk_calc_text | escape }}</p>{%- endif -%}
+          {%- if kk_calc_text != blank -%}<p class="kk-calc__text">{{ kk_calc_text }}</p>{%- endif -%}
           <label class="kk-calc__label" for="kk-home-retail">{{ 'kk.landing.calc_retail' | t }}</label>
           <div class="kk-calc__field">
             <span aria-hidden="true">€</span>
             <input id="kk-home-retail" type="text" inputmode="decimal" autocomplete="off" data-kk-home-retail value="{{ kk_suggested | money_without_currency }}">
           </div>
           <div class="kk-calc__out" aria-live="polite">
-            <div class="kk-calc__row"><span>{{ 'kk.landing.calc_cost' | t }}</span><b>{{ kk_first_cost | money }}</b></div>
+            <div class="kk-calc__row"><span>{{ 'kk.landing.calc_cost' | t }}</span><b data-kk-home-cost>{{ kk_first_cost | money }}</b></div>
             <div class="kk-calc__row"><span>{{ 'kk.landing.calc_margin_unit' | t }}</span><b data-kk-home-margin>…</b></div>
             <div class="kk-calc__row"><span>{{ 'kk.landing.calc_margin' | t }}</span><b data-kk-home-pct>…</b></div>
           </div>
@@ -205,6 +213,30 @@
       }
       input.addEventListener('input', paint);
       paint();
+
+      /* un clic pe o treaptă din tabel mută calculatorul pe cantitatea și costul ei */
+      var rows = document.querySelectorAll('.kk-ladder__row');
+      var outC = box.querySelector('[data-kk-home-cost]');
+      var qtyEl = box.querySelector('[data-kk-home-qty]');
+      var priceEl = box.querySelector('[data-kk-home-price]');
+      function select(row) {
+        for (var i = 0; i < rows.length; i++) {
+          var on = rows[i] === row;
+          rows[i].classList.toggle('is-on', on);
+          rows[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+        cost = parseInt(row.dataset.cost, 10) || cost;
+        if (outC) outC.textContent = money(cost);
+        if (qtyEl) qtyEl.textContent = row.dataset.q;
+        if (priceEl) priceEl.textContent = money(cost);
+        paint();
+      }
+      for (var r = 0; r < rows.length; r++) {
+        rows[r].addEventListener('click', function () { select(this); });
+        rows[r].addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(this); }
+        });
+      }
     })();
   </script>
 {%- elsif request.design_mode -%}
@@ -276,7 +308,7 @@
       "id": "calc_text",
       "label": "Text",
       "info": "__product__, __price__ and __min__ are replaced by the product name, its unit price and the minimum order.",
-      "default": "Type the price you plan to sell at. We show your margin on __product__ at the minimum order of __min__ pieces, __price__ per unit. Your own formula and quantity change the number."
+      "default": "Type the price you plan to sell at. We show your margin on __product__ at __min__ pieces, __price__ per unit. Pick another row in the table to change the quantity."
     },
     {
       "type": "text",

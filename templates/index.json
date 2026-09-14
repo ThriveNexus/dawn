@@ -265,7 +265,7 @@
         "show_lead": false,
         "quote_link": "/pages/request-a-quote",
         "calc_title": "What you make on it",
-        "calc_text": "Type the price you plan to sell at. We show your margin on __product__ at the minimum order of __min__ pieces, __price__ per unit. Your own formula and quantity change the number.",
+        "calc_text": "Type the price you plan to sell at. We show your margin on __product__ at __min__ pieces, __price__ per unit. Pick another row in the table to change the quantity.",
         "calc_foot": "Your number, our arithmetic. Shipping, label printing and your own selling costs are not in it.",
         "color_scheme": "scheme-1",
         "padding_top": 72,

@@ -735,7 +735,8 @@
       "calc_retail": "Ihr Verkaufspreis pro Stück",
       "calc_cost": "Ihre Kosten pro Stück",
       "calc_margin_unit": "Ihre Marge pro Stück",
-      "calc_margin": "Ihre Marge"
+      "calc_margin": "Ihre Marge",
+      "terms_tap": "Tippen Sie auf eine Zeile, um Ihre Marge bei dieser Menge zu sehen."
     }
   }
 }

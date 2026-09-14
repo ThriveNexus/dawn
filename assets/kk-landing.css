@@ -713,8 +713,33 @@
   font-weight: 600;
   font-size: 1.7rem;
 }
-.kk-ladder .is-min td {
-  background: rgba(var(--color-button), 0.08);
+.kk-ladder__row {
+  cursor: pointer;
+}
+.kk-ladder__row:hover td {
+  background: rgba(var(--color-button), 0.04);
+}
+.kk-ladder__row:focus-visible {
+  outline: 2px solid rgb(var(--color-button));
+  outline-offset: -2px;
+}
+.kk-ladder .is-on td {
+  background: rgba(var(--color-button), 0.1);
+}
+.kk-ladder .is-on .kk-ladder__q::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.7rem;
+  border-radius: 50%;
+  background: rgb(var(--color-button));
+  vertical-align: middle;
+}
+.kk-ladder__hint {
+  margin: 1rem 0 0;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.55);
 }
 .kk-ladder__off {
   margin-left: 0.6rem;

@@ -735,7 +735,8 @@
       "calc_retail": "Your retail price, per unit",
       "calc_cost": "Your cost per unit",
       "calc_margin_unit": "Your margin per unit",
-      "calc_margin": "Your margin"
+      "calc_margin": "Your margin",
+      "terms_tap": "Tap a row to see your margin at that quantity."
     }
   }
 }

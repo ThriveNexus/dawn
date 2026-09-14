@@ -747,7 +747,8 @@
       "calc_retail": "Il tuo prezzo al pubblico, per unità",
       "calc_cost": "Il tuo costo per unità",
       "calc_margin_unit": "Il tuo margine per unità",
-      "calc_margin": "Il tuo margine"
+      "calc_margin": "Il tuo margine",
+      "terms_tap": "Tocca una riga per vedere il tuo margine a quella quantità."
     }
   }
 }

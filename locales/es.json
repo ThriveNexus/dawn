@@ -747,7 +747,8 @@
       "calc_retail": "Tu precio de venta, por unidad",
       "calc_cost": "Tu coste por unidad",
       "calc_margin_unit": "Tu margen por unidad",
-      "calc_margin": "Tu margen"
+      "calc_margin": "Tu margen",
+      "terms_tap": "Toca una fila para ver tu margen con esa cantidad."
     }
   }
 }
